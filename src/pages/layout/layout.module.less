@@ -1,0 +1,84 @@
+.context {
+  height: 100%;
+  width: 100%;
+  position: relative;
+
+  .head {
+    height: 64px;
+  }
+
+  .innerContent {
+    display: flex;
+    height: calc(100% - 80px) ;
+    .left {
+      flex: 0 0 auto;
+      overflow: auto;
+    }
+
+    .right {
+      flex: 1;
+    }
+
+  }
+  .avatar {
+    //height: 100px;
+    background-color: #fff;
+    border-radius: 5px;
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    display: flex;
+    cursor: default;
+    padding: 0 5px;
+    align-items: center;
+    .pic {
+      width: 46px;
+      height: 46px;
+      margin-right: 10px;
+      img {
+        width: 100%;
+        border-radius: 50%;
+      }
+    }
+    .profile {
+      .phone {
+        font-weight: 500;
+        font-size: 24px;
+        line-height: 34px;
+        color: #33353A;
+      }
+      .useId {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        color: #33353A;
+      }
+    }
+  }
+}
+
+.logoutModal {
+  .modalTitle {
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 31px;
+    color: #000000;
+    margin-bottom: 68px;
+  }
+  :global {
+    .ant-modal {
+      width: 437px !important;
+    }
+    .ant-modal-confirm-btns {
+      margin-top: 68px;
+      text-align: center;
+    }
+    .ant-btn {
+      width: 181px;
+      height: 41px;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+}

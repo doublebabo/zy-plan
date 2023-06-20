@@ -1,0 +1,69 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+ul, li {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 8px;
+  background-color: #ebeef5;
+}
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #ccc;
+}
+::-webkit-scrollbar-track{
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 1);
+}
+
+.ant-notification {
+  .ant-notification-notice-message {
+    margin-bottom: 0 !important;
+    font-weight: 400;
+    color: #000000;
+    margin-left: 32px !important;
+    font-style: normal;
+    font-size: 20px !important;
+    line-height: 28px;
+  }
+  .ant-notification-notice-icon-success.anticon {
+    color: #3D8AFF;
+  }
+  .ant-notification-notice-with-icon {
+    svg {
+      margin-top: 3px;
+    }
+  }
+  .ant-notification-close-icon {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+}
+
+.ant-modal-root {
+  .ant-modal-title {
+    text-align: center;
+  }
+  .ant-modal-confirm-content {
+    width: 100%;
+    text-align: center;
+  }
+  .ant-modal-confirm-btns {
+    .ant-btn-default {
+      background: #ECECEC;
+      border: none;
+    }
+  }
+}

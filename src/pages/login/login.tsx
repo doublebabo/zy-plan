@@ -1,0 +1,97 @@
+import styles from './login.module.less';
+import {Button, notification} from 'antd';
+import {useRef, useState} from "react";
+import {useNavigate} from "react-router";
+import {BetaSchemaForm, ProFormColumnsType, ProFormInstance} from '@ant-design/pro-components';
+import {userLogin} from "../../services";
+import bk from './../../assets/bk.svg'
+import {LockOutlined, UserOutlined} from "@ant-design/icons";
+
+const columns: ProFormColumnsType<any>[] = [
+    {
+        title: '',
+        dataIndex: 'username',
+        formItemProps: {
+            rules: [
+                {
+                    required: true,
+                    message: '请输入用户名',
+                },
+            ],
+        },
+        fieldProps: {
+            size: 'large',
+            placeholder: '用户名',
+            prefix: <UserOutlined style={{color: '#00000073'}}/>
+
+        },
+        width: 'm',
+    },
+    {
+        title: '',
+        dataIndex: 'password',
+        valueType: 'password',
+        formItemProps: {
+            rules: [
+                {
+                    required: true,
+                    message: '请输入密码',
+                },
+            ],
+        },
+        fieldProps: {
+            size: 'large',
+            placeholder: '密码',
+            prefix: <LockOutlined style={{color: '#00000073'}}/>,
+            style: {'marginTop': '5px'}
+        },
+        width: 'm',
+    },
+]
+
+const Login = () => {
+    const formRef = useRef<ProFormInstance>();
+
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(false);
+
+    async function onConfirm() {
+        if (loading) return;
+        formRef.current?.validateFields?.().then(async values => {
+            setLoading(true);
+            const res = await userLogin(values.code);
+            if (res?.code === 200) {
+                notification.success({message: '登录成功', duration: 3, description: null});
+                navigate('/word');
+            }
+            setLoading(false);
+        })
+    }
+
+    return (
+        <div className={styles.login}>
+            <h1>泽宇研究院工作计划管理系统</h1>
+            <img src={bk} alt=""/>
+            <div className={styles.loginBox}>
+                <div className={styles.header}>账号登录</div>
+                <BetaSchemaForm
+                    columns={columns}
+                    formRef={formRef}
+                    submitter={{
+                        render: () => {
+                            return [
+                                <Button style={{width: '100%', marginTop: 20}} type='primary' size='large'
+                                        onClick={onConfirm} key="login">
+                                    登录
+                                </Button>,
+                            ]
+                        }
+                    }}
+                />
+            </div>
+        </div>
+    )
+}
+
+export default Login;
