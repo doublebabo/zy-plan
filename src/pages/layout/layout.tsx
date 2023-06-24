@@ -1,12 +1,11 @@
-import {PoweroffOutlined} from "@ant-design/icons";
 import styles from "./layout.module.less";
-import {Dropdown, Menu, MenuProps, Modal, notification} from "antd";
-import { Outlet } from "react-router-dom";
+import {Button, Menu, MenuProps, Modal, notification, Popconfirm} from "antd";
+import {Outlet, useLocation} from "react-router-dom";
 import {clearUserTokenInfo} from "../../services";
 import {useNavigate} from "react-router";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-const { confirm } = Modal;
+const {confirm} = Modal;
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -16,114 +15,100 @@ function getItem(
     children?: MenuItem[],
     type?: 'group',
 ): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  } as MenuItem;
+    return {
+        key,
+        icon,
+        children,
+        label,
+        type,
+    } as MenuItem;
 }
 
 const items: MenuProps['items'] = [
-  getItem('Navigation One', 'sub1', null, [
-    getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
-    getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
-  ]),
-
-  getItem('Navigation Two', 'sub2', null, [
-    getItem('Option 5', '5'),
-    getItem('Option 6', '6'),
-    getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
-  ]),
-
-  {type: 'divider'},
-
-  getItem('Navigation Three', 'sub4', null, [
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
-    getItem('Option 11', '11'),
-    getItem('Option 12', '12'),
-  ]),
-
-  getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
+    getItem('用户管理', '/user-mgt', null,),
+    getItem('工作计划管理', '/work-plan', null,),
 ];
 
 
 const Layout = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const myLocation = useLocation();
+    const [current, setCurrent] = useState('');
 
-  const nickName = localStorage.getItem('nick_name') || '';
+    function onExit() {
+        confirm({
+            icon: null,
+            title: <span className={styles.modalTitle}>确认要退出登录吗？</span>,
+            closable: true,
+            wrapClassName: styles.logoutModal,
+            okText: '确定',
+            cancelText: '取消',
+            onOk() {
+                notification.success({message: '退出成功', duration: 3, description: null});
+                clearUserTokenInfo();
+                navigate('/');
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    }
 
-  const img = localStorage.getItem('head_image_url') || '';
+    function onMenuClick(e: any) {
+        setCurrent(e.key);
+        navigate(e.key);
+    }
 
-  const user_code = localStorage.getItem('user_code') || '';
+    useEffect(() => {
+        setCurrent(myLocation.pathname);
+    }, [myLocation])
 
-  function onExit() {
-    confirm({
-      icon: null,
-      content: <span className={styles.modalTitle}>确认要退出登录吗？</span>  ,
-      closable: true,
-      wrapClassName: styles.logoutModal,
-      onOk() {
-        notification.success({message: '退出成功', duration: 3, description: null});
-        clearUserTokenInfo();
-        navigate('/');
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  }
+    return (
+        <>
+            <div className={styles.context}>
+                <div className={styles.head}>
+                    <div className={styles.headLeft}>泽宇研究院工作计划管理系统</div>
+                    <div className={styles.headMid}>
+                        <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
+                              items={items}/>
+                    </div>
+                    <div className={styles.headRight}>
+                        <Popconfirm
+                            title={null}
+                            description={
+                                <div className={styles.popup} style={{width: 200}}>
+                                    <div>一级部门：xxx</div>
+                                    <div>二级部门：xxx</div>
+                                    <div>权限：xxx</div>
+                                    <div>账号：xxx</div>
+                                    <div>创建时间：xxx</div>
+                                </div>
+                            }
+                            showCancel={false}
+                            defaultOpen={true}
+                            icon={null}
+                            okText="确认"
+                        >
+                           <span style={{marginRight: 16, cursor: 'pointer'}}>
+                            欢迎您！xxxx
+                          </span>
+                        </Popconfirm>
 
-  return (
-    <>
-      <div className={styles.context}>
-        <div className={styles.head}>
-
-
-          <Dropdown menu={{
-            items: [
-              {
-                label: (
-                    <a onClick={onExit} style={{
-                      display: 'flex',
-                      justifyContent: 'space-between'
-                    }}>
-                      退出<PoweroffOutlined/>
-                    </a>
-                ),
-              },
-            ]
-          }}>
-            <div className={styles.avatar}>
-              <div className={styles.pic}><img src={img} alt=""/></div>
-              <div className={styles.profile}>
-                <div className={styles.phone}>{nickName}</div>
-                <div className={styles.useId}>{nickName}id: {user_code}</div>
-              </div>
+                        <Button type="default">
+                            修改密码
+                        </Button>
+                        <Button type='primary' danger onClick={onExit}>
+                            退出登录
+                        </Button>
+                    </div>
+                </div>
+                <div className={styles.innerContent}>
+                    <Outlet/>
+                </div>
             </div>
-          </Dropdown>
-        </div>
-        <div className={styles.innerContent}>
-          <Menu
-              style={{ width: 256 }}
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              mode="inline"
-              items={items}
-              className={styles.left}
-          />
-          <div
-              className={styles.right}
-          >
-            <Outlet/>
-          </div>
-        </div>
-      </div>
-    </>
+        </>
 
-  )
+    )
 }
 
 export default Layout;

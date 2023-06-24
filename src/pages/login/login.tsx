@@ -74,7 +74,7 @@ const Login = () => {
             <h1>泽宇研究院工作计划管理系统</h1>
             <img src={bk} alt=""/>
             <div className={styles.loginBox}>
-                <div className={styles.header}>账号登录</div>
+                <div className={styles.header}>用户登录</div>
                 <BetaSchemaForm
                     columns={columns}
                     formRef={formRef}

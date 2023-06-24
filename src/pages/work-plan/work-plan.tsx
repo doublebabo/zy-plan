@@ -1,119 +1,168 @@
-import styles from './user-mgt.module.less';
+import styles from './work-plan.module.less';
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
-import {ActionType, ProTable} from '@ant-design/pro-components';
-import request from "umi-request";
-import {Button, Modal} from "antd";
-import {waitTime} from "../work-plan/work-plan.tsx";
-import ModifyModal from "./modify-modal.tsx";
-import {delUser} from "../../services";
-import {useRequest} from "ahooks";
+import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
+import {Button} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
+import request from 'umi-request';
+import MonthPlanModal from "./month-plan-modal.tsx";
 
-const {confirm} = Modal;
+export const waitTimePromise = async (time: number = 100) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    });
+};
 
-const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
+export const waitTime = async (time: number = 100) => {
+    await waitTimePromise(time);
+};
+
+const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     {
         title: '序号',
         dataIndex: 'index',
         width: 48,
         valueType: 'index'
     },
-
-    {
-        title: '姓名',
-        dataIndex: 'title',
-        ellipsis: true,
-    },
-
     {
         title: '一级部门',
         dataIndex: 'title',
         ellipsis: true,
     },
-
     {
         title: '二级部门',
         dataIndex: 'title',
         ellipsis: true,
     },
-
     {
-        title: '权限',
+        title: '工作名称',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '工作内容',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '开始时间',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '截止时间',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '超时时间',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '完成时间',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '责任人',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '参与人',
+        dataIndex: 'title',
+        ellipsis: true,
+        hideInSearch: true
+    },
+    {
+        title: '计划完成状态',
         dataIndex: 'title',
         ellipsis: true,
     },
-
     {
-        title: '账号',
+        title: '姓名',
+        dataIndex: 'title2',
+        ellipsis: true,
+        hideInTable: true
+    },
+    {
+        title: '周计划员工是否确认',
         dataIndex: 'title',
         ellipsis: true,
-    },
+        width: 170,
 
+        hideInSearch: true
+    },
     {
-        title: '创建时间',
+        title: '周计划领导是否确认',
         dataIndex: 'title',
         ellipsis: true,
-    },
+        width: 170,
 
+        hideInSearch: true
+    },
+    {
+        title: '周计划是否发布',
+        dataIndex: 'title',
+        ellipsis: true,
+        width: 150,
+
+        hideInSearch: true
+    },
     {
         title: '操作',
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 100,
+        width: 140,
         render: (text, record, _, action) => [
             <a
                 key="editable"
                 onClick={() => {
-                    onShowModal('edit', record)
+                    // todo
+                    navigate('/work-plan/week-plan/123')
                 }}
             >
-                <span>编辑</span>
+                周计划
             </a>,
-            <a onClick={() => onDelete(record)} target="_blank" rel="noopener noreferrer" key="view">
-                删除
+            <a href={record.url}
+               onClick={() => {
+                   onAdd('edit', record)
+               }}
+               key="view">
+                编辑
             </a>,
         ],
     },
-]
+];
 
-const UserMgt = () => {
+const WorkPlan = () => {
     const navigate = useNavigate();
     const actionRef = useRef<ActionType>();
     const [cols, setCols] = useState<any>([]);
+
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalType, setModalType] = useState<string>('');
 
-    const delReq = useRequest(delUser, {
-        manual: true,
-    });
+    const [modalType, setModalType] = useState<string>('')
 
-    function onShowModal(type: string, record?: any) {
-        setModalType(type);
+    function onAdd(type: string, record?: any) {
         setModalVisible(true);
-    }
-
-    function onDelete(record: any) {
-        confirm({
-            icon: null,
-            title: <span className={styles.modalTitle}>确认要删除吗？</span>  ,
-            closable: true,
-            wrapClassName: styles.logoutModal,
-            okText: '确定',
-            cancelText: '取消',
-            okButtonProps: {loading: delReq.loading},
-            onOk() {
-                // todo
-                delReq.run(record);
-            },
-        });
+        setModalType(type)
     }
 
     useEffect(() => {
-        setCols(getColumns(navigate, {onDelete, onShowModal}));
+        setCols(getColumns(navigate, {onAdd}));
     }, []);
-
     return (
         <div className={styles.container}>
             <ProTable
@@ -129,8 +178,12 @@ const UserMgt = () => {
                         params,
                     });
                 }}
+                scroll={{x: 2000}}
                 rowKey="id"
-                search={false}
+                search={{
+                    labelWidth: 'auto',
+                    defaultColsNumber: 12,
+                }}
                 options={{
                     setting: false,
                     density: false
@@ -153,21 +206,21 @@ const UserMgt = () => {
                     onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
-                headerTitle="用户列表"
+                headerTitle="每月计划列表"
                 toolBarRender={() => [
                     <Button
                         key="button"
                         icon={<PlusOutlined/>}
+                        onClick={() => onAdd('add')}
                         type="primary"
-                        onClick={() => onShowModal('add')}
                     >
-                        创建用户
+                        新增
                     </Button>,
                 ]}
             />
-            <ModifyModal visible={modalVisible} setVisible={setModalVisible} type={modalType} />
+            <MonthPlanModal type={modalType} visible={modalVisible} setVisible={setModalVisible}/>
         </div>
     )
 }
 
-export default UserMgt;
+export default WorkPlan;

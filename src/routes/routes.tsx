@@ -6,6 +6,8 @@ import {useInfo} from "../services";
 import {redirect} from "react-router";
 import myLocalstorage from "../utils/localstorage.ts";
 import UserMgt from "../pages/user-mgt/user-mgt.tsx";
+import WorkPlan from "../pages/work-plan/work-plan.tsx";
+import WeekPlan from "../pages/work-plan/week-plan/week-plan.tsx";
 
 async function loginLoader() {
   if (myLocalstorage.get('token')) {
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
     loader: loginLoader
   },
   {
-    path: "/dashborad",
+    path: "/user-mgt",
     element: <Layout/>,
     errorElement: <ErrorPage/>,
     loader: async () => {
@@ -39,6 +41,23 @@ const router = createBrowserRouter([
     },
     children: [
       { index: true, element: <UserMgt /> },
+    ],
+  },
+  {
+    path: "/work-plan",
+    element: <Layout/>,
+    errorElement: <ErrorPage/>,
+    loader: async () => {
+      // if (myLocalstorage.get('token')) {
+      //   await useInfo();
+      // } else {
+      //   return redirect('/');
+      // }
+      return null
+    },
+    children: [
+      { index: true, element: <WorkPlan /> },
+      { path: '/work-plan/week-plan/:id', element: <WeekPlan /> },
     ],
   },
 ]);
