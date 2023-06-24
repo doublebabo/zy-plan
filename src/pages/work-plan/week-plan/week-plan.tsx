@@ -1,24 +1,12 @@
 import styles from './week-plan.module.less';
 import {useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router";
+import {useLocation, useNavigate} from "react-router";
 import {ActionType, ProColumns, ProDescriptions, ProTable} from '@ant-design/pro-components';
-import {Button, Dropdown} from "antd";
-import {EllipsisOutlined, PlusOutlined} from "@ant-design/icons";
-import request from 'umi-request';
+import {Button} from "antd";
+import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import WorkDetailModal from "./work-detail-modal.tsx";
 import ConfirmModal from "./confirm-modal.tsx";
-
-export const waitTimePromise = async (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
-
-export const waitTime = async (time: number = 100) => {
-    await waitTimePromise(time);
-};
+import {arrayToMap, planStatus, weekPlanListById} from "../../../services";
 
 const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any>[] => [
     {
@@ -28,38 +16,39 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any
         valueType: 'index'
     },
     {
-        title: '工作名称',
-        dataIndex: 'title',
-        ellipsis: true,
+        dataIndex: 'id',
+        hideInTable: true,
+
     },
     {
         title: '工作内容',
-        dataIndex: 'title',
+        dataIndex: 'content',
         ellipsis: true,
     },
     {
         title: '创建时间',
-        dataIndex: 'title',
+        dataIndex: 'startTime',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '截止时间',
-        dataIndex: 'title',
+        dataIndex: 'endTime',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '完成时间',
-        dataIndex: 'title',
+        dataIndex: 'finishTime',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '计划完成状态',
-        dataIndex: 'title',
+        dataIndex: 'status',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        valueEnum: arrayToMap(planStatus),
     },
     {
         title: '操作',
@@ -73,12 +62,12 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any
                 <a
                     key="editable"
                     onClick={() => {
-                        onConfirm('staff',record);
+                        onConfirm(record);
                     }}
                 >
                     结果确认
                 </a>,
-                <a href={record.url} target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
+                <a target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
                     onWeekPlan('edit',record);
                 }}>
                     编辑
@@ -91,41 +80,42 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any
 const descCols = [
     {
         title: '一级部门',
-        dataIndex: 'id',
+        dataIndex: 'deptFirst',
     },
     {
         title: '二级部门',
-        dataIndex: 'id',
+        dataIndex: 'deptSecond',
     },
     {
         title: '工作名称',
-        dataIndex: 'id',
+        dataIndex: 'title',
         span:2
     },
     {
         title: '工作内容',
-        dataIndex: 'id',
+        dataIndex: 'content',
         span: 2
     },
     {
         title: '开始时间',
-        dataIndex: 'id',
+        dataIndex: 'startTime',
     },
     {
         title: '截止时间',
-        dataIndex: 'id',
+        dataIndex: 'endTime',
     },
     {
         title: '完成状态',
-        dataIndex: 'id',
+        dataIndex: 'monthStatus',
+        valueEnum: arrayToMap(planStatus),
     },
     {
         title: '责任人',
-        dataIndex: 'id',
+        dataIndex: 'executorName',
     },
     {
         title: '参与人',
-        dataIndex: 'id',
+        dataIndex: 'participant',
     },
 ]
 
@@ -140,16 +130,26 @@ const WeekPlan = () => {
 
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
-    const [confirmType, setConfirmType] = useState<string>('');
+    const [confirmType, setConfirmType] = useState<string>('staff');
+    const [weekPlanId, setWeekPlanId] = useState<string>(null);
+
+    const [record, setRecord] = useState<any>();
+    let location = useLocation();
 
     function onWeekPlan(type: string,record?: any) {
         setAddModalVisible(true);
         setWorkDetailType(type);
+        if (record) setRecord(record);
     }
 
-    function onConfirm(type: string, record?: any) {
+    function onConfirm(record?: any) {
         setConfirmModalVisible(true);
-        setConfirmType(type);
+        if (record.employeeStatus === 0) {
+            setConfirmType('staff');
+        } else if (record.leaderStatus === 0) {
+            setConfirmType('manager');
+        }
+        setWeekPlanId(record?.id);
     }
 
     useEffect(() => {
@@ -157,24 +157,28 @@ const WeekPlan = () => {
     }, []);
     return (
         <div className={styles.container}>
+
             <ProDescriptions
                 column={2}
                 columns={descCols}
-                title="月计划详情"
+                title={
+                    <div>
+                        <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
+                            navigate('/work-plan')
+                        }}></Button>月计划详情
+                    </div>
+                }
                 className={styles.desc}
+                request={() => {
+                    return Promise.resolve({success: true, data: location.state})
+                }}
             />
             <ProTable
                 columns={cols}
                 actionRef={actionRef}
                 cardBordered
                 request={async (params = {}, sort, filter) => {
-                    console.log(sort, filter);
-                    await waitTime(2000);
-                    return request<{
-                        data: any[];
-                    }>('https://proapi.azurewebsites.net/github/issues', {
-                        params,
-                    });
+                    return weekPlanListById(location.state.id);
                 }}
                 rowKey="id"
                 search={false}
@@ -182,23 +186,6 @@ const WeekPlan = () => {
                     setting: false,
                     density: false,
                     reload: false
-                }}
-                form={{
-                    // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                    syncToUrl: (values, type) => {
-                        if (type === 'get') {
-                            return {
-                                ...values,
-                                created_at: [values.startTime, values.endTime],
-                            };
-                        }
-                        return values;
-                    },
-                }}
-                pagination={{
-                    pageSize: 10,
-                    pageSizeOptions: [10, 20, 50],
-                    onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="每月周计划列表"
@@ -213,8 +200,23 @@ const WeekPlan = () => {
                     </Button>,
                 ]}
             />
-            <WorkDetailModal visible={addModalVisible} type={workDetailType} setVisible={setAddModalVisible}/>
-            <ConfirmModal visible={confirmModalVisible} type={confirmType} setVisible={setConfirmModalVisible} />
+            <WorkDetailModal
+              visible={addModalVisible}
+              type={workDetailType}
+              setVisible={setAddModalVisible}
+              onSuccess={() => {
+                  actionRef?.current?.reload();
+              }}
+              record={record}
+              monthId={location.state.id}/>
+            <ConfirmModal
+              visible={confirmModalVisible}
+              type={confirmType}
+              setVisible={setConfirmModalVisible}
+              onSuccess={() => {
+                  actionRef?.current?.reload();
+              }}
+              weekPlanId={weekPlanId} />
         </div>
     )
 }

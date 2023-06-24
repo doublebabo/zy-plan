@@ -9,13 +9,14 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {waitTime} from "./week-plan.tsx";
 import {message, Modal} from "antd";
+import {weekPlanEmployee, weekPlanLeader} from "../../../services";
 
 const getColumns = (type: string): ProFormColumnsType<any>[] => {
     if (type === 'staff') {
         return [
             {
                 // title: '计划周数',
-                dataIndex: 'title',
+                dataIndex: 'employeeStatus',
                 valueType: 'radio',
                 formItemProps: {
                     rules: [
@@ -36,7 +37,7 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
             },
             {
                 title: '工作描述',
-                dataIndex: 'title',
+                dataIndex: 'comment',
                 valueType: 'textarea',
                 formItemProps: {
                     rules: [
@@ -52,7 +53,7 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
         return [
             {
                 // title: '计划周数',
-                dataIndex: 'title',
+                dataIndex: 'leaderStatus',
                 valueType: 'radio',
                 formItemProps: {
                     rules: [
@@ -73,7 +74,7 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
             },
             {
                 title: '意见',
-                dataIndex: 'title',
+                dataIndex: 'comment',
                 valueType: 'textarea',
                 formItemProps: {
                     rules: [
@@ -91,7 +92,7 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
 
 export default function ConfirmModal(props: any) {
 
-    const {type, visible, setVisible} = props;
+    const {type, visible, setVisible, weekPlanId, onSuccess} = props;
 
     const [formRef] = [useRef<ProFormInstance>()];
 
@@ -99,15 +100,33 @@ export default function ConfirmModal(props: any) {
 
     const title = type === 'staff' ? '员工工作计划完成描述' : '部门经理工作计划确认';
 
-    useEffect(() => {
-        setCols(getColumns(type));
-    }, [type]);
+    async function onOk(values) {
+        let result;
+        if (type === 'staff') {
+            result = await weekPlanEmployee({
+                weekPlanId,
+                employeeStatus: +values.employeeStatus,
+                comment: values.comment
+            });
+        } else if (type === 'manager') {
+            result = await weekPlanLeader({
+                weekPlanId,
+                leaderStatus: +values.leaderStatus,
+                comment: values.comment
+            });
+        }
+        if (result.success) {
+            onSuccess?.();
+            setVisible(false);
+        }
+    }
 
     useEffect(() => {
         if (visible) {
             formRef?.current?.resetFields();
         }
-    }, [visible])
+        setCols(getColumns(type));
+    }, [visible, type]);
 
 
     return (
@@ -116,9 +135,7 @@ export default function ConfirmModal(props: any) {
                 open={visible}
                 layoutType='ModalForm'
                 title={title}
-                onFinish={async (values) => {
-                    console.log(values);
-                }}
+                onFinish={onOk}
                 formRef={formRef}
                 modalProps={{
                     maskClosable: false,

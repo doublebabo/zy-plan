@@ -9,37 +9,38 @@ import {
 import {useEffect, useRef, useState} from "react";
 import {waitTime} from "./week-plan.tsx";
 import {message, Modal} from "antd";
+import {arrayToMap, planStatus, weekHistory, weekPlanAdd, weekPlanEdit} from "../../../services";
 
 const getColumns = (): ProFormColumnsType<any>[]  => {
         return [
-            {
-                title: '计划周数',
-                dataIndex: 'title',
-                valueType: 'select',
-                formItemProps: {
-                    rules: [
-                        {
-                            required: true,
-                            message: '此项为必填项',
-                        },
-                    ],
-                },
-            },
-            {
-                title: '工作名称',
-                dataIndex: 'title2',
-                formItemProps: {
-                    rules: [
-                        {
-                            required: true,
-                            message: '此项为必填项',
-                        },
-                    ],
-                },
-            },
+            // {
+            //     title: '计划周数',
+            //     dataIndex: 'title',
+            //     valueType: 'select',
+            //     formItemProps: {
+            //         rules: [
+            //             {
+            //                 required: true,
+            //                 message: '此项为必填项',
+            //             },
+            //         ],
+            //     },
+            // },
+            // {
+            //     title: '工作名称',
+            //     dataIndex: 'title2',
+            //     formItemProps: {
+            //         rules: [
+            //             {
+            //                 required: true,
+            //                 message: '此项为必填项',
+            //             },
+            //         ],
+            //     },
+            // },
             {
                 title: '工作内容',
-                dataIndex: 'title3',
+                dataIndex: 'content',
                 valueType: 'textarea',
                 formItemProps: {
                     rules: [
@@ -49,85 +50,84 @@ const getColumns = (): ProFormColumnsType<any>[]  => {
                         },
                     ],
                 },
-
             },
         ];
 }
 
 
 const tableCols = [
-    {
-        title: '序号',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
-    },
-    {
-        title: '工作名称',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
-    },
+    // {
+    //     title: '工作名称',
+    //     dataIndex: 'title',
+    // },
     {
         title: '原/修改工作内容',
-        dataIndex: 'title3',
+        dataIndex: 'content',
         valueType: 'textarea',
-        formItemProps: {
-            rules: [
-                {
-                    required: true,
-                    message: '此项为必填项',
-                },
-            ],
-        },
+ 
     },
     {
         title: '创建时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'startTime',
+ 
     },
     {
         title: '截止时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'endTime',
+ 
     },
     {
         title: '完成时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'finishTime',
     },
     {
         title: '计划完成状态',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'status',
+        valueEnum: arrayToMap(planStatus),
     },
 ]
 
 
 export default function WorkDetailModal(props: any) {
 
-    const {type,visible, setVisible} = props;
+    const {type,visible, setVisible, onSuccess, monthId, record} = props;
 
     const [formRef, formRefEdit] = [useRef<ProFormInstance>(),useRef<ProFormInstance>()];
 
     const [cols, setCols] = useState<any>([]);
 
+
+
+    const [loading, setLoading] = useState(false);
+
+    const [dataSource, setDataSource] = useState<any>([]);
+
     const title = type === 'add' ? '新增工作计划' : '周计划编辑';
 
-    function onOk() {
-        formRefEdit?.current?.validateFields()?.then(values => {
-            console.log(values)
+    async function onAddOk(values) {
+        const result = await weekPlanAdd({...values, monthId});
+        if (result.success) {
+            setVisible(false);
+            onSuccess?.();
+        }
+        return true;
+    }
+
+    function onEditOk() {
+        formRefEdit?.current?.validateFields()?.then(async values => {
+            let result;
+            setLoading(true);
+            result = await weekPlanEdit({...values, weekPlanId: record.id});
+            setLoading(false);
+            if (result.success) {
+                onSuccess?.();
+                setVisible(false);
+            }
         })
+    }
+    async function getHistory(id) {
+        const {data = []} = await weekHistory(id);
+        setDataSource(data);
     }
 
     useEffect(() => {
@@ -135,7 +135,13 @@ export default function WorkDetailModal(props: any) {
             formRef?.current?.resetFields();
         }
         setCols(getColumns());
-    }, [visible, type]);
+        console.log('record', record);
+        if (record) {
+            console.log('record', record);
+            if (visible) getHistory(record.id);
+            formRefEdit?.current?.setFieldsValue?.(record);
+        }
+    }, [visible, type, record]);
 
 
     return (
@@ -145,9 +151,7 @@ export default function WorkDetailModal(props: any) {
                     open={visible}
                     layoutType='ModalForm'
                     title={title}
-                    onFinish={async (values) => {
-                        console.log(values);
-                    }}
+                    onFinish={onAddOk}
                     formRef={formRef}
                     modalProps={{
                         maskClosable: false,
@@ -164,28 +168,22 @@ export default function WorkDetailModal(props: any) {
                         title={title}
                         width='80%'
                         onCancel={() => setVisible(false)}
-                        onOk={onOk}
+                        onOk={onEditOk}
                         >
                         <ProForm
                             formRef={formRefEdit}
                             submitter={false}
                         >
                             <ProForm.Group>
-                                <ProFormText
-                                    width="md"
-                                    name="name"
-                                    label="序号"
-                                    readonly={true}
-                                />
-                                <ProFormText
-                                    width="md"
-                                    name="company"
-                                    label="工作名称"
-                                    readonly={true}
-                                />
+                                {/*<ProFormText*/}
+                                {/*    width="md"*/}
+                                {/*    name="title"*/}
+                                {/*    label="工作名称"*/}
+                                {/*    disabled={true}*/}
+                                {/*/>*/}
                                 <ProFormTextArea
                                     width="md"
-                                    name="company1"
+                                    name="content"
                                     label="工作内容"
                                     placeholder="请输入"
                                     required={true}
@@ -193,27 +191,27 @@ export default function WorkDetailModal(props: any) {
                                 />
                                 <ProFormText
                                     width="md"
-                                    name="company"
+                                    name="startTime"
                                     label="创建时间"
-                                    readonly={true}
+                                    disabled={true}
                                 />
                                 <ProFormText
                                     width="md"
-                                    name="company"
+                                    name="endTime"
                                     label="截止时间"
-                                    readonly={true}
+                                    disabled={true}
                                 />
                                 <ProFormText
                                     width="md"
-                                    name="company"
+                                    name="finishTime"
                                     label="完成时间"
-                                    readonly={true}
+                                    disabled={true}
                                 />
                                 <ProFormText
                                     width="md"
                                     name="company"
                                     label="计划完成状态"
-                                    readonly={true}
+                                    disabled={true}
                                 />
                             </ProForm.Group>
                             <ProForm.Item
@@ -222,15 +220,11 @@ export default function WorkDetailModal(props: any) {
                                 trigger="onValuesChange"
                             >
                                 <ProTable
-                                    dataSource={[]}
-                                    rowKey="key"
-                                    pagination={{
-                                        showQuickJumper: true,
-                                    }}
+                                    dataSource={dataSource}
+                                    rowKey="id"
                                     columns={tableCols}
                                     search={false}
                                     dateFormatter="string"
-                                    headerTitle="表格标题"
                                     toolBarRender={false}
                                 />
                             </ProForm.Item>

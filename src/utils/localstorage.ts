@@ -10,7 +10,7 @@ const isFresh = (valObj) => {
 /* 加方法 */
 const extend = (s) => {
   return {
-    set(key, value, expires) {
+    set(key, value, expires?) {
       if (['', null, void 0].includes(value)) {
         s.removeItem(key);
       } else {

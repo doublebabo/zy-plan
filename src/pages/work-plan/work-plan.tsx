@@ -4,20 +4,8 @@ import {useNavigate} from "react-router";
 import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
 import {Button} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
-import request from 'umi-request';
 import MonthPlanModal from "./month-plan-modal.tsx";
-
-export const waitTimePromise = async (time: number = 100) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
-
-export const waitTime = async (time: number = 100) => {
-    await waitTimePromise(time);
-};
+import {arrayToMap, deptList2, download, exportMonth, monthPlanList, planStatus, yOrN} from "../../services";
 
 const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     {
@@ -28,13 +16,42 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     },
     {
         title: '一级部门',
-        dataIndex: 'title',
+        dataIndex: 'deptFirstList',
         ellipsis: true,
+        valueType: 'select',
+        request: async () => {
+            const {data} = await deptList2();
+            return (data?.first).map(o => ({label: o.name, value: o.name}));
+        },
+        fieldProps: {
+            mode: 'multiple'
+        },
+        hideInTable: true,
     },
     {
         title: '二级部门',
-        dataIndex: 'title',
+        dataIndex: 'deptSecondList',
+        valueType: 'select',
+        fieldProps: {
+            mode: 'multiple'
+        },
+        ellipsis: true,request: async () => {
+            const {data} = await deptList2();
+            return (data?.second).map(o => ({label: o.name, value: o.name}));
+        },
+        hideInTable: true,
+    },
+    {
+        title: '一级部门',
+        dataIndex: 'deptFirst',
         ellipsis: true,
+        hideInSearch: true,
+    },
+    {
+        title: '二级部门',
+        dataIndex: 'deptSecond',
+        ellipsis: true,
+        hideInSearch: true,
     },
     {
         title: '工作名称',
@@ -44,19 +61,20 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     },
     {
         title: '工作内容',
-        dataIndex: 'title',
+        dataIndex: 'content',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 400
     },
     {
         title: '开始时间',
-        dataIndex: 'title',
+        dataIndex: 'startTime',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '截止时间',
-        dataIndex: 'title',
+        dataIndex: 'endTime',
         ellipsis: true,
         hideInSearch: true
     },
@@ -68,30 +86,42 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     },
     {
         title: '完成时间',
-        dataIndex: 'title',
+        dataIndex: 'finishTime',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '责任人',
-        dataIndex: 'title',
+        dataIndex: 'executorName',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '参与人',
-        dataIndex: 'title',
+        dataIndex: 'participant',
         ellipsis: true,
         hideInSearch: true
     },
     {
         title: '计划完成状态',
-        dataIndex: 'title',
+        dataIndex: 'planStatus',
         ellipsis: true,
+        request: () => {
+            return planStatus;
+        },
+
+        hideInTable: true
+    },
+    {
+        title: '计划完成状态',
+        dataIndex: 'monthStatus',
+        ellipsis: true,
+        valueEnum: arrayToMap(planStatus),
+        hideInSearch: true
     },
     {
         title: '姓名',
-        dataIndex: 'title2',
+        dataIndex: 'executorName',
         ellipsis: true,
         hideInTable: true
     },
@@ -100,24 +130,26 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
         dataIndex: 'title',
         ellipsis: true,
         width: 170,
+        hideInSearch: true,
+        valueEnum: arrayToMap(yOrN)
 
-        hideInSearch: true
     },
     {
         title: '周计划领导是否确认',
         dataIndex: 'title',
         ellipsis: true,
         width: 170,
+        hideInSearch: true,
+        valueEnum: arrayToMap(yOrN)
 
-        hideInSearch: true
     },
     {
         title: '周计划是否发布',
-        dataIndex: 'title',
+        dataIndex: 'weekStatus',
         ellipsis: true,
         width: 150,
-
-        hideInSearch: true
+        hideInSearch: true,
+        valueEnum: arrayToMap(yOrN)
     },
     {
         title: '操作',
@@ -129,8 +161,11 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
             <a
                 key="editable"
                 onClick={() => {
-                    // todo
-                    navigate('/work-plan/week-plan/123')
+                    navigate('/work-plan/week-plan/' + record.id,
+                       {
+                            state: record
+                        }
+                    )
                 }}
             >
                 周计划
@@ -153,11 +188,26 @@ const WorkPlan = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [modalType, setModalType] = useState<string>('')
+    const [modalType, setModalType] = useState<string>('');
+
+    const [params, setParams] = useState({});
+
+    const [downloading, setDownloading] = useState(false);
+
+    const [record, setRecord] = useState<any>();
 
     function onAdd(type: string, record?: any) {
         setModalVisible(true);
-        setModalType(type)
+        setModalType(type);
+        if (record) setRecord(record);
+    }
+
+    async function exportData() {
+        if (downloading) return;
+        setDownloading(true);
+        const res = await exportMonth(params);
+        setDownloading(false);
+        download(res);
     }
 
     useEffect(() => {
@@ -170,15 +220,10 @@ const WorkPlan = () => {
                 actionRef={actionRef}
                 cardBordered
                 request={async (params = {}, sort, filter) => {
-                    console.log(sort, filter);
-                    await waitTime(2000);
-                    return request<{
-                        data: any[];
-                    }>('https://proapi.azurewebsites.net/github/issues', {
-                        params,
-                    });
+                    setParams(params);
+                    return monthPlanList(params);
                 }}
-                scroll={{x: 2000}}
+                scroll={{x: 2600}}
                 rowKey="id"
                 search={{
                     labelWidth: 'auto',
@@ -187,18 +232,6 @@ const WorkPlan = () => {
                 options={{
                     setting: false,
                     density: false
-                }}
-                form={{
-                    // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-                    syncToUrl: (values, type) => {
-                        if (type === 'get') {
-                            return {
-                                ...values,
-                                created_at: [values.startTime, values.endTime],
-                            };
-                        }
-                        return values;
-                    },
                 }}
                 pagination={{
                     pageSize: 10,
@@ -209,6 +242,13 @@ const WorkPlan = () => {
                 headerTitle="每月计划列表"
                 toolBarRender={() => [
                     <Button
+                      key="button"
+                      onClick={() => exportData()}
+                      loading={downloading}
+                    >
+                        导出月度计划
+                    </Button>,
+                    <Button
                         key="button"
                         icon={<PlusOutlined/>}
                         onClick={() => onAdd('add')}
@@ -218,7 +258,11 @@ const WorkPlan = () => {
                     </Button>,
                 ]}
             />
-            <MonthPlanModal type={modalType} visible={modalVisible} setVisible={setModalVisible}/>
+            <MonthPlanModal
+              onSuccess={() => {
+                  actionRef?.current?.reload();
+              }}
+              type={modalType} visible={modalVisible} setVisible={setModalVisible} record={record}/>
         </div>
     )
 }

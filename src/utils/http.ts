@@ -4,24 +4,19 @@ import {clearUserTokenInfo} from "../services/index.ts";
 import myLocalstorage from "./localstorage.ts";
 
 const http = axios.create({
-  baseURL: 'http://bug-dev.xiaoxiaobite.com',
+  baseURL: 'http://localhost:8989',
   timeout: 15000,
   // headers: {'Content-Type': 'text/plain'}
 });
 
 // request拦截器
 http.interceptors.request.use((config) => {
-  // if (config.url !== '/api/v1/user/login') {
-    config.data = {
-      // ...config.data,
-      // token: myLocalstorage.get('token'), // localstorage的封装，可以设置过期时间
-      // nonce: Math.random().toString(),
-      // time_stamp: parseInt(new Date().getTime() / 1000, 10),
-      // time_zone: 28800,
-      // "debug": process.env.NODE_ENV === 'development',
-      // 'package': 'web'
+  if (config.url !== '/user/login') {
+    config.headers = {
+      ...config.headers,
+      token: myLocalstorage.get('token') || '', // localstorage的封装，可以设置过期时间
     }
-  // }
+  }
   return config
 }, (error) => {
   // Do something with request error
@@ -30,18 +25,27 @@ http.interceptors.request.use((config) => {
 
 // response拦截器
 http.interceptors.response.use((res) => {
-  if (res.data?.code !== 200) {
-    notification.error({message: res.data?.msg || '服务器开小差~', duration: 3, description: null})
-    if (res.data?.code === 100) {
-      clearUserTokenInfo();
-      setTimeout(() => {
-        location.href = '/';
-      }, 500)
-    }
+  if (res?.status !== 200) {
+    notification.error({message: res.data?.msg || '服务器开小差~', duration: 1.5, description: null})
     throw new Error(res.data?.msg);
+  } else {
+    if (res.data?.msg) {
+      if (res.data.success) {
+        notification.success({message: res.data?.msg, duration: 1.5, description: null});
+      } else {
+        notification.error({message: res.data?.msg, duration: 1.5, description: null});
+      }
+      if (res.data?.code === 401) {
+        clearUserTokenInfo();
+        setTimeout(() => {
+          location.href = '/';
+        }, 100)
+      }
+    }
   }
   return res.data
 }, (error) => {
+  notification.error({message: error.message || '服务器开小差~', duration: 1.5, description: null})
   return Promise.reject(error)
 });
 

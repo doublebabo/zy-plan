@@ -4,10 +4,12 @@ import {
     ProFormColumnsType, ProFormDatePicker,
     ProFormInstance,
     ProFormText, ProFormTextArea,
-    ProTable
+    ProTable,
+    ProFormSelect
 } from "@ant-design/pro-components";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Modal} from "antd";
+import {monthHistory, monthPlanAdd, monthPlanEdit, monthPlanUserList, planStatus} from "../../services";
 
 const cols: ProFormColumnsType<any>[] = [
     {
@@ -24,7 +26,7 @@ const cols: ProFormColumnsType<any>[] = [
     },
     {
         title: '工作内容',
-        dataIndex: 'title',
+        dataIndex: 'content',
         valueType: 'textarea',
         formItemProps: {
             rules: [
@@ -37,7 +39,7 @@ const cols: ProFormColumnsType<any>[] = [
     },
     {
         title: '开始时间',
-        dataIndex: 'title',
+        dataIndex: 'startTime',
         valueType: 'date',
         formItemProps: {
             rules: [
@@ -47,12 +49,18 @@ const cols: ProFormColumnsType<any>[] = [
                 },
             ],
         },
+        fieldProps: {
+            format: 'YYYY-MM-DD',
+        },
         width: '100%'
     },
     {
         title: '截止时间',
-        dataIndex: 'title',
+        dataIndex: 'endTime',
         valueType: 'date',
+        fieldProps: {
+            format: 'YYYY-MM-DD',
+        },
         formItemProps: {
             rules: [
                 {
@@ -66,7 +74,7 @@ const cols: ProFormColumnsType<any>[] = [
     },
     {
         title: '责任人',
-        dataIndex: 'title',
+        dataIndex: 'executor',
         valueType: 'select',
         formItemProps: {
             rules: [
@@ -76,10 +84,14 @@ const cols: ProFormColumnsType<any>[] = [
                 },
             ],
         },
+        request: async () => {
+            const {data} = await monthPlanUserList();
+            return (data || []).map(o => ({label: o.nickName, value: o.id}))
+        }
     },
     {
         title: '协助人',
-        dataIndex: 'title',
+        dataIndex: 'participant',
         valueType: 'select',
         formItemProps: {
             rules: [
@@ -89,6 +101,10 @@ const cols: ProFormColumnsType<any>[] = [
                 },
             ],
         },
+        request: async () => {
+            const {data} = await monthPlanUserList();
+            return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
+        }
     },
 ];
 
@@ -96,95 +112,92 @@ const cols: ProFormColumnsType<any>[] = [
 const tableCols = [
     {
         title: '一级部门',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'deptFirst',
     },
     {
         title: '二级部门',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'deptSecond',
     },
     {
         title: '原/修改工作名称',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'title',
     },
     {
         title: '原/修改工作内容',
-        dataIndex: 'title3',
+        dataIndex: 'content',
         valueType: 'textarea',
-        formItemProps: {
-            rules: [
-                {
-                    required: true,
-                    message: '此项为必填项',
-                },
-            ],
-        },
     },
     {
         title: '原/修改开始时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'startTime',
     },
     {
         title: '原/修改截止时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'endTime',
     },
     {
         title: '原/修改完成时间',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'finishTime',
     },
     {
         title: '原/修改责任人',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'executor',
     },
     {
         title: '原/修改参与人',
-        dataIndex: 'title3',
-        fieldProps: {
-            disabled: true,
-        }
+        dataIndex: 'participant',
     },
 ]
 
 export default function MonthPlanModal(props: any) {
 
-    const {type, visible, setVisible} = props;
+    const {type, visible, setVisible, onSuccess, record} = props;
 
     const [formRef, formRefEdit] = [useRef<ProFormInstance>(), useRef<ProFormInstance>()];
 
+    const [loading, setLoading] = useState(false);
+
+    const [dataSource, setDataSource] = useState<any>([]);
 
     const title = type === 'add' ? '新增月工作计划' : '月计划编辑';
 
-    function onOk() {
-        formRefEdit?.current?.validateFields()?.then(values => {
-            console.log(values)
+    function onEditOk() {
+        formRefEdit?.current?.validateFields()?.then(async values => {
+            let result;
+            setLoading(true);
+            result = await monthPlanEdit({...values, monthPlanId: record.id});
+            setLoading(false);
+            if (result.success) {
+                onSuccess?.();
+                setVisible(false);
+            }
         })
+    }
+
+    async function onAddOk(values) {
+        const result = await monthPlanAdd(values);
+        if (result.success) {
+            onSuccess?.();
+            setVisible(false);
+        }
+        return true;
+    }
+
+    async function getHistory(id) {
+        const {data = []} = await monthHistory(id);
+        setDataSource(data);
     }
 
     useEffect(() => {
         if (visible) {
             formRef?.current?.resetFields();
         }
-    }, [visible, type]);
+        if (record) {
+            console.log('record', record);
+            if (visible) getHistory(record.id);
+            formRefEdit?.current?.setFieldsValue?.(record);
+        }
+    }, [visible, type, record]);
 
 
     return (
@@ -195,13 +208,12 @@ export default function MonthPlanModal(props: any) {
                         open={visible}
                         layoutType='ModalForm'
                         title={title}
-                        onFinish={async (values) => {
-                            console.log(values);
-                        }}
+                        onFinish={onAddOk}
                         formRef={formRef}
                         modalProps={{
                             maskClosable: false,
                             onCancel: () => setVisible(false),
+                            okButtonProps: {loading: loading}
                         }}
                         columns={cols}
                     >
@@ -215,36 +227,35 @@ export default function MonthPlanModal(props: any) {
                         title={title}
                         width='80%'
                         onCancel={() => setVisible(false)}
-                        onOk={onOk}
+                        onOk={onEditOk}
                     >
                         <ProForm
                             formRef={formRefEdit}
                             submitter={false}
                         >
                             <ProForm.Group>
-
                                 <ProFormText
                                     width="md"
-                                    name="company"
+                                    name="deptFirst"
                                     label="一级部门"
                                     disabled={true}
                                 />
                                 <ProFormText
                                     width="md"
-                                    name="name"
+                                    name="deptSecond"
                                     label="二级部门"
                                     disabled={true}
                                 />
                                 <ProFormText
                                     width="md"
-                                    name="company"
+                                    name="title"
                                     label="工作名称"
                                     rules={[{required: true, message: '这是必填项'}]}
 
                                 />
                                 <ProFormTextArea
                                     width="md"
-                                    name="company1"
+                                    name="content"
                                     label="工作内容"
                                     placeholder="请输入"
                                     required={true}
@@ -252,45 +263,52 @@ export default function MonthPlanModal(props: any) {
                                 />
                                 <ProFormDatePicker
                                     width="md"
-                                    name="company"
+                                    name="startTime"
                                     label="开始时间"
                                     rules={[{required: true, message: '这是必填项'}]}
 
                                 />
                                 <ProFormDatePicker
                                     width="md"
-                                    name="company"
+                                    name="endTime"
                                     label="截止时间"
                                     rules={[{required: true, message: '这是必填项'}]}
 
                                 />
                                 <ProFormDatePicker
                                     width="md"
-                                    name="company"
+                                    name="finishTime"
                                     label="完成时间"
                                     rules={[{required: true, message: '这是必填项'}]}
 
                                 />
-                                <ProFormText
-                                    width="md"
-                                    name="company"
-                                    label="完成状态"
-                                    disabled={true}
-                                />
-                                <ProFormText
-                                    width="md"
-                                    name="company"
-                                    label="责任人"
-                                    rules={[{required: true, message: '这是必填项'}]}
-
-                                />
-                                <ProFormText
-                                    width="md"
-                                    name="company"
-                                    label="参与人"
-                                    rules={[{required: true, message: '这是必填项'}]}
-
-                                />
+                                <ProFormSelect
+                                  width="md"
+                                  name="monthStatus"
+                                  label="完成状态"
+                                  disabled={true}
+                                  request={async () => planStatus}
+                                ></ProFormSelect>
+                                <ProFormSelect
+                                  width="md"
+                                  name="executor"
+                                  label="责任人"
+                                  rules={[{required: true, message: '这是必填项'}]}
+                                  request={async () => {
+                                      const {data} = await monthPlanUserList();
+                                      return (data || []).map(o => ({label: o.nickName, value: o.id}))
+                                  }}
+                                ></ProFormSelect>
+                                <ProFormSelect
+                                  width="md"
+                                  name="participant"
+                                  label="参与人"
+                                  rules={[{required: true, message: '这是必填项'}]}
+                                  request={async () => {
+                                      const {data} = await monthPlanUserList();
+                                      return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
+                                  }}
+                                ></ProFormSelect>
                             </ProForm.Group>
                             <ProForm.Item
                                 label="历史月计划编辑记录"
@@ -298,15 +316,11 @@ export default function MonthPlanModal(props: any) {
                                 trigger="onValuesChange"
                             >
                                 <ProTable
-                                    dataSource={[]}
-                                    rowKey="key"
-                                    pagination={{
-                                        showQuickJumper: true,
-                                    }}
+                                    dataSource={dataSource}
+                                    rowKey="id"
                                     columns={tableCols}
                                     search={false}
                                     dateFormatter="string"
-                                    headerTitle="表格标题"
                                     toolBarRender={false}
                                 />
                             </ProForm.Item>

@@ -1,7 +1,7 @@
 import styles from "./layout.module.less";
 import {Button, Menu, MenuProps, Modal, notification, Popconfirm} from "antd";
 import {Outlet, useLocation} from "react-router-dom";
-import {clearUserTokenInfo} from "../../services";
+import {clearUserTokenInfo, userLogout} from "../../services";
 import {useNavigate} from "react-router";
 import React, {useEffect, useState} from "react";
 
@@ -43,9 +43,8 @@ const Layout = () => {
             wrapClassName: styles.logoutModal,
             okText: '确定',
             cancelText: '取消',
-            onOk() {
-                notification.success({message: '退出成功', duration: 3, description: null});
-                clearUserTokenInfo();
+            async onOk() {
+                await userLogout();
                 navigate('/');
             },
             onCancel() {
@@ -94,9 +93,9 @@ const Layout = () => {
                           </span>
                         </Popconfirm>
 
-                        <Button type="default">
-                            修改密码
-                        </Button>
+                        {/*<Button type="default">*/}
+                        {/*    修改密码*/}
+                        {/*</Button>*/}
                         <Button type='primary' danger onClick={onExit}>
                             退出登录
                         </Button>

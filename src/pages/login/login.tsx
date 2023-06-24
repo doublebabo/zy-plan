@@ -10,7 +10,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 const columns: ProFormColumnsType<any>[] = [
     {
         title: '',
-        dataIndex: 'username',
+        dataIndex: 'userName',
         formItemProps: {
             rules: [
                 {
@@ -60,10 +60,9 @@ const Login = () => {
         if (loading) return;
         formRef.current?.validateFields?.().then(async values => {
             setLoading(true);
-            const res = await userLogin(values.code);
-            if (res?.code === 200) {
-                notification.success({message: '登录成功', duration: 3, description: null});
-                navigate('/word');
+            const res = await userLogin(values);
+            if (res?.success) {
+                navigate('/user-mgt');
             }
             setLoading(false);
         })
@@ -81,7 +80,7 @@ const Login = () => {
                     submitter={{
                         render: () => {
                             return [
-                                <Button style={{width: '100%', marginTop: 20}} type='primary' size='large'
+                                <Button loading={loading} style={{width: '100%', marginTop: 20}} type='primary' size='large'
                                         onClick={onConfirm} key="login">
                                     登录
                                 </Button>,
