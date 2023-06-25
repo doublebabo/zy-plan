@@ -214,7 +214,6 @@ export function weekPlanLeader(data) {
 // 查询月计划修改历史
 export function monthHistory(id) {
   return executeAndTryCatch(() => http.get('monthPlan/history?monthPlanId=' + id).then(res => {
-
     res.data = res.data.map(o => {
       return {
         ...o,
@@ -222,7 +221,7 @@ export function monthHistory(id) {
         content: o.contentOld + '/' + o.contentNew,
         startTime: o.startTimeOld + '/' + o.startTimeNew,
         endTime: o.endTimeOld + '/' + o.endTimeNew,
-        finishTime: o?.finishTimeOld + '/' + o?.finishTimeNew,
+        finishTime: (o?.finishTimeOld || '') + '/' + (o?.finishTimeNew || ''),
         executor: o.executorOld + '/' + o.executorNew,
         participant: o.participantOld + '/' + o.participantNew,
       }
