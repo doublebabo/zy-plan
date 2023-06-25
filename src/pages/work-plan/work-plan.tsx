@@ -1,13 +1,23 @@
 import styles from './work-plan.module.less';
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
-import {Button} from "antd";
+import {Button, Modal} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
-import {arrayToMap, deptList2, download, exportMonth, monthPlanList, planStatus, yOrN} from "../../services";
+import {
+    arrayToMap, completeMonthPlan,
+    deptList2,
+    download,
+    exportMonth,
+    monthPlanList,
+    planStatus,
+} from "../../services";
+import myLocalstorage from "../../utils/localstorage.ts";
 
-const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
+const {confirm} = Modal;
+
+const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColumns<any>[] => [
     {
         title: '序号',
         dataIndex: 'index',
@@ -80,7 +90,7 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     },
     {
         title: '超时时间',
-        dataIndex: 'title',
+        dataIndex: 'overTime',
         ellipsis: true,
         hideInSearch: true
     },
@@ -109,7 +119,6 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
         request: () => {
             return planStatus;
         },
-
         hideInTable: true
     },
     {
@@ -127,29 +136,26 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
     },
     {
         title: '周计划员工是否确认',
-        dataIndex: 'title',
+        dataIndex: 'weekPlanPublish',
         ellipsis: true,
         width: 170,
         hideInSearch: true,
-        valueEnum: arrayToMap(yOrN)
 
     },
     {
         title: '周计划领导是否确认',
-        dataIndex: 'title',
+        dataIndex: 'weekPlanLeader',
         ellipsis: true,
         width: 170,
         hideInSearch: true,
-        valueEnum: arrayToMap(yOrN)
-
     },
     {
         title: '周计划是否发布',
-        dataIndex: 'weekStatus',
+        dataIndex: 'weekPlanPublish',
         ellipsis: true,
         width: 150,
         hideInSearch: true,
-        valueEnum: arrayToMap(yOrN)
+        // valueEnum: arrayToMap(yOrN)
     },
     {
         title: '操作',
@@ -170,13 +176,23 @@ const getColumns = (navigate: any, {onAdd}: any): ProColumns<any>[] => [
             >
                 周计划
             </a>,
-            <a href={record.url}
+            <a
                onClick={() => {
                    onAdd('edit', record)
                }}
                key="view">
                 编辑
             </a>,
+            (
+                isPublisher &&  <a
+                    onClick={() => {
+                        onFinish(record)
+                    }}
+                    key="finish">
+                    完成
+                </a>
+            )
+           ,
         ],
     },
 ];
@@ -202,6 +218,22 @@ const WorkPlan = () => {
         if (record) setRecord(record);
     }
 
+    function onFinish(record: any) {
+        confirm({
+            icon: null,
+            title: <span className={styles.modalTitle}>确认要完成吗？</span>,
+            closable: true,
+            wrapClassName: styles.logoutModal,
+            okText: '确定',
+            cancelText: '取消',
+            async onOk() {
+                await completeMonthPlan(record.id);
+                actionRef.current?.reload();
+                return true;
+            },
+        });
+    }
+
     async function exportData() {
         if (downloading) return;
         setDownloading(true);
@@ -211,7 +243,9 @@ const WorkPlan = () => {
     }
 
     useEffect(() => {
-        setCols(getColumns(navigate, {onAdd}));
+        const isPublisher = myLocalstorage.get('role') === 'publisher';
+
+        setCols(getColumns(navigate, {onAdd,onFinish, isPublisher}));
     }, []);
     return (
         <div className={styles.container}>

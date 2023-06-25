@@ -15,6 +15,7 @@ async function executeAndTryCatch(func) {
 export function clearUserTokenInfo() {
   localStorage.setItem('token', '');
   localStorage.setItem('role', '');
+  localStorage.setItem('name', '');
 }
 
 export function userLogin(data) {
@@ -22,6 +23,7 @@ export function userLogin(data) {
     if (res.success) {
       myLocalstorage.set('token', res.data?.token);
       myLocalstorage.set('role', res.data?.role);
+      myLocalstorage.set('name', res.data?.name);
     }
     return res
   }));
@@ -42,7 +44,6 @@ export function userList(data) {
   }
   return executeAndTryCatch(() => http.post('/user/list', postData).then(res => {
     if (res.success) {
-
       return {
         data: res?.data?.obj || [],
         // success 请返回 true，
@@ -74,13 +75,13 @@ export function deptList() {
 }
 
 export function addUser(data) {
-  const vals = {...data, authority: data.authority.join(',') || null}
+  const vals = {...data, authority: data?.authority?.join(',') || null}
   return executeAndTryCatch(() => http.post('/user/add', vals));
 }
 
 
 export function editUser(data) {
-  const vals = {...data, authority: data.authority.join(',') || null}
+  const vals = {...data, authority: data?.authority?.join(',') || null}
   return executeAndTryCatch(() => http.post('/user/modify', vals));
 }
 
@@ -141,6 +142,12 @@ export const planStatus = [
 export const yOrN = [
   {label: '否', value: 0},
   {label: '是', value: 1},
+]
+
+export const completeStatus = [
+  {label: '未确认', value: 0},
+  {label: '未完成', value: 1},
+  {label: '完成', value: 2},
 ]
 
 export function arrayToMap(array) {
@@ -242,4 +249,9 @@ export function weekPlanEdit(data) {
     content: data.content,
     weekPlanId: data.weekPlanId
   }));
+}
+
+// 完成月计划
+export function completeMonthPlan(id) {
+  return executeAndTryCatch(() => http.get('monthPlan/finish?monthPlanId=' + id, ));
 }

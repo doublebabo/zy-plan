@@ -4,6 +4,7 @@ import {Outlet, useLocation} from "react-router-dom";
 import {clearUserTokenInfo, userLogout} from "../../services";
 import {useNavigate} from "react-router";
 import React, {useEffect, useState} from "react";
+import myLocalstorage from "../../utils/localstorage.ts";
 
 const {confirm} = Modal;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -25,8 +26,8 @@ function getItem(
 }
 
 const items: MenuProps['items'] = [
-    getItem('用户管理', '/user-mgt', null,),
     getItem('工作计划管理', '/work-plan', null,),
+    getItem('用户管理', '/user-mgt', null,),
 ];
 
 
@@ -62,6 +63,8 @@ const Layout = () => {
         setCurrent(myLocation.pathname);
     }, [myLocation])
 
+    const isPublisher = myLocalstorage.get('role') === 'publisher';
+
     return (
         <>
             <div className={styles.context}>
@@ -69,33 +72,12 @@ const Layout = () => {
                     <div className={styles.headLeft}>泽宇研究院工作计划管理系统</div>
                     <div className={styles.headMid}>
                         <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
-                              items={items}/>
+                              items={isPublisher ? items : items.filter(o => o.key !== '/user-mgt')}/>
                     </div>
                     <div className={styles.headRight}>
-                        <Popconfirm
-                            title={null}
-                            description={
-                                <div className={styles.popup} style={{width: 200}}>
-                                    <div>一级部门：xxx</div>
-                                    <div>二级部门：xxx</div>
-                                    <div>权限：xxx</div>
-                                    <div>账号：xxx</div>
-                                    <div>创建时间：xxx</div>
-                                </div>
-                            }
-                            showCancel={false}
-                            defaultOpen={true}
-                            icon={null}
-                            okText="确认"
-                        >
-                           <span style={{marginRight: 16, cursor: 'pointer'}}>
-                            欢迎您！xxxx
+                        <span style={{marginRight: 16, cursor: 'pointer'}}>
+                            欢迎您！{(localStorage.getItem('name') || '').replace(/"/g, '')}
                           </span>
-                        </Popconfirm>
-
-                        {/*<Button type="default">*/}
-                        {/*    修改密码*/}
-                        {/*</Button>*/}
                         <Button type='primary' danger onClick={onExit}>
                             退出登录
                         </Button>

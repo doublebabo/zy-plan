@@ -2,11 +2,9 @@ import styles from './user-mgt.module.less';
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {ActionType, ProTable} from '@ant-design/pro-components';
-import request from "umi-request";
 import {Button, Modal} from "antd";
 import ModifyModal from "./modify-modal.tsx";
 import {delUser, userList} from "../../services";
-import {useRequest} from "ahooks";
 import {PlusOutlined} from "@ant-design/icons";
 
 const {confirm} = Modal;
@@ -29,7 +27,7 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     },
     {
         title: '部门',
-        dataIndex: 'deptId',
+        dataIndex: 'deptName',
         ellipsis: true,
     },
     // {
@@ -39,7 +37,7 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     // },
     {
         title: '权限',
-        dataIndex: 'authority',
+        dataIndex: 'authorityName',
         ellipsis: true,
     },
     {

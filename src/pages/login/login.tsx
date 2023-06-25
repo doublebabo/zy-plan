@@ -62,7 +62,7 @@ const Login = () => {
             setLoading(true);
             const res = await userLogin(values);
             if (res?.success) {
-                navigate('/user-mgt');
+                navigate('/work-plan');
             }
             setLoading(false);
         })

@@ -34,6 +34,7 @@ module.exports = {
         ],
         "react/no-this-in-sfc": 0,
         "react/react-in-jsx-scope": "off",
-        "@typescript-eslint/no-explicit-any": ["off"]
+        "@typescript-eslint/no-explicit-any": ["off"],
+        "noImplicitAny": false,
     },
 }
