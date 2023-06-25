@@ -185,7 +185,7 @@ const WeekPlan = () => {
                 options={{
                     setting: false,
                     density: false,
-                    reload: false
+                    // reload: false
                 }}
                 dateFormatter="string"
                 headerTitle="每月周计划列表"
