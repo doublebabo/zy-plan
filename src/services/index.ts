@@ -179,7 +179,8 @@ export function monthPlanUserList() {
 export function monthPlanAdd(data) {
   data.startTime = dayjs(data.startTime).format('YYYY-MM-DD');
   data.endTime = dayjs(data.endTime).format('YYYY-MM-DD');
-  return executeAndTryCatch(() => http.post('/monthPlan/add', data));
+  const vals = {...data, participant: data?.participant?.join(',') || null}
+  return executeAndTryCatch(() => http.post('/monthPlan/add', vals));
 }
 
 

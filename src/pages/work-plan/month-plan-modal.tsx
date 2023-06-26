@@ -93,13 +93,9 @@ const cols: ProFormColumnsType<any>[] = [
         title: '协助人',
         dataIndex: 'participant',
         valueType: 'select',
-        formItemProps: {
-            rules: [
-                {
-                    required: true,
-                    message: '此项为必填项',
-                },
-            ],
+        fieldProps: {
+            mode: 'multiple',
+            showSearch: true
         },
         request: async () => {
             const {data} = await monthPlanUserList();
@@ -279,8 +275,7 @@ export default function MonthPlanModal(props: any) {
                                     width="md"
                                     name="finishTime"
                                     label="完成时间"
-                                    rules={[{required: true, message: '这是必填项'}]}
-
+                                    disabled={true}
                                 />
                                 <ProFormSelect
                                   width="md"
@@ -303,7 +298,10 @@ export default function MonthPlanModal(props: any) {
                                   width="md"
                                   name="participant"
                                   label="参与人"
-                                  rules={[{required: true, message: '这是必填项'}]}
+                                  fieldProps={{
+                                        mode: 'multiple',
+                                        showSearch: true
+                                  }}
                                   request={async () => {
                                       const {data} = await monthPlanUserList();
                                       return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
