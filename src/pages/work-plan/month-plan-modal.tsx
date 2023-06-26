@@ -189,8 +189,8 @@ export default function MonthPlanModal(props: any) {
             formRef?.current?.resetFields();
         }
         if (record) {
-            console.log('record', record);
             if (visible) getHistory(record.id);
+            record.participant = record?.participant?.split?.(',');
             formRefEdit?.current?.setFieldsValue?.(record);
         }
     }, [visible, type, record]);

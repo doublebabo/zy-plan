@@ -219,7 +219,7 @@ const WorkPlan = () => {
     function onAdd(type: string, record?: any) {
         setModalVisible(true);
         setModalType(type);
-        if (record) setRecord(record);
+        if (record) setRecord({...record});
     }
 
     function onFinish(record: any) {

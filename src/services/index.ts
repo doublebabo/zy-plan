@@ -240,7 +240,8 @@ export function monthPlanEdit(data) {
   data.endTime = dayjs(data.endTime).format('YYYY-MM-DD');
   data.startTime = dayjs(data.startTime).format('YYYY-MM-DD');
   data.finishTime = dayjs(data.finishTime).format('YYYY-MM-DD');
-  return executeAndTryCatch(() => http.post('/monthPlan/modify', data));
+  const vals = {...data, participant: data?.participant?.join(',') || null}
+  return executeAndTryCatch(() => http.post('/monthPlan/modify', vals));
 }
 // 查询周计划修改历史
 export function weekHistory(id) {
@@ -265,5 +266,16 @@ export function weekPlanEdit(data) {
 
 // 完成月计划
 export function completeMonthPlan(id) {
-  return executeAndTryCatch(() => http.get('monthPlan/finish?monthPlanId=' + id, ));
+  return executeAndTryCatch(() => http.get('/monthPlan/finish?monthPlanId=' + id, ));
 }
+
+// 周详情
+export function weekPlanDetail(id) {
+  return executeAndTryCatch(() => http.get('/weekPlan/detail?weekPlanId=' + id, ));
+}
+
+
+export const leaderOrEmployeeStatus = [
+  {label: '未完成', value: 1},
+  {label: '已完成', value: 2},
+];

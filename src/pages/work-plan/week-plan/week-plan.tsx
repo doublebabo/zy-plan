@@ -138,7 +138,7 @@ const WeekPlan = () => {
 
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
-    const [confirmType, setConfirmType] = useState<string>('staff');
+    // const [confirmType, setConfirmType] = useState<string>('staff');
     const [weekPlanId, setWeekPlanId] = useState<string>(null);
 
     const [record, setRecord] = useState<any>();
@@ -149,21 +149,23 @@ const WeekPlan = () => {
     function onWeekPlan(type: string,record?: any) {
         setAddModalVisible(true);
         setWorkDetailType(type);
-        if (record) setRecord(record);
+        if (record) {
+            setRecord({...record});
+        }
     }
 
     function onConfirm(record?: any) {
         setConfirmModalVisible(true);
-        const isPublisher = myLocalstorage.get('role') === 'publisher';
-        if (!isPublisher) {
-            setConfirmType('staff');
-        } else if (record.employeeStatus === 0) {
-            setConfirmType('staff');
-        } else if (record.leaderStatus === 0) {
-            setConfirmType('manager');
-        } else {
-            setConfirmType('manager');
-        }
+        // const isPublisher = myLocalstorage.get('role') === 'publisher';
+        // if (!isPublisher) {
+        //     setConfirmType('staff');
+        // } else if (record.employeeStatus === 0) {
+        //     setConfirmType('staff');
+        // } else if (record.leaderStatus === 0) {
+        //     setConfirmType('manager');
+        // } else {
+        //     setConfirmType('manager');
+        // }
         setWeekPlanId(record?.id);
     }
 
@@ -228,7 +230,7 @@ const WeekPlan = () => {
               monthId={location.state.id}/>
             <ConfirmModal
               visible={confirmModalVisible}
-              type={confirmType}
+              // type={confirmType}
               setVisible={setConfirmModalVisible}
               onSuccess={() => {
                   actionRef?.current?.reload();
