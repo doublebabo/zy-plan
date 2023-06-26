@@ -9,7 +9,7 @@ import ConfirmModal from "./confirm-modal.tsx";
 import {arrayToMap, planStatus, weekStatus, weekPlanListById} from "../../../services";
 import myLocalstorage from "../../../utils/localstorage.ts";
 
-const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any>[] => [
+const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): ProColumns<any>[] => [
     {
         title: '序号',
         dataIndex: 'index',
@@ -68,11 +68,14 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any
                 >
                     结果确认
                 </a>,
-                <a target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
-                    onWeekPlan('edit',record);
-                }}>
-                    编辑
-                </a>,
+                (
+                    isPublisher && <a
+                        target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
+                            onWeekPlan('edit',record);
+                        }}>
+                            编辑
+                        </a>
+                )
             ]
         },
     },
@@ -135,6 +138,8 @@ const WeekPlan = () => {
     const [weekPlanId, setWeekPlanId] = useState<string>(null);
 
     const [record, setRecord] = useState<any>();
+
+    const isPublisher = myLocalstorage.get('role') === 'publisher';
     let location = useLocation();
 
     function onWeekPlan(type: string,record?: any) {
@@ -159,7 +164,8 @@ const WeekPlan = () => {
     }
 
     useEffect(() => {
-        setCols(getColumns(navigate, {onWeekPlan, onConfirm}));
+        const isPublisher = myLocalstorage.get('role') === 'publisher';
+        setCols(getColumns(navigate, {onWeekPlan, onConfirm, isPublisher}));
     }, []);
     return (
         <div className={styles.container}>
@@ -201,6 +207,7 @@ const WeekPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onWeekPlan('add')}
                         type="primary"
+                        disabled={!isPublisher}
                     >
                         新增
                     </Button>,

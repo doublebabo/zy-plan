@@ -176,13 +176,15 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
             >
                 周计划
             </a>,
-            <a
-               onClick={() => {
-                   onAdd('edit', record)
-               }}
-               key="view">
-                编辑
-            </a>,
+            (
+                isPublisher && <a
+                    onClick={() => {
+                        onAdd('edit', record)
+                    }}
+                    key="view">
+                    编辑
+                </a>
+            ),
             (
                 isPublisher &&  <a
                     onClick={() => {
@@ -211,6 +213,8 @@ const WorkPlan = () => {
     const [downloading, setDownloading] = useState(false);
 
     const [record, setRecord] = useState<any>();
+
+    const isPublisher = myLocalstorage.get('role') === 'publisher';
 
     function onAdd(type: string, record?: any) {
         setModalVisible(true);
@@ -287,6 +291,7 @@ const WorkPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onAdd('add')}
                         type="primary"
+                        disabled={!isPublisher}
                     >
                         新增
                     </Button>,
