@@ -138,6 +138,10 @@ export const planStatus = [
   {label: '周计划领导已确认', value: 10}
 ];
 
+export const weekStatus = [
+  {label: '未完成', value: 1},
+  {label: '已完成', value: 2}
+];
 
 export const yOrN = [
   {label: '否', value: 0},
@@ -239,7 +243,15 @@ export function monthPlanEdit(data) {
 }
 // 查询周计划修改历史
 export function weekHistory(id) {
-  return executeAndTryCatch(() => http.get('/weekPlan/history?weekPlanId=' + id));
+  return executeAndTryCatch(() => http.get('/weekPlan/history?weekPlanId=' + id).then(res => {
+    res.data = res.data.map(o => {
+      return {
+        ...o,
+        content: o.contentOld + '/' + o.contentNew,
+      }
+    })
+    return res;
+  }));
 }
 
 // 修改周计划

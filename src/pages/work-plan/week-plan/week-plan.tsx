@@ -6,7 +6,7 @@ import {Button} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import WorkDetailModal from "./work-detail-modal.tsx";
 import ConfirmModal from "./confirm-modal.tsx";
-import {arrayToMap, planStatus, weekPlanListById} from "../../../services";
+import {arrayToMap, planStatus, weekStatus, weekPlanListById} from "../../../services";
 
 const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any>[] => [
     {
@@ -48,7 +48,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any
         dataIndex: 'status',
         ellipsis: true,
         hideInSearch: true,
-        valueEnum: arrayToMap(planStatus),
+        valueEnum: arrayToMap(weekStatus),
     },
     {
         title: '操作',
@@ -147,6 +147,8 @@ const WeekPlan = () => {
         if (record.employeeStatus === 0) {
             setConfirmType('staff');
         } else if (record.leaderStatus === 0) {
+            setConfirmType('manager');
+        } else {
             setConfirmType('manager');
         }
         setWeekPlanId(record?.id);

@@ -136,7 +136,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     },
     {
         title: '周计划员工是否确认',
-        dataIndex: 'weekPlanPublish',
+        dataIndex: 'weekPlanEmployee',
         ellipsis: true,
         width: 170,
         hideInSearch: true,

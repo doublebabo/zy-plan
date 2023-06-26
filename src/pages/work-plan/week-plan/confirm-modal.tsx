@@ -27,10 +27,10 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
                     ],
                 },
                 valueEnum : {
-                    1: {
+                    2: {
                         text: '已完成',
                     },
-                    0: {
+                    1: {
                         text: '未完成',
                     }
                 }
@@ -64,10 +64,10 @@ const getColumns = (type: string): ProFormColumnsType<any>[] => {
                     ],
                 },
                 valueEnum : {
-                    1: {
+                    2: {
                         text: '已完成',
                     },
-                    0: {
+                    1: {
                         text: '未完成',
                     }
                 }
