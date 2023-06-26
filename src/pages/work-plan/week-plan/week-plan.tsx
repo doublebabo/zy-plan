@@ -7,6 +7,7 @@ import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import WorkDetailModal from "./work-detail-modal.tsx";
 import ConfirmModal from "./confirm-modal.tsx";
 import {arrayToMap, planStatus, weekStatus, weekPlanListById} from "../../../services";
+import myLocalstorage from "../../../utils/localstorage.ts";
 
 const getColumns = (navigate: any, {onWeekPlan, onConfirm}: any): ProColumns<any>[] => [
     {
@@ -144,7 +145,10 @@ const WeekPlan = () => {
 
     function onConfirm(record?: any) {
         setConfirmModalVisible(true);
-        if (record.employeeStatus === 0) {
+        const isPublisher = myLocalstorage.get('role') === 'publisher';
+        if (!isPublisher) {
+            setConfirmType('staff');
+        } else if (record.employeeStatus === 0) {
             setConfirmType('staff');
         } else if (record.leaderStatus === 0) {
             setConfirmType('manager');
