@@ -185,11 +185,11 @@ export default function ConfirmModal(props: any) {
                     canLeaderEdit = true
                 }
                 formRef?.current?.setFieldsValue({
-                    employeeStatus: res.data.employeeStatus,
+                    employeeStatus: "" + res.data.employeeStatus,
                     comment: res.data.employeeComment,
                 });
                 formRef2?.current?.setFieldsValue({
-                    leaderStatus: res.data.leaderStatus,
+                    leaderStatus: "" + res.data.leaderStatus,
                     comment: res.data.leaderComment,
                 });
                 setCanLeaderEdit(canLeaderEdit);
