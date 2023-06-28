@@ -22,7 +22,8 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         title: '序号',
         dataIndex: 'index',
         width: 48,
-        valueType: 'index'
+        valueType: 'index',
+        align: "center"
     },
     {
         title: '一级部门',
@@ -56,61 +57,80 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         dataIndex: 'deptFirst',
         ellipsis: true,
         hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '二级部门',
         dataIndex: 'deptSecond',
         ellipsis: true,
         hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '工作名称',
         dataIndex: 'title',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 200,
+        align: "center"
     },
     {
         title: '工作内容',
         dataIndex: 'content',
         ellipsis: true,
         hideInSearch: true,
-        width: 400
+        width: 500,
+        align: "center"
     },
     {
         title: '开始时间',
         dataIndex: 'startTime',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '截止时间',
         dataIndex: 'endTime',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '超时时间',
         dataIndex: 'overTime',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '完成时间',
         dataIndex: 'finishTime',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '责任人',
         dataIndex: 'executorName',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '参与人',
         dataIndex: 'participant',
         ellipsis: true,
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '计划完成状态',
@@ -126,7 +146,9 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         dataIndex: 'monthStatus',
         ellipsis: true,
         valueEnum: arrayToMap(planStatus),
-        hideInSearch: true
+        hideInSearch: true,
+        width: 100,
+        align: "center"
     },
     {
         title: '姓名',
@@ -138,23 +160,25 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         title: '周计划员工是否确认',
         dataIndex: 'weekPlanEmployee',
         ellipsis: true,
-        width: 170,
+        width: 130,
         hideInSearch: true,
-
+        align: "center"
     },
     {
         title: '周计划领导是否确认',
         dataIndex: 'weekPlanLeader',
         ellipsis: true,
-        width: 170,
+        width: 130,
         hideInSearch: true,
+        align: "center"
     },
     {
         title: '周计划是否发布',
         dataIndex: 'weekPlanPublish',
         ellipsis: true,
-        width: 150,
+        width: 100,
         hideInSearch: true,
+        align: "center"
         // valueEnum: arrayToMap(yOrN)
     },
     {

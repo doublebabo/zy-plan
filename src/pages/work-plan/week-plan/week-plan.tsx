@@ -113,6 +113,10 @@ const descCols = [
         dataIndex: 'endTime',
     },
     {
+        title: '完成时间',
+        dataIndex: 'finishTime',
+    },
+    {
         title: '完成状态',
         dataIndex: 'monthStatus',
         valueEnum: arrayToMap(planStatus),

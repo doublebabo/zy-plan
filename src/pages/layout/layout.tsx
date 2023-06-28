@@ -69,7 +69,7 @@ const Layout = () => {
         <>
             <div className={styles.context}>
                 <div className={styles.head}>
-                    <div className={styles.headLeft}>泽宇研究院工作计划管理系统</div>
+                    <div className={styles.headLeft}>泽宇智能工作计划管理</div>
                     <div className={styles.headMid}>
                         <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
                               items={isPublisher ? items : items.filter(o => o.key !== '/user-mgt')}/>
