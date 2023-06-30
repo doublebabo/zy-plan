@@ -4,7 +4,7 @@ import {clearUserTokenInfo} from "../services/index.ts";
 import myLocalstorage from "./localstorage.ts";
 
 const http = axios.create({
-  baseURL: 'http://localhost:8989',
+  baseURL: 'http://122.192.6.227:8010/api',
   timeout: 15000,
   // headers: {'Content-Type': 'text/plain'}
 });

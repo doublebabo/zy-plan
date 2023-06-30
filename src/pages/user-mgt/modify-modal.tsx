@@ -2,6 +2,7 @@ import {BetaSchemaForm, ProColumns, ProFormInstance} from "@ant-design/pro-compo
 import {useEffect, useRef, useState} from "react";
 import {addUser, deptList, deptTree, editUser, roleList} from "../../services";
 import {notification} from "antd";
+import myLocalstorage from "../../utils/localstorage.ts";
 
 const getColumns = (type: string): ProColumns<any>[]  => {
     return [
@@ -14,7 +15,7 @@ const getColumns = (type: string): ProColumns<any>[]  => {
                 showSearch: true
             },
             request: async () => {
-                const {data} = await deptList();
+                const {data} = await deptList(myLocalstorage.get('id'));
                 return (data || []).map(o => ({label: o.name, value: o.id}))
             },
         },

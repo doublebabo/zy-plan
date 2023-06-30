@@ -24,6 +24,7 @@ export function userLogin(data) {
       myLocalstorage.set('token', res.data?.token);
       myLocalstorage.set('role', res.data?.role);
       myLocalstorage.set('name', res.data?.name);
+      myLocalstorage.set('id', res.data?.id);
     }
     return res
   }));
@@ -70,8 +71,8 @@ export function deptTree() {
 }
 
 // 一级部门
-export function deptList() {
-  return executeAndTryCatch(() => http.get('/dept/list'));
+export function deptList(id) {
+  return executeAndTryCatch(() => http.get('/dept/list?userId=' + id));
 }
 
 export function addUser(data) {
