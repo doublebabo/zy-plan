@@ -21,7 +21,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '序号',
         dataIndex: 'index',
-        width: 48,
+        width: 10,
         valueType: 'index',
         align: "center"
     },
@@ -55,25 +55,25 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '一级部门',
         dataIndex: 'deptFirst',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '二级部门',
         dataIndex: 'deptSecond',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '工作名称',
         dataIndex: 'title',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 200,
+        width: 30,
         align: "center"
     },
     {
@@ -81,61 +81,61 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         dataIndex: 'content',
         ellipsis: true,
         hideInSearch: true,
-        width: 500,
+        width: 30,
         align: "center"
     },
     {
         title: '开始时间',
         dataIndex: 'startTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '截止时间',
         dataIndex: 'endTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '超时时间',
         dataIndex: 'overTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '完成时间',
         dataIndex: 'finishTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '责任人',
         dataIndex: 'executorName',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 20,
         align: "center"
     },
     {
         title: '参与人',
         dataIndex: 'participant',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        width: 30,
         align: "center"
     },
     {
         title: '计划完成状态',
         dataIndex: 'planStatus',
-        ellipsis: true,
+        // ellipsis: true,
         request: () => {
             return planStatus;
         },
@@ -144,10 +144,10 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '计划完成状态',
         dataIndex: 'monthStatus',
-        ellipsis: true,
+        // ellipsis: true,
         valueEnum: arrayToMap(planStatus),
         hideInSearch: true,
-        width: 100,
+        width: 20,
         align: "center"
     },
     {
@@ -159,24 +159,24 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '周计划员工是否确认',
         dataIndex: 'weekPlanEmployee',
-        ellipsis: true,
-        width: 130,
+        // ellipsis: true,
+        width: 40,
         hideInSearch: true,
         align: "center"
     },
     {
         title: '周计划领导是否确认',
         dataIndex: 'weekPlanLeader',
-        ellipsis: true,
-        width: 130,
+        // ellipsis: true,
+        width: 40,
         hideInSearch: true,
         align: "center"
     },
     {
         title: '周计划是否发布',
         dataIndex: 'weekPlanPublish',
-        ellipsis: true,
-        width: 100,
+        // ellipsis: true,
+        width: 40,
         hideInSearch: true,
         align: "center"
         // valueEnum: arrayToMap(yOrN)
@@ -186,7 +186,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 140,
+        width: 40,
         render: (text, record, _, action) => [
             <a
                 key="editable"
@@ -285,7 +285,7 @@ const WorkPlan = () => {
                     setParams(params);
                     return monthPlanList(params);
                 }}
-                scroll={{x: 2600}}
+                // scroll={{x: 2600}}
                 rowKey="id"
                 search={{
                     labelWidth: 'auto',
