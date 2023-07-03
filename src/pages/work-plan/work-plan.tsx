@@ -21,7 +21,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '序号',
         dataIndex: 'index',
-        width: 10,
+        width: 11,
         valueType: 'index',
         align: "center"
     },
@@ -55,25 +55,25 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '一级部门',
         dataIndex: 'deptFirst',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 25,
         align: "center"
     },
     {
         title: '二级部门',
         dataIndex: 'deptSecond',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 25,
         align: "center"
     },
     {
         title: '工作名称',
         dataIndex: 'title',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 50,
         align: "center"
     },
     {
@@ -87,53 +87,53 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
     {
         title: '开始时间',
         dataIndex: 'startTime',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 25,
         align: "center"
     },
     {
         title: '截止时间',
         dataIndex: 'endTime',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 25,
         align: "center"
     },
     {
         title: '超时时间',
         dataIndex: 'overTime',
-        // ellipsis: true,
-        hideInSearch: true,
-        width: 30,
-        align: "center"
-    },
-    {
-        title: '完成时间',
-        dataIndex: 'finishTime',
-        // ellipsis: true,
-        hideInSearch: true,
-        width: 30,
-        align: "center"
-    },
-    {
-        title: '责任人',
-        dataIndex: 'executorName',
-        // ellipsis: true,
+        ellipsis: true,
         hideInSearch: true,
         width: 20,
         align: "center"
     },
     {
-        title: '参与人',
-        dataIndex: 'participant',
-        // ellipsis: true,
+        title: '完成时间',
+        dataIndex: 'finishTime',
+        ellipsis: true,
         hideInSearch: true,
-        width: 30,
+        width: 25,
         align: "center"
     },
     {
-        title: '计划完成状态',
+        title: '责任人',
+        dataIndex: 'executorName',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 15,
+        align: "center"
+    },
+    // {
+    //     title: '参与人',
+    //     dataIndex: 'participant',
+    //     ellipsis: true,
+    //     hideInSearch: true,
+    //     width: 30,
+    //     align: "center"
+    // },
+    {
+        title: '状态',
         dataIndex: 'planStatus',
         // ellipsis: true,
         request: () => {
@@ -142,12 +142,12 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         hideInTable: true
     },
     {
-        title: '计划完成状态',
+        title: '状态',
         dataIndex: 'monthStatus',
-        // ellipsis: true,
+        ellipsis: true,
         valueEnum: arrayToMap(planStatus),
         hideInSearch: true,
-        width: 20,
+        width: 15,
         align: "center"
     },
     {
@@ -157,26 +157,26 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         hideInTable: true
     },
     {
-        title: '周计划员工是否确认',
+        title: '周计划员工确认',
         dataIndex: 'weekPlanEmployee',
-        // ellipsis: true,
-        width: 40,
+        ellipsis: true,
+        width: 29,
         hideInSearch: true,
         align: "center"
     },
     {
-        title: '周计划领导是否确认',
+        title: '周计划经理确认',
         dataIndex: 'weekPlanLeader',
-        // ellipsis: true,
-        width: 40,
+        ellipsis: true,
+        width: 29,
         hideInSearch: true,
         align: "center"
     },
     {
-        title: '周计划是否发布',
+        title: '周计划发布',
         dataIndex: 'weekPlanPublish',
-        // ellipsis: true,
-        width: 40,
+        ellipsis: true,
+        width: 29,
         hideInSearch: true,
         align: "center"
         // valueEnum: arrayToMap(yOrN)
