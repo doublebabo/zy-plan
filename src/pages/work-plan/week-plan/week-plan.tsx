@@ -72,14 +72,13 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): P
                 >
                     结果确认
                 </a>,
-                (
-                    isPublisher && <a
-                        target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
-                            onWeekPlan('edit',record);
-                        }}>
-                            编辑
-                        </a>
-                )
+                <a
+                    target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
+                        onWeekPlan('edit',record);
+                    }}
+                >
+                    编辑
+                </a>
             ]
         },
     },
