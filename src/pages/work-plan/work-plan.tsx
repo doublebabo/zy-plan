@@ -20,9 +20,9 @@ const {confirm} = Modal;
 const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColumns<any>[] => [
     {
         title: '序号',
-        dataIndex: 'index',
+        dataIndex: 'rowNumber',
         width: 11,
-        valueType: 'index',
+        hideInSearch: true,
         align: "center"
     },
     {
