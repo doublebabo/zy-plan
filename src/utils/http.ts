@@ -10,7 +10,7 @@ const http = axios.create({
 });
 
 // request拦截器
-http.interceptors.request.use((config) => {
+http.interceptors.request.use((config: any) => {
   if (config.url !== '/user/login') {
     config.headers = {
       ...config.headers,

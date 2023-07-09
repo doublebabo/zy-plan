@@ -185,7 +185,8 @@ const WeekPlan = () => {
                 title={
                     <div>
                         <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
-                            navigate('/work-plan')
+                            // navigate('/work-plan')
+                            window.history.go(-1);
                         }}></Button>月计划详情
                     </div>
                 }

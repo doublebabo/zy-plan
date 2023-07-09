@@ -290,15 +290,35 @@ const WorkPlan = () => {
                 search={{
                     labelWidth: 'auto',
                     defaultColsNumber: 12,
+
                 }}
                 options={{
                     setting: false,
                     density: false
                 }}
+                form={{
+                    // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
+                    syncToUrl: (values, type) => {
+                        const results: any = values
+                        if (type === 'get') {
+                            if (!['', void 0, null].includes(results.planStatus)) {
+                                results.planStatus = +results.planStatus
+                            }
+                            if (results.deptFirstList && !(results.deptFirstList instanceof Array)) {
+                                results.deptFirstList = [results.deptFirstList]
+                            }
+                            if (results.deptSecondList && !(results.deptSecondList instanceof Array)) {
+                                results.deptSecondList = [results.deptSecondList]
+                            }
+                            return results;
+                        }
+                        return results;
+                    },
+                    syncToInitialValues: false
+                }}
                 pagination={{
                     pageSize: 10,
                     pageSizeOptions: [10, 20, 50],
-                    onChange: (page) => console.log(page),
                 }}
                 dateFormatter="string"
                 headerTitle="每月计划列表"
