@@ -46,7 +46,8 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         fieldProps: {
             mode: 'multiple'
         },
-        ellipsis: true,request: async () => {
+        ellipsis: true,
+        request: async () => {
             const {data} = await deptList2();
             return (data?.second).map(o => ({label: o.name, value: o.name}));
         },
@@ -290,7 +291,6 @@ const WorkPlan = () => {
                 search={{
                     labelWidth: 'auto',
                     defaultColsNumber: 12,
-
                 }}
                 options={{
                     setting: false,

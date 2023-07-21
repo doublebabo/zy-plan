@@ -280,3 +280,70 @@ export const leaderOrEmployeeStatus = [
   {label: '未完成', value: 1},
   {label: '已完成', value: 2},
 ];
+
+export function issueEndList(data: any) {
+  const postData = {
+    "currPage": data.current,
+    "pageSize": data.pageSize
+  }
+  return executeAndTryCatch(() => http.post('/issue/endList', postData).then((res: any) => {
+    if (res.success) {
+      return {
+        data: res?.data?.obj || [],
+        // success 请返回 true，
+        // 不然 table 会停止解析数据，即使有数据
+        success: res.success,
+        // 不传会使用 data 的长度，如果是分页一定要传
+        total: res?.data.total,
+      }
+    }
+    return res;
+  }));
+}
+
+
+export function issueStartList(data: any) {
+  const postData = {
+    "currPage": data.current,
+    "pageSize": data.pageSize
+  }
+  return executeAndTryCatch(() => http.post('/issue/startList', postData).then((res: any) => {
+    if (res.success) {
+      return {
+        data: res?.data?.obj || [],
+        // success 请返回 true，
+        // 不然 table 会停止解析数据，即使有数据
+        success: res.success,
+        // 不传会使用 data 的长度，如果是分页一定要传
+        total: res?.data.total,
+      }
+    }
+    return res;
+  }));
+}
+
+// 查询一级部门列表
+export function getDeptFirst() {
+  return executeAndTryCatch(() => http.get('/issue/dept/first'));
+}
+
+// 查询二级部门列表
+export function getDeptSecond(deptFirstList: string[]) {
+  return executeAndTryCatch(() => http.post('/issue/dept/second', {
+    deptFirstList
+  }));
+}
+
+// 责任人列表
+export function getBlameList() {
+  return executeAndTryCatch(() => http.get('/issue/userList'));
+}
+
+// 工作完成状态
+export const workStatus = [
+  {label: '全部', value: 0},
+  {label: '未完成', value: 1},
+  {label: '已完成', value: 2},
+  {label: '跨部门问题直接结束', value: 3},
+  {label: '非跨部门问题直接结束', value: 4},
+]
