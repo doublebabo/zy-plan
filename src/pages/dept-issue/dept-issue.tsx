@@ -1,16 +1,15 @@
 import styles from './dept-issue.module.less';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {
     ActionType,
     BetaSchemaForm,
     ModalForm, ProFormDatePicker,
     ProFormInstance, ProFormSelect,
-    ProFormText, ProFormTextArea,
+    ProFormTextArea,
     ProTable
 } from "@ant-design/pro-components";
 import {Button, Modal, Tabs} from "antd";
 import {
-    delUser,
     getBlameList,
     getDeptFirst,
     getDeptSecond, issueAdd, issueEndClose, issueEndConfirm, issueEndEmployeeFinish, issueEndLeaderFinish,
@@ -146,7 +145,7 @@ const commonCols = [
 ]
 
 
-const employeeStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
         title: '是否确认完成时间',
@@ -169,11 +168,11 @@ const employeeStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     },
 ]
 
-const employeeEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const employeeTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
 ]
 
-const leaderStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
         title: '问题确认',
@@ -181,7 +180,7 @@ const leaderStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         fixed: 'right',
         hideInSearch: true,
         render: (text, record, _, action) => [
-            isPublisher && record.status === '0' && <a
+            isPublisher && (record.status === '2' || record.status === '0') && <a
                 key="editable"
                 target="_blank"
                 onClick={() => {
@@ -190,7 +189,7 @@ const leaderStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
             >
                 <span>问题确认</span>
             </a>,
-            isPublisher && record.status === '0' && <a target="_blank" key="view"
+            isPublisher && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
                                                             onClick={() => {
                                                                 onFinish(record);
                                                             }}
@@ -208,7 +207,7 @@ const leaderStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     },
 ];
 
-const leaderEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
         title: '问题确认',
@@ -216,7 +215,7 @@ const leaderEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         fixed: 'right',
         hideInSearch: true,
         render: (text, record, _, action) => [
-            isPublisher && record.status === '0' && <a
+            isPublisher && (record.status === '2' || record.status === '0') && <a
                 key="editable"
                 target="_blank"
                 onClick={() => {
@@ -225,7 +224,7 @@ const leaderEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
             >
                 <span>问题确认</span>
             </a>,
-            isPublisher && record.status === '0' && <a target="_blank" key="view"
+            isPublisher && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
                                                             onClick={() => {
                                                                 onFinish(record);
                                                             }}
@@ -407,11 +406,11 @@ export default function DeptIssue() {
     let cols1: any = [];
     let cols2: any = [];
     if (isPublisher) {
-        cols1 = leaderStartCols({isPublisher, onConfirm, onFinish, onDoneOk})
-        cols2 = leaderEndCols({isPublisher, onConfirm, onFinish, onDoneOk})
+        cols1 = leaderTable1Cols({isPublisher, onConfirm, onFinish, onDoneOk})
+        cols2 = leaderTable2Cols({isPublisher, onConfirm, onFinish, onDoneOk})
     } else {
-        cols1 = employeeStartCols({isPublisher, onConfirm, onFinish, onDoneOk});
-        cols2 = employeeEndCols({isPublisher, onConfirm, onFinish, onDoneOk});
+        cols1 = employeeTable1Cols({isPublisher, onConfirm, onFinish, onDoneOk});
+        cols2 = employeeTable2Cols({isPublisher, onConfirm, onFinish, onDoneOk});
     }
 
     function tableOne() {
@@ -426,7 +425,8 @@ export default function DeptIssue() {
                 }}
                 rowKey="id"
                 pagination={{
-                    showQuickJumper: true,
+                    pageSize: 10,
+                    pageSizeOptions: [10, 20, 50],
                 }}
                 search={{
                     labelWidth: 'auto',
@@ -437,14 +437,6 @@ export default function DeptIssue() {
                     density: false
                 }}
                 dateFormatter="string"
-                // toolBarRender={() => [
-                //     <Button key="out" type='primary' onClick={() => {
-                //         addFormRef.current?.resetFields();
-                //         setAddVisible(true)
-                //     }}>
-                //         新增
-                //     </Button>,
-                // ]}
             />
         )
     }
@@ -461,7 +453,8 @@ export default function DeptIssue() {
                 }}
                 rowKey="id"
                 pagination={{
-                    showQuickJumper: true,
+                    pageSize: 10,
+                    pageSizeOptions: [10, 20, 50],
                 }}
                 search={{
                     labelWidth: 'auto',
@@ -505,20 +498,6 @@ export default function DeptIssue() {
                 }}
                 columns={addCols}
             />
-
-            {/* 部门经理确认*/}
-            {/*<BetaSchemaForm*/}
-            {/*    open={confirmVisible}*/}
-            {/*    layoutType='ModalForm'*/}
-            {/*    title={activeKey === '1' ? '部门问题确认' : '部门问题确认'}*/}
-            {/*    onFinish={onConfirmOk}*/}
-            {/*    formRef={confirmFormRef}*/}
-            {/*    modalProps={{*/}
-            {/*        maskClosable: false,*/}
-            {/*        onCancel: () => setConfirmVisible(false),*/}
-            {/*    }}*/}
-            {/*    columns={confirmCols}*/}
-            {/*/>*/}
 
             <ModalForm
                 open={confirmVisible}
