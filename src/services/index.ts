@@ -283,9 +283,11 @@ export const leaderOrEmployeeStatus = [
 
 export function issueEndList(data: any) {
   const postData = {
+    ...data,
     "currPage": data.current,
-    "pageSize": data.pageSize
+    "pageSize": data.pageSize,
   }
+  delete postData.current
   return executeAndTryCatch(() => http.post('/issue/endList', postData).then((res: any) => {
     if (res.success) {
       return {
@@ -304,9 +306,11 @@ export function issueEndList(data: any) {
 
 export function issueStartList(data: any) {
   const postData = {
+    ...data,
     "currPage": data.current,
-    "pageSize": data.pageSize
+    "pageSize": data.pageSize,
   }
+  delete postData.current
   return executeAndTryCatch(() => http.post('/issue/startList', postData).then((res: any) => {
     if (res.success) {
       return {
@@ -335,15 +339,64 @@ export function getDeptSecond(deptFirstList: string[]) {
 }
 
 // 责任人列表
-export function getBlameList() {
+  export function getBlameList() {
   return executeAndTryCatch(() => http.get('/issue/userList'));
 }
 
 // 工作完成状态
+// // 0：提出，
+// // 1：本部经理关闭，
+// // 2：本部经理确认，
+// // 3：对方经理关闭，
+// // 4：对方经理确认，
+// // 5：责任人完成，
+// // 6：对方经理确认完成
 export const workStatus = [
-  {label: '全部', value: 0},
-  {label: '未完成', value: 1},
-  {label: '已完成', value: 2},
-  {label: '跨部门问题直接结束', value: 3},
-  {label: '非跨部门问题直接结束', value: 4},
+  {label: '提出', value: 0},
+  {label: '本部经理关闭', value: 1},
+  {label: '本部经理确认', value: 2},
+  {label: '对方经理关闭', value: 3},
+  {label: '对方经理确认', value: 4},
+  {label: '责任人完成', value: 5},
+  {label: '对方经理确认完成', value: 6},
 ]
+
+// 本部门经理直接关闭
+export function startClose(data: any) {
+  return executeAndTryCatch(() => http.post('/issue/start/close', {
+    issueId: data.issueId,
+    closeComment: data.closeComment
+  }));
+}
+
+//本部门经理问题确认
+export function startConfirm(data: any) {
+  return executeAndTryCatch(() => http.post('/issue/start/confirm', {
+    issueId: data.issueId,
+    expectTime: data.expectTime
+  }));
+}
+
+export function issueAdd(data: any) {
+  return executeAndTryCatch(() => http.post('/issue/add', data));
+}
+
+// 对方部门经理直接关闭
+export function issueEndClose(data: any) {
+  return executeAndTryCatch(() => http.post('/issue/end/close', data));
+}
+
+// 对方部门经理确认问题
+export function issueEndConfirm(data: any) {
+  return executeAndTryCatch(() => http.post('/issue/end/confirm', data));
+}
+
+// 对方部门员工确认完成
+export function issueEndEmployeeFinish(id: any) {
+  return executeAndTryCatch(() => http.get('/issue/end/employee/finish?issueId=' + id));
+}
+
+// 对方部门经理确认完成
+export function issueEndLeaderFinish(id: any) {
+  return executeAndTryCatch(() => http.get('/issue/end/leader/finish?issueId=' + id));
+}

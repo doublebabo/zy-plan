@@ -1,16 +1,29 @@
 import styles from './dept-issue.module.less';
-import React, {useEffect, useRef} from "react";
-import {ActionType, ProTable} from "@ant-design/pro-components";
-import {Button, Tabs} from "antd";
+import React, {useEffect, useRef, useState} from "react";
 import {
+    ActionType,
+    BetaSchemaForm,
+    ModalForm, ProFormDatePicker,
+    ProFormInstance, ProFormSelect,
+    ProFormText, ProFormTextArea,
+    ProTable
+} from "@ant-design/pro-components";
+import {Button, Modal, Tabs} from "antd";
+import {
+    delUser,
+    getBlameList,
     getDeptFirst,
-    getDeptSecond,
+    getDeptSecond, issueAdd, issueEndClose, issueEndConfirm, issueEndEmployeeFinish, issueEndLeaderFinish,
     issueEndList,
-    issueStartList,
+    issueStartList, startClose, startConfirm,
     workStatus
 } from "../../services";
+import myLocalstorage from "../../utils/localstorage.ts";
 
-const getIssuesToSolveCols = () => [
+
+const {confirm} = Modal;
+
+const commonCols = [
     {
         hideInTable: true,
         title: '一级部门',
@@ -68,6 +81,7 @@ const getIssuesToSolveCols = () => [
         dataIndex: 'id',
         hideInTable: true,
         hideInSearch: true,
+        valueType: 'digital'
     },
     {
         title: '序号',
@@ -127,36 +141,278 @@ const getIssuesToSolveCols = () => [
     {
         hideInSearch: true,
         title: '问题解决状态',
-        dataIndex: 'status',
+        dataIndex: 'statusStr',
+    },
+]
+
+
+const employeeStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+    ...commonCols,
+    {
+        title: '是否确认完成时间',
+        hideInSearch: true,
     },
     {
         title: '问题确认',
         valueType: 'option',
         fixed: 'right',
+        hideInSearch: true,
         render: (text, record, _, action) => [
-            <a
+            record.status === '5' && <a target="_blank" key="view"
+                                                       onClick={() => {
+                                                           onDoneOk(record);
+                                                       }}
+            >
+                确认完成
+            </a>,
+        ],
+    },
+]
+
+const employeeEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+    ...commonCols,
+]
+
+const leaderStartCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+    ...commonCols,
+    {
+        title: '问题确认',
+        valueType: 'option',
+        fixed: 'right',
+        hideInSearch: true,
+        render: (text, record, _, action) => [
+            isPublisher && record.status === '0' && <a
                 key="editable"
+                target="_blank"
                 onClick={() => {
-                    // onShowModal('edit', record)
+                    onConfirm(record);
                 }}
             >
-                <span>编辑</span>
+                <span>问题确认</span>
             </a>,
-            <a target="_blank" rel="noopener noreferrer" key="view">
-                删除
+            isPublisher && record.status === '0' && <a target="_blank" key="view"
+                                                            onClick={() => {
+                                                                onFinish(record);
+                                                            }}
+            >
+                问题结束
+            </a>,
+            isPublisher && record.status === '6' && <a target="_blank" key="view"
+                                                       onClick={() => {
+                                                           onDoneOk(record);
+                                                       }}
+            >
+                确认完成
             </a>,
         ],
     },
 ];
+
+const leaderEndCols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+    ...commonCols,
+    {
+        title: '问题确认',
+        valueType: 'option',
+        fixed: 'right',
+        hideInSearch: true,
+        render: (text, record, _, action) => [
+            isPublisher && record.status === '0' && <a
+                key="editable"
+                target="_blank"
+                onClick={() => {
+                    onConfirm(record);
+                }}
+            >
+                <span>问题确认</span>
+            </a>,
+            isPublisher && record.status === '0' && <a target="_blank" key="view"
+                                                            onClick={() => {
+                                                                onFinish(record);
+                                                            }}
+            >
+                问题结束
+            </a>,
+        ],
+    },
+]
+
+//
+
+
+const addCols: any = [
+    {
+        title: '问题描述',
+        dataIndex: 'description',
+        valueType: 'textarea',
+        formItemProps: {
+            rules: [
+                {
+                    required: true,
+                    message: '此项为必填项',
+                },
+            ],
+        },
+
+    },
+    {
+        title: '责任部门',
+        dataIndex: 'endDept',
+        valueType: 'select',
+        formItemProps: {
+            rules: [
+                {
+                    required: true,
+                    message: '此项为必填项',
+                },
+            ],
+        },
+        request: async () => {
+            const {data = []} = await getDeptFirst();
+            return data.map(o => ({label: o.name, value: o.name}));
+        },
+    },
+]
+
+
+const finishCols = [
+    {
+        title: '问题直接结束说明',
+        dataIndex: 'closeComment',
+        valueType: 'textarea',
+        formItemProps: {
+            rules: [
+                {
+                    required: true,
+                    message: '此项为必填项',
+                },
+            ],
+        },
+    },
+]
 
 
 export default function DeptIssue() {
 
     const actionRef = useRef<ActionType>();
 
-    const cols1: any = getIssuesToSolveCols();
-    const cols2: any = getIssuesToSolveCols();
+    const [addFormRef, confirmFormRef, finishFormRef] = [useRef<ProFormInstance>(),useRef<ProFormInstance>(),useRef<ProFormInstance>()];
 
+    const [addVisible, setAddVisible] = useState(false);
+
+    const [confirmVisible, setConfirmVisible] = useState(false);
+
+    const [finishVisible, setFinishVisible] = useState(false);
+
+    const [activeKey, setActiveKey] = useState<any>('1');
+
+    const currentRowRef: any = useRef();
+
+    const [loading, setLoading] = useState(false);
+
+
+    async function onAddOk(values: any) {
+        const res = await issueAdd(values);
+        if (res.success) {
+            setAddVisible(false);
+            actionRef.current?.reload();
+        }
+        return true;
+    }
+
+    async function onConfirmOk(values: any) {
+        //  activeKey = 1 调用对方部门接口
+        //  2 调用本部接口
+        let request: any = null;
+        if (activeKey === '1') {
+            request = issueEndConfirm;
+        } else if (activeKey === '2') {
+            request = startConfirm;
+        }
+        const [endPersonId, endPerson] = values.endPersonId?.split?.('#')
+        const res = await request?.({...values, issueId: currentRowRef.current.id, endPersonId, endPerson});
+        if (res.success) {
+            setConfirmVisible(false);
+            actionRef.current?.reload();
+        }
+        return true;
+    }
+
+
+    async function onFinishOk(values: any) {
+        let request: any = null;
+        if (activeKey === '1') {
+            request = issueEndClose;
+        } else if (activeKey === '2') {
+            request = startClose;
+        }
+        const res = await request?.({...values, issueId: currentRowRef.current?.id});
+        if (res.success) {
+            setFinishVisible(false);
+            actionRef.current?.reload();
+        }
+        return true;
+    }
+
+    async function onDoneOk(record: any) {
+        confirm({
+            title: '确认要完成吗？',
+            closable: true,
+            okText: '确定',
+            cancelText: '取消',
+            okButtonProps: {loading: loading},
+            async onOk() {
+                let request: any = null;
+                if (isPublisher) {
+                    request = issueEndLeaderFinish;
+                } else if (activeKey === '2') {
+                    request = issueEndEmployeeFinish;
+                }
+                setLoading(true);
+                const res = await request?.(record.id);
+                setLoading(false);
+                if (res.success) {
+                    actionRef.current?.reload();
+                }
+                return true;
+            }
+        });
+
+    }
+
+
+
+
+    async function onConfirm(record) {
+        await setConfirmVisible(true);
+        confirmFormRef.current?.resetFields();
+        confirmFormRef.current?.setFieldsValue({
+            ...record,
+            expectTime: record.expectTime || null,
+            endPersonId: record.endPersonId + '#' + record.endPerson,
+        })
+        currentRowRef.current = record;
+    }
+
+    function onFinish(record) {
+        setFinishVisible(true);
+        finishFormRef.current?.resetFields();
+        finishFormRef.current?.setFieldsValue(record)
+        currentRowRef.current = record;
+    }
+
+
+    // 领导
+    const isPublisher = myLocalstorage.get('role') === 'publisher';
+
+    let cols1: any = [];
+    let cols2: any = [];
+    if (isPublisher) {
+        cols1 = leaderStartCols({isPublisher, onConfirm, onFinish, onDoneOk})
+        cols2 = leaderEndCols({isPublisher, onConfirm, onFinish, onDoneOk})
+    } else {
+        cols1 = employeeStartCols({isPublisher, onConfirm, onFinish, onDoneOk});
+        cols2 = employeeEndCols({isPublisher, onConfirm, onFinish, onDoneOk});
+    }
 
     function tableOne() {
         return (
@@ -181,11 +437,14 @@ export default function DeptIssue() {
                     density: false
                 }}
                 dateFormatter="string"
-                toolBarRender={() => [
-                    <Button key="out" type='primary'>
-                        新增
-                    </Button>,
-                ]}
+                // toolBarRender={() => [
+                //     <Button key="out" type='primary' onClick={() => {
+                //         addFormRef.current?.resetFields();
+                //         setAddVisible(true)
+                //     }}>
+                //         新增
+                //     </Button>,
+                // ]}
             />
         )
     }
@@ -194,7 +453,7 @@ export default function DeptIssue() {
         return (
             <ProTable
                 cardBordered
-                columns={cols1}
+                columns={cols2}
                 actionRef={actionRef}
                 request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
@@ -213,7 +472,14 @@ export default function DeptIssue() {
                     density: false
                 }}
                 dateFormatter="string"
-
+                toolBarRender={() => [
+                    <Button key="out" type='primary' onClick={() => {
+                        addFormRef.current?.resetFields();
+                        setAddVisible(true)
+                    }}>
+                        新增
+                    </Button>,
+                ]}
             />
         )
     }
@@ -225,7 +491,95 @@ export default function DeptIssue() {
 
     return (
         <div className={styles.container}>
-            <Tabs items={tabItems} type="card"></Tabs>
+            <Tabs items={tabItems} type="card" destroyInactiveTabPane={true} activeKey={activeKey}
+                  onChange={(k) => setActiveKey(k)}></Tabs>
+            <BetaSchemaForm
+                open={addVisible}
+                layoutType='ModalForm'
+                title='新增跨部门问题'
+                onFinish={onAddOk}
+                formRef={addFormRef}
+                modalProps={{
+                    maskClosable: false,
+                    onCancel: () => setAddVisible(false),
+                }}
+                columns={addCols}
+            />
+
+            {/* 部门经理确认*/}
+            {/*<BetaSchemaForm*/}
+            {/*    open={confirmVisible}*/}
+            {/*    layoutType='ModalForm'*/}
+            {/*    title={activeKey === '1' ? '部门问题确认' : '部门问题确认'}*/}
+            {/*    onFinish={onConfirmOk}*/}
+            {/*    formRef={confirmFormRef}*/}
+            {/*    modalProps={{*/}
+            {/*        maskClosable: false,*/}
+            {/*        onCancel: () => setConfirmVisible(false),*/}
+            {/*    }}*/}
+            {/*    columns={confirmCols}*/}
+            {/*/>*/}
+
+            <ModalForm
+                open={confirmVisible}
+                title={activeKey === '1' ? '部门问题确认' : '部门问题确认'}
+                onFinish={onConfirmOk}
+                formRef={confirmFormRef}
+                modalProps={{
+                    maskClosable: false,
+                    onCancel: () => setConfirmVisible(false)
+                }}
+            >
+                <ProFormTextArea
+                    name="description"
+                    label="问题描述"
+                    disabled={true}
+                />
+                <ProFormSelect
+                    name='endDept'
+                    label="责任部门"
+                    disabled={true}
+                    request={async () => {
+                        const {data = []} = await getDeptFirst();
+                        return data.map(o => ({label: o.name, value: o.id}));
+                    }}
+                >
+                </ProFormSelect>
+                <ProFormSelect
+                    name='endPersonId'
+                    label="责任人"
+                    required={true}
+                    disabled={activeKey === '2'}
+                    request={async () => {
+                        const {data = []} = await getBlameList();
+                        return data.map(o => ({label: o.nickName, value: o.id + '#' + o.nickName}));
+                    }}
+                >
+                </ProFormSelect>
+                <ProFormDatePicker
+                    name='expectTime'
+                    label="协商时间"
+                    required={true}
+                    width='100%'
+                    dataFormat={'YYYY-MM-DD'}
+                >
+                </ProFormDatePicker>
+
+            </ModalForm>
+
+            {/* 问题结束*/}
+            <BetaSchemaForm
+                open={finishVisible}
+                layoutType='ModalForm'
+                title='问题结束'
+                onFinish={onFinishOk}
+                formRef={finishFormRef}
+                modalProps={{
+                    maskClosable: false,
+                    onCancel: () => setFinishVisible(false),
+                }}
+                columns={finishCols}
+            />
         </div>
-    )
+    );
 };
