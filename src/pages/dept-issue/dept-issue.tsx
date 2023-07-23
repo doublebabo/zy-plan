@@ -327,7 +327,7 @@ export default function DeptIssue() {
         } else if (activeKey === '2') {
             request = startConfirm;
         }
-        const [endPersonId, endPerson] = values.endPersonId?.split?.('#')
+        const [endPersonId, endPerson] = values?.endPersonId?.split?.('#') || [];
         const res = await request?.({...values, issueId: currentRowRef.current.id, endPersonId, endPerson});
         if (res.success) {
             setConfirmVisible(false);
@@ -387,7 +387,7 @@ export default function DeptIssue() {
         confirmFormRef.current?.setFieldsValue({
             ...record,
             expectTime: record.expectTime || null,
-            endPersonId: record.endPersonId + '#' + record.endPerson,
+            endPersonId: record.endPersonId && record.endPerson && record.endPersonId + '#' + record.endPerson || null,
         })
         currentRowRef.current = record;
     }
@@ -528,6 +528,12 @@ export default function DeptIssue() {
                     name='endPersonId'
                     label="责任人"
                     required={true}
+                    rules={[
+                        {
+                            required: activeKey !== '2',
+                            message: '此项为必填项',
+                        },
+                    ]}
                     disabled={activeKey === '2'}
                     request={async () => {
                         const {data = []} = await getBlameList();
@@ -539,6 +545,12 @@ export default function DeptIssue() {
                     name='expectTime'
                     label="协商时间"
                     required={true}
+                    rules={[
+                        {
+                            required: true,
+                            message: '此项为必填项',
+                        },
+                    ]}
                     width='100%'
                     dataFormat={'YYYY-MM-DD'}
                 >
