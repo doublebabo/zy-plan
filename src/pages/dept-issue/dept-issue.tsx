@@ -157,7 +157,7 @@ const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         fixed: 'right',
         hideInSearch: true,
         render: (text, record, _, action) => [
-            record.status === '5' && <a target="_blank" key="view"
+            record.status === '4' && <a target="_blank" key="view"
                                                        onClick={() => {
                                                            onDoneOk(record);
                                                        }}
@@ -196,7 +196,7 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
             >
                 问题结束
             </a>,
-            isPublisher && record.status === '6' && <a target="_blank" key="view"
+            isPublisher && record.status === '5' && <a target="_blank" key="view"
                                                        onClick={() => {
                                                            onDoneOk(record);
                                                        }}
@@ -363,7 +363,7 @@ export default function DeptIssue() {
                 let request: any = null;
                 if (isPublisher) {
                     request = issueEndLeaderFinish;
-                } else if (activeKey === '2') {
+                } else {
                     request = issueEndEmployeeFinish;
                 }
                 setLoading(true);
