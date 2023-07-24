@@ -344,21 +344,21 @@ export function getDeptSecond(deptFirstList: string[]) {
 }
 
 // 工作完成状态
-// // 0：提出，
-// // 1：本部经理关闭，
-// // 2：本部经理确认，
-// // 3：对方经理关闭，
-// // 4：对方经理确认，
-// // 5：责任人完成，
-// // 6：对方经理确认完成
+// 0、全部
+// 1、已完成
+// 2、未完成
+// 3、超时已完成
+// 4、超时未完成
+// 5、跨部门问题直接结束
+// 6、非跨部门问题直接结束
 export const workStatus = [
-  {label: '提出', value: 0},
-  {label: '本部经理关闭', value: 1},
-  {label: '本部经理确认', value: 2},
-  {label: '对方经理关闭', value: 3},
-  {label: '对方经理确认', value: 4},
-  {label: '责任人完成', value: 5},
-  {label: '对方经理确认完成', value: 6},
+  {label: '全部', value: 0},
+  {label: '已完成', value: 1},
+  {label: '未完成', value: 2},
+  {label: '超时已完成', value: 3},
+  {label: '超时未完成', value: 4},
+  {label: '跨部门问题直接结束', value: 5},
+  {label: '非跨部门问题直接结束', value: 6},
 ]
 
 // 本部门经理直接关闭
