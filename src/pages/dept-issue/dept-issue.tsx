@@ -84,44 +84,60 @@ const commonCols = [
     },
     {
         title: '序号',
-        dataIndex: 'index',
-        valueType: 'index',
+        dataIndex: 'rowNumber',
+        // valueType: 'index',
         hideInSearch: true,
+        width: 50,
+        align: "center",
     },
     {
-        title: '问题反馈人员一级部门',
+        title: '一级部门',
         dataIndex: 'startDeptFirst',
         hideInSearch: true,
+        width: 100,
+        align: "center",
     },
     {
-        title: '问题反馈人员二级部门',
+        title: '二级部门',
         dataIndex: 'startDeptSecond',
         hideInSearch: true,
+        width: 100,
+        align: "center",
     },
     {
-        title: '问题反馈人员',
+        title: '反馈人员',
         dataIndex: 'startPerson',
         hideInSearch: true,
+        width: 80,
+        align: "center",
     },
     {
         title: '跨部门问题描述',
         dataIndex: 'description',
         hideInSearch: true,
+        // width: 500,
+        align: "center",
     },
     {
         title: '协商时间',
         dataIndex: 'expectTime',
         hideInSearch: true,
+        width: 100,
+        align: "center",
     },
     {
         title: '完成时间',
         dataIndex: 'finishTime',
         hideInSearch: true,
+        width: 100,
+        align: "center",
     },
     {
         title: '超时时间',
         dataIndex: 'overTime',
         hideInSearch: true,
+        width: 80,
+        align: "center",
     },
     {
         title: '责任部门',
@@ -131,31 +147,40 @@ const commonCols = [
             mode: 'multiple'
         },
         hideInSearch: true,
+        width: 100,
+        align: "center",
     },
     {
         title: '责任人',
         dataIndex: 'endPerson',
         hideInSearch: true,
+        width: 80,
+        align: "center",
     },
     {
         hideInSearch: true,
-        title: '问题解决状态',
+        title: '解决状态',
         dataIndex: 'statusStr',
+        width: 80,
+        align: "center",
     },
 ]
 
 
 const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
-    {
-        title: '是否确认完成时间',
-        hideInSearch: true,
-    },
+    // {
+    //     title: '是否确认完成时间',
+    //     hideInSearch: true,
+    //     align: "center",
+    // },
     {
         title: '问题确认',
         valueType: 'option',
-        fixed: 'right',
+        // fixed: 'right',
         hideInSearch: true,
+        width: 100,
+        align: "center",
         render: (text, record, _, action) => [
             record.status === '4' && <a target="_blank" key="view"
                                                        onClick={() => {
@@ -177,8 +202,10 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     {
         title: '问题确认',
         valueType: 'option',
-        fixed: 'right',
+        // fixed: 'right',
         hideInSearch: true,
+        width: 150,
+        align: "center",
         render: (text, record, _, action) => [
             isPublisher && (record.status === '2' || record.status === '0') && <a
                 key="editable"
@@ -214,6 +241,8 @@ const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         valueType: 'option',
         fixed: 'right',
         hideInSearch: true,
+        width: 150,
+        align: 'center',
         render: (text, record, _, action) => [
             isPublisher && (record.status === '2' || record.status === '0') && <a
                 key="editable"

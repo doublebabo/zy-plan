@@ -27,7 +27,7 @@ function getItem(
 
 const items: MenuProps['items'] = [
     getItem('工作计划管理', '/work-plan', null,),
-    getItem('部门协同', '/dept-issue', null,),
+    getItem('部门协同管理', '/dept-issue', null,),
     getItem('用户管理', '/user-mgt', null,),
 ];
 
@@ -70,7 +70,7 @@ const Layout = () => {
         <>
             <div className={styles.context}>
                 <div className={styles.head}>
-                    <div className={styles.headLeft}>泽宇智能工作计划管理</div>
+                    <div className={styles.headLeft}>泽宇智能工作管理</div>
                     <div className={styles.headMid}>
                         <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
                               items={isPublisher ? items : items.filter(o => o.key !== '/user-mgt')}/>
