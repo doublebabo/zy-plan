@@ -373,6 +373,7 @@ export function startClose(data: any) {
 export function startConfirm(data: any) {
   return executeAndTryCatch(() => http.post('/issue/start/confirm', {
     issueId: data.issueId,
+    endDept: data.endDept,
     expectTime: data.expectTime
   }));
 }

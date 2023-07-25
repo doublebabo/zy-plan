@@ -175,7 +175,7 @@ const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     //     align: "center",
     // },
     {
-        title: '问题确认',
+        title: '操作',
         valueType: 'option',
         // fixed: 'right',
         hideInSearch: true,
@@ -200,7 +200,7 @@ const employeeTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
 const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
-        title: '问题确认',
+        title: '操作',
         valueType: 'option',
         // fixed: 'right',
         hideInSearch: true,
@@ -237,7 +237,7 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
 const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
-        title: '问题确认',
+        title: '操作',
         valueType: 'option',
         fixed: 'right',
         hideInSearch: true,
@@ -546,7 +546,7 @@ export default function DeptIssue() {
                 <ProFormSelect
                     name='endDept'
                     label="责任部门"
-                    disabled={true}
+                    // disabled={true}
                     request={async () => {
                         const {data = []} = await getDeptFirst();
                         return data.map(o => ({label: o.name, value: o.id}));
