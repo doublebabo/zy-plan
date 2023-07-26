@@ -133,7 +133,7 @@ const commonCols = [
         align: "center",
     },
     {
-        title: '超时时间',
+        title: '剩余时间',
         dataIndex: 'overTime',
         hideInSearch: true,
         width: 80,

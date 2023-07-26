@@ -102,7 +102,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         align: "center"
     },
     {
-        title: '超时时间',
+        title: '剩余时间',
         dataIndex: 'overTime',
         ellipsis: true,
         hideInSearch: true,
