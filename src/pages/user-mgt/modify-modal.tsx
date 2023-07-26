@@ -32,7 +32,7 @@ const getColumns = (type: string): ProColumns<any>[]  => {
                 ],
             },
             fieldProps: {
-                disabled: type === 'edit',
+                // disabled: type === 'edit',
                 fieldNames: {
                     label: 'name',
                     value: 'id'

@@ -546,7 +546,7 @@ export default function DeptIssue() {
                 <ProFormSelect
                     name='endDept'
                     label="责任部门"
-                    // disabled={true}
+                    disabled={activeKey === '1'}
                     request={async () => {
                         const {data = []} = await getDeptFirst();
                         return data.map(o => ({label: o.name, value: o.id}));
