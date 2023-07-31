@@ -217,7 +217,7 @@ const WeekPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onWeekPlan('add')}
                         type="primary"
-                        disabled={!isPublisher}
+                        // disabled={!isPublisher}
                     >
                         新增
                     </Button>,

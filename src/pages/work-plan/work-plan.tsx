@@ -70,7 +70,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         align: "center"
     },
     {
-        title: '工作名称',
+        title: '工作内容',
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
@@ -78,7 +78,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         align: "center"
     },
     {
-        title: '工作内容',
+        title: '工作计划',
         dataIndex: 'content',
         ellipsis: true,
         hideInSearch: true,
@@ -201,24 +201,20 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
             >
                 周计划
             </a>,
-            (
-                isPublisher && <a
-                    onClick={() => {
-                        onAdd('edit', record)
-                    }}
-                    key="view">
-                    编辑
-                </a>
-            ),
-            (
-                isPublisher &&  <a
-                    onClick={() => {
-                        onFinish(record)
-                    }}
-                    key="finish">
-                    完成
-                </a>
-            )
+            <a
+                onClick={() => {
+                    onAdd('edit', record)
+                }}
+                key="view">
+                编辑
+            </a>,
+            <a
+                onClick={() => {
+                    onFinish(record)
+                }}
+                key="finish">
+                完成
+            </a>
            ,
         ],
     },
@@ -335,7 +331,7 @@ const WorkPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onAdd('add')}
                         type="primary"
-                        disabled={!isPublisher}
+                        // disabled={!isPublisher}
                     >
                         新增
                     </Button>,
