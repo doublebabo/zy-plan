@@ -341,7 +341,7 @@ const WorkPlan = () => {
               onSuccess={() => {
                   actionRef?.current?.reload();
               }}
-              type={modalType} visible={modalVisible} setVisible={setModalVisible} record={record}/>
+              type={modalType} visible={modalVisible} setVisible={setModalVisible} isPublisher={isPublisher} record={record}/>
         </div>
     )
 }

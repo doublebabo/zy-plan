@@ -147,7 +147,7 @@ const tableCols = [
 
 export default function MonthPlanModal(props: any) {
 
-    const {type, visible, setVisible, onSuccess, record} = props;
+    const {type, visible, setVisible, onSuccess, isPublisher, record} = props;
 
     const [formRef, formRefEdit] = [useRef<ProFormInstance>(), useRef<ProFormInstance>()];
 
@@ -211,7 +211,7 @@ export default function MonthPlanModal(props: any) {
                             onCancel: () => setVisible(false),
                             okButtonProps: {loading: loading}
                         }}
-                        columns={cols}
+                        columns={isPublisher ? cols : cols.filter((col) => col.title !== '责任人')}
                     >
                     </BetaSchemaForm>
                 )
@@ -288,6 +288,7 @@ export default function MonthPlanModal(props: any) {
                                   width="md"
                                   name="executor"
                                   label="责任人"
+                                  disabled={!isPublisher}
                                   rules={[{required: true, message: '这是必填项'}]}
                                   request={async () => {
                                       const {data} = await monthPlanUserList();
