@@ -70,7 +70,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         align: "center"
     },
     {
-        title: '工作内容',
+        title: '工作名称',
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
@@ -78,7 +78,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         align: "center"
     },
     {
-        title: '工作计划',
+        title: '工作内容',
         dataIndex: 'content',
         ellipsis: true,
         hideInSearch: true,

@@ -13,7 +13,7 @@ import {monthHistory, monthPlanAdd, monthPlanEdit, monthPlanUserList, planStatus
 
 const cols: ProFormColumnsType<any>[] = [
     {
-        title: '工作内容',
+        title: '工作名称',
         dataIndex: 'title',
         formItemProps: {
             rules: [
@@ -25,7 +25,7 @@ const cols: ProFormColumnsType<any>[] = [
         },
     },
     {
-        title: '工作计划',
+        title: '工作内容',
         dataIndex: 'content',
         valueType: 'textarea',
         formItemProps: {
@@ -115,11 +115,11 @@ const tableCols = [
         dataIndex: 'deptSecond',
     },
     {
-        title: '原/修改工作内容',
+        title: '原/修改工作名称',
         dataIndex: 'title',
     },
     {
-        title: '原/修改工作计划',
+        title: '原/修改工作内容',
         dataIndex: 'content',
         valueType: 'textarea',
     },
@@ -245,14 +245,14 @@ export default function MonthPlanModal(props: any) {
                                 <ProFormText
                                     width="md"
                                     name="title"
-                                    label="工作内容"
+                                    label="工作名称"
                                     rules={[{required: true, message: '这是必填项'}]}
 
                                 />
                                 <ProFormTextArea
                                     width="md"
                                     name="content"
-                                    label="工作计划"
+                                    label="工作内容"
                                     placeholder="请输入"
                                     required={true}
                                     rules={[{required: true, message: '这是必填项'}]}
