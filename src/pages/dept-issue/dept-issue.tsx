@@ -10,6 +10,8 @@ import {
 } from "@ant-design/pro-components";
 import {Button, Modal, Tabs} from "antd";
 import {
+    download, exportDataOne, exportDataTwo,
+    exportMonth,
     getBlameList,
     getDeptFirst,
     getDeptSecond, issueAdd, issueEndClose, issueEndConfirm, issueEndEmployeeFinish, issueEndLeaderFinish,
@@ -428,6 +430,24 @@ export default function DeptIssue() {
         currentRowRef.current = record;
     }
 
+    async function exportDataTableOne() {
+        // todo
+        if (loading) return;
+        setLoading(true);
+        const res = await exportDataOne({});
+        setLoading(false);
+        download(res);
+    }
+
+    async function exportDataTableTwo() {
+        // todo
+        if (loading) return;
+        setLoading(true);
+        const res = await exportDataTwo({});
+        setLoading(false);
+        download(res);
+    }
+
 
     // 领导
     const isPublisher = myLocalstorage.get('role') === 'publisher';
@@ -465,6 +485,15 @@ export default function DeptIssue() {
                     setting: false,
                     density: false
                 }}
+                toolBarRender={() => [
+                    <Button
+                        key="button"
+                        onClick={() => exportDataTableOne()}
+                        loading={loading}
+                    >
+                        导出部门问题表
+                    </Button>
+                ]}
                 dateFormatter="string"
             />
         )
@@ -501,14 +530,21 @@ export default function DeptIssue() {
                     }}>
                         新增
                     </Button>,
+                    <Button
+                        key="button"
+                        onClick={() => exportDataTableTwo()}
+                        loading={loading}
+                    >
+                        导出部门问题表
+                    </Button>
                 ]}
             />
         )
     }
 
     const tabItems = [
-        {key: '1', label: '需解决跨部门问题事项', children: tableOne()},
-        {key: '2', label: '提出跨部门问题事项', children: tableTwo()}
+        {key: '1', label: '责任部门问题事项', children: tableOne()},
+        {key: '2', label: '发起部门问题事项', children: tableTwo()}
     ]
 
     return (

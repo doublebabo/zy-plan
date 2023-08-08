@@ -14,6 +14,8 @@ import {
     planStatus,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
+import AddPlanModal from "./add-plan-modal.tsx";
+import PlanConfirmForm from "./plan-confirm-form.tsx";
 
 const {confirm} = Modal;
 
@@ -25,6 +27,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         hideInSearch: true,
         align: "center"
     },
+
     {
         title: '一级部门',
         dataIndex: 'deptFirstList',
@@ -45,6 +48,21 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         valueType: 'select',
         fieldProps: {
             mode: 'multiple'
+        },
+        ellipsis: true,
+        request: async () => {
+            const {data} = await deptList2();
+            return (data?.second).map(o => ({label: o.name, value: o.name}));
+        },
+        hideInTable: true,
+    },
+    {
+        // todo
+        title: '工作分类',
+        dataIndex: 'deptSecondList',
+        valueType: 'select',
+        fieldProps: {
+            // mode: 'multiple'
         },
         ellipsis: true,
         request: async () => {
@@ -189,18 +207,18 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         fixed: 'right',
         width: 40,
         render: (text, record, _, action) => [
-            <a
-                key="editable"
-                onClick={() => {
-                    navigate('/work-plan/week-plan/' + record.id,
-                       {
-                            state: record
-                        }
-                    )
-                }}
-            >
-                周计划
-            </a>,
+            // <a
+            //     key="editable"
+            //     onClick={() => {
+            //         navigate('/work-plan/week-plan/' + record.id,
+            //             {
+            //                 state: record
+            //             }
+            //         )
+            //     }}
+            // >
+            //     周计划
+            // </a>,
             <a
                 onClick={() => {
                     onAdd('edit', record)
@@ -213,12 +231,13 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
                     onFinish(record)
                 }}
                 key="finish">
-                完成
+                确认
             </a>
-           ,
+            ,
         ],
     },
 ];
+
 
 const WorkPlan = () => {
     const navigate = useNavigate();
@@ -235,28 +254,43 @@ const WorkPlan = () => {
 
     const [record, setRecord] = useState<any>();
 
+    const addModalRef: any = useRef();
+
     const isPublisher = myLocalstorage.get('role') === 'publisher';
 
     function onAdd(type: string, record?: any) {
-        setModalVisible(true);
-        setModalType(type);
-        if (record) setRecord({...record});
+        // setModalVisible(true);
+        // setModalType(type);
+        // if (record) setRecord({...record});
+
+        if (type === 'add') {
+            addModalRef.current.show();
+        }
+        else if (type === 'edit') {
+            navigate('/work-plan/edit/' + record.id);
+        }
     }
 
+    function showPlanDetail(record: any) {
+        navigate('/work-plan/detail/' + record.id);
+    }
+
+    // 确认
     function onFinish(record: any) {
-        confirm({
-            icon: null,
-            title: <span className={styles.modalTitle}>确认要完成吗？</span>,
-            closable: true,
-            wrapClassName: styles.logoutModal,
-            okText: '确定',
-            cancelText: '取消',
-            async onOk() {
-                await completeMonthPlan(record.id);
-                actionRef.current?.reload();
-                return true;
-            },
-        });
+        // confirm({
+        //     icon: null,
+        //     title: <span className={styles.modalTitle}>确认要完成吗？</span>,
+        //     closable: true,
+        //     wrapClassName: styles.logoutModal,
+        //     okText: '确定',
+        //     cancelText: '取消',
+        //     async onOk() {
+        //         await completeMonthPlan(record.id);
+        //         actionRef.current?.reload();
+        //         return true;
+        //     },
+        // });
+        navigate('/work-plan/confirm/' + record.id);
     }
 
     async function exportData() {
@@ -281,6 +315,11 @@ const WorkPlan = () => {
                 request={async (params = {}, sort, filter) => {
                     setParams(params);
                     return monthPlanList(params);
+                }}
+                onRow={(record) => {
+                    return {
+                        onDoubleClick: () => showPlanDetail(record)
+                    }
                 }}
                 // scroll={{x: 2600}}
                 rowKey="id"
@@ -328,6 +367,13 @@ const WorkPlan = () => {
                     </Button>,
                     <Button
                         key="button"
+                        onClick={() => exportData()}
+                        loading={downloading}
+                    >
+                        导入月度计划
+                    </Button>,
+                    <Button
+                        key="button"
                         icon={<PlusOutlined/>}
                         onClick={() => onAdd('add')}
                         type="primary"
@@ -337,6 +383,7 @@ const WorkPlan = () => {
                     </Button>,
                 ]}
             />
+            <AddPlanModal ref={addModalRef}/>
             <MonthPlanModal
               onSuccess={() => {
                   actionRef?.current?.reload();

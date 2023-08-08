@@ -27,7 +27,7 @@ function getItem(
 
 const items: MenuProps['items'] = [
     getItem('工作计划管理', '/work-plan', null,),
-    getItem('部门协同管理', '/dept-issue', null,),
+    getItem('部门问题管理', '/dept-issue', null,),
     getItem('用户管理', '/user-mgt', null,),
 ];
 

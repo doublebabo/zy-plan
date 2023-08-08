@@ -39,7 +39,7 @@ http.interceptors.response.use((res) => {
         clearUserTokenInfo();
         setTimeout(() => {
           location.href = '/';
-        }, 100)
+        }, 1000)
       }
     }
   }

@@ -8,6 +8,9 @@ import UserMgt from "../pages/user-mgt/user-mgt.tsx";
 import WorkPlan from "../pages/work-plan/work-plan.tsx";
 import WeekPlan from "../pages/work-plan/week-plan/week-plan.tsx";
 import DeptIssue from "../pages/dept-issue/dept-issue.tsx";
+import PlanEdit from "../pages/work-plan/plan-edit.tsx";
+import PlanDetail from "../pages/work-plan/plan-detail.tsx";
+import PlanConfirmForm from "../pages/work-plan/plan-confirm-form.tsx";
 
 async function loginLoader() {
   if (myLocalstorage.get('token')) {
@@ -56,6 +59,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <WorkPlan /> },
       { path: '/work-plan/week-plan/:id', element: <WeekPlan /> },
+      { path: '/work-plan/edit/:id', element: <PlanEdit /> },
+      { path: '/work-plan/detail/:id', element: <PlanDetail /> },
+      { path: '/work-plan/confirm/:id', element: <PlanConfirmForm /> },
     ],
   },
   {

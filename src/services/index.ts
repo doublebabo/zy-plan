@@ -401,3 +401,18 @@ export function issueEndEmployeeFinish(id: any) {
 export function issueEndLeaderFinish(id: any) {
   return executeAndTryCatch(() => http.get('/issue/end/leader/finish?issueId=' + id));
 }
+
+
+// 责任部门导出问题报表 todo
+export function exportDataOne(params) {
+  return executeAndTryCatch(() => http.post('/monthPlan/export', params, {
+    responseType: 'blob'
+  }));
+}
+
+// 发起部门导出问题报表 todo
+export function exportDataTwo(params) {
+  return executeAndTryCatch(() => http.post('/monthPlan/export', params, {
+    responseType: 'blob'
+  }));
+}
