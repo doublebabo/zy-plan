@@ -11,14 +11,17 @@
       padding: 0 30px;
 
     }
-
+    .formListRow {
+      display: flex;
+      :global {
+        .ant-form-item {
+          width: 200px;
+        }
+      }
+    }
     .formList {
       width: 100%;
-      .formListRow {
-        display: flex;
-        //justify-content: space-between;
-        gap: 120px;
-      }
+
     }
 
     .formRow {

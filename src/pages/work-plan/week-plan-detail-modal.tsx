@@ -9,7 +9,7 @@ import {
     ProFormTextArea
 } from "@ant-design/pro-components";
 import {weekPlanDetail} from "../../services";
-import styles from "./plan-edit.module.less";
+import styles from "./week-plan-detail-modal.module.less";
 
 export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: any) {
 
@@ -63,7 +63,7 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
                     readonly={true}
                     layout='inline'
                 >
-                    <div>
+                    <div style={{width: '100%'}}>
                         <ProFormTextArea
                             name="content"
                             label="工作内容"
@@ -91,7 +91,6 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
 
                         <ProFormList
                             name="commentList"
-                            className={styles.formList}
                             creatorButtonProps={{
                                 style: {
                                     display: 'none'
@@ -99,7 +98,7 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
                             }}
                             actionRender={() => []}
                         >
-                            <div className={styles.formListRow}>
+                            <div style={{display: 'flex'}}>
                                 <ProFormText name="comment" label="第三方意见" />
                                 <ProFormText name="commentator" label="评论人" />
                             </div>

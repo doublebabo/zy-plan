@@ -53,7 +53,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
 
     async function onThirdConfirm(formData: any) {
         const api = type === 'month' ? monthPlancomment : weekPlancomment;
-        const idType = type === 'month' ? 'monthId' : 'weekPlanId'
+        const idType = type === 'month' ? 'monthId' : 'weekId'
         const res = await api({...formData, [idType]: useparams.id})
         if (res.success) {
             history.go(-1);
