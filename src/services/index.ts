@@ -180,7 +180,7 @@ export function monthPlanUserList() {
 export function monthPlanAdd(data) {
   data.startTime = dayjs(data.startTime).format('YYYY-MM-DD');
   data.endTime = dayjs(data.endTime).format('YYYY-MM-DD');
-  const vals = {...data, participant: data?.participant?.join(',') || null}
+  const vals = {...data, participant: data?.participant?.join(',') || null, executor: data?.executor?.split?.('#')?.[0] || ''}
   return executeAndTryCatch(() => http.post('/monthPlan/add', vals));
 }
 
@@ -339,7 +339,7 @@ export function getDeptSecond(deptFirstList: string[]) {
 }
 
 // 责任人列表
-  export function getBlameList() {
+export function getBlameList() {
   return executeAndTryCatch(() => http.get('/issue/userList'));
 }
 
@@ -403,16 +403,21 @@ export function issueEndLeaderFinish(id: any) {
 }
 
 
-// 责任部门导出问题报表 todo
-export function exportDataOne(params) {
-  return executeAndTryCatch(() => http.post('/monthPlan/export', params, {
+// 责任部门导出问题报表
+export function exportDataOne(params ={}) {
+  return executeAndTryCatch(() => http.post('/issue/start/export', params, {
     responseType: 'blob'
   }));
 }
 
 // 发起部门导出问题报表 todo
-export function exportDataTwo(params) {
-  return executeAndTryCatch(() => http.post('/monthPlan/export', params, {
+export function exportDataTwo(params = {}) {
+  return executeAndTryCatch(() => http.post('/issue/end/export', params, {
     responseType: 'blob'
   }));
 }
+
+export const workIsImportantEnum = [
+  {label: '重点事项', value: '是'},
+  {label: '非重点事项', value: '否'},
+]

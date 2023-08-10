@@ -383,7 +383,9 @@ const WorkPlan = () => {
                     </Button>,
                 ]}
             />
-            <AddPlanModal ref={addModalRef}/>
+            <AddPlanModal ref={addModalRef} onSuccess={() => {
+                actionRef?.current?.reload();
+            }}/>
             <MonthPlanModal
               onSuccess={() => {
                   actionRef?.current?.reload();

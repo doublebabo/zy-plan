@@ -431,7 +431,6 @@ export default function DeptIssue() {
     }
 
     async function exportDataTableOne() {
-        // todo
         if (loading) return;
         setLoading(true);
         const res = await exportDataOne({});
@@ -440,7 +439,6 @@ export default function DeptIssue() {
     }
 
     async function exportDataTableTwo() {
-        // todo
         if (loading) return;
         setLoading(true);
         const res = await exportDataTwo({});
