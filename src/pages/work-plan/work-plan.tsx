@@ -11,7 +11,7 @@ import {
     download,
     exportMonth,
     monthPlanList,
-    planStatus,
+    planStatus, workIsImportantEnum,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import AddPlanModal from "./add-plan-modal.tsx";
@@ -57,17 +57,15 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         hideInTable: true,
     },
     {
-        // todo
         title: '工作分类',
-        dataIndex: 'deptSecondList',
+        dataIndex: 'important',
         valueType: 'select',
         fieldProps: {
             // mode: 'multiple'
         },
         ellipsis: true,
         request: async () => {
-            const {data} = await deptList2();
-            return (data?.second).map(o => ({label: o.name, value: o.name}));
+            return workIsImportantEnum;
         },
         hideInTable: true,
     },
