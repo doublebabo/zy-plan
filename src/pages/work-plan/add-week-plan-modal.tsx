@@ -1,8 +1,12 @@
 import React, {useImperativeHandle, useRef, useState} from "react";
 import {ProForm, ProFormInstance, ProFormSelect, ProFormTextArea} from "@ant-design/pro-components";
 import {Modal} from "antd";
+import {planWeeks, weekPlanAdd, weekPlanEdit} from "../../services";
+import {useParams} from "react-router";
 
-export default React.forwardRef(function (props, ref) {
+export default React.forwardRef(function (props: any, ref) {
+
+    const {onSuccess} = props
 
     const [visible, setVisible] = useState(false);
 
@@ -10,12 +14,16 @@ export default React.forwardRef(function (props, ref) {
 
     const [loading, setLoading] = useState(false);
 
+    const useparams = useParams();
+
+    const [weekPlanId, setWeekPlanId] = useState<any>(null);
+
     function onOk() {
         if (loading) return;
         formRef.current?.validateFields?.().then(async values => {
             setLoading(true);
-            // todo
-            const res = await userLogin(values);
+            const res = await (weekPlanId ?  weekPlanEdit({...values, weekPlanId}) : weekPlanAdd({...values, monthId: useparams.id}));
+            onSuccess?.();
             if (res?.success) {
                 onCancel();
             }
@@ -28,8 +36,10 @@ export default React.forwardRef(function (props, ref) {
     }
 
     useImperativeHandle(ref, () => ({
-        show: () => {
+        show: (id = null) => {
             setVisible(true);
+            formRef.current?.resetFields();
+            setWeekPlanId(id);
         },
         hide: () => {
             onCancel();
@@ -40,8 +50,8 @@ export default React.forwardRef(function (props, ref) {
 
         <Modal
             open={visible}
-            title='新增工作计划'
-            width='80%'
+            title={`${weekPlanId ? '修改' : '新增'}周工作计划`}
+            width={500}
             onCancel={() => setVisible(false)}
             onOk={onOk}
             confirmLoading={loading}
@@ -50,11 +60,6 @@ export default React.forwardRef(function (props, ref) {
                 formRef={formRef}
                 submitter={false}
             >
-                <ProFormSelect
-                    name='todo'
-                    label="计划周数"
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
                 <ProFormTextArea
                     name="content"
                     label="工作内容"

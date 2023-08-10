@@ -5,16 +5,23 @@ import {
     ProColumns,
     ProForm,
     ProFormDatePicker,
-    ProFormGroup,
+    ProFormGroup, ProFormInstance,
     ProFormSelect,
     ProFormText,
     ProFormTextArea, ProTable
 } from "@ant-design/pro-components";
 
 import styles from './plan-edit.module.less';
-import {Button, Row} from "antd";
+import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
-import {arrayToMap, weekPlanListById, weekStatus} from "../../services";
+import {
+    arrayToMap, getBlameList,
+    monthPlanDetail, monthPlanEdit, monthPlanUserList,
+    weekPlanListById,
+    weekStatus,
+    workIsImportantEnum,
+    workStatus, workStatus2
+} from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import ConfirmModal from "./week-plan/confirm-modal.tsx";
 import AddWeekPlanModal from "./add-week-plan-modal.tsx";
@@ -101,35 +108,52 @@ export default function PlanEdit(prosp: any) {
     const navigate = useNavigate();
     const location = useLocation();
     const useparams = useParams();
-    const formRef = useRef();
+    const formRef = useRef<ProFormInstance>();
     const [cols, setCols] = useState<any>([]);
     const [confirmModalVisible, setConfirmModalVisible] = useState(false);
     const actionRef = useRef<ActionType>();
     const [weekPlanId, setWeekPlanId] = useState<string>(null);
-
+    const [loading, setLoading] = useState(false);
+    const [weekData, setWeekData] = useState([]);
     const addWeekPlanRef: any = useRef();
     const weekPlanDetailModalRef: any = useRef();
-    function initData() {
-
+    async function initData() {
+        setLoading(true);
+        const res = await monthPlanDetail(useparams.id);
+        setLoading(false);
+        if (res.success) {
+            setWeekData(res.data.weekPlanList);
+            formRef.current?.setFieldsValue({
+                ...res.data?.monthPlan,
+                participant: res.data?.monthPlan?.participant?.split(','),
+                status: res.data?.monthPlan?.monthStatus
+            });
+        }
     }
 
     function onWeekPlan(type: string,record?: any) {
 
         if (type === 'add') {
             addWeekPlanRef.current.show();
+        } else if (type === 'edit') {
+            addWeekPlanRef.current.show(record.id);
         }
+    }
+
+    async function onOK(formData: any) {
+       await monthPlanEdit({...formData, monthPlanId: useparams.id});
+        return await initData();
     }
 
 
 
 
     function showWeekPlanDetail(record: any) {
-        weekPlanDetailModalRef?.current.show();
+        weekPlanDetailModalRef?.current.show(record.id);
     }
 
     function onConfirm(record?: any) {
-        setConfirmModalVisible(true);
-        setWeekPlanId(record?.id);
+        navigate('/work-plan/confirm/' + record.id, {state: 'week'});
     }
 
 
@@ -142,158 +166,165 @@ export default function PlanEdit(prosp: any) {
 
     return (
         <div className={styles.planEdit}>
-            <ProForm
-                className={styles.planEditForm}
-                formRef={formRef}
-                submitter={{
-                    searchConfig: {
-                        submitText: '确认',
-                    },
-                    // 配置按钮的属性
-                    resetButtonProps: {
-                        style: {
-                            // 隐藏重置按钮
-                            display: 'none',
+            <Spin spinning={loading}>
+                <div style={{fontSize: 16}}>
+                    <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
+                        window.history.go(-1);
+                    }}></Button>总计划编辑
+                </div>
+                <ProForm
+                    className={styles.planEditForm}
+                    formRef={formRef}
+                    submitter={{
+                        searchConfig: {
+                            submitText: '确认',
                         },
-                    },
-                }}
-            >
-                <ProFormGroup title={
-                    <div style={{fontSize: 16}}>
-                        <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
-                            window.history.go(-1);
-                        }}></Button>总计划编辑
-                    </div>
-                }>
-                    <ProFormSelect
-                        width='lg'
-                        name='todo'
-                        label="一级部门"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormSelect
-                        name='todo'
-                        label="二级部门"
-                        width='lg'
+                        // 配置按钮的属性
+                        resetButtonProps: {
+                            style: {
+                                // 隐藏重置按钮
+                                display: 'none',
+                            },
+                        },
+                    }}
+                    onFinish={onOK}
+                >
+                    <ProFormGroup>
+                        <ProFormSelect
+                            width='lg'
+                            name='deptFirst'
+                            label="一级部门"
+                            disabled={true}
+                        />
+                        <ProFormSelect
+                            name='deptSecond'
+                            label="二级部门"
+                            width='lg'
+                            disabled={true}
+                        />
+                        <ProFormSelect
+                            name='important'
+                            width='lg'
+                            label="工作分类"
+                            options={workIsImportantEnum}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormText
+                            name="title"
+                            width='lg'
+                            label="工作名称"
 
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormSelect
-                        name='todo'
-                        width='lg'
-                        label="工作分类"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormText
-                        name="title"
-                        width='lg'
-                        label="工作名称"
+                        />
+                        <ProFormTextArea
+                            name="content"
+                            label="工作内容"
+                            width='lg'
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormTextArea
+                            name="objective"
+                            label="工作目标"
+                            width='lg'
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormDatePicker
 
-                    />
-                    <ProFormTextArea
-                        name="content"
-                        label="工作内容"
-                        width='lg'
+                            name="startTime"
+                            width='lg'
+                            label="开始时间"
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormDatePicker
 
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormTextArea
-                        name="content"
-                        label="工作目标"
-                        width='lg'
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormDatePicker
-                        
-                        name="startTime"
-                        width='lg'
-                        label="开始时间"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormDatePicker
-                        
-                        width='lg'
-                        name="endTime"
-                        label="截止时间"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormDatePicker
-                        
-                        name="endTime"
-                        width='lg'
-                        label="完成时间"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormSelect
-                        width='lg'
-                        name='todo'
-                        label="工作分类"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormSelect
-                        name='todo'
-                        width='lg'
-                        label="责任人"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormSelect
-                        name='todo'
-                        width='lg'
-                        label="参与人"
-                        fieldProps={{
-                            mode:'multiple'
-                        }}
-                    />
-                </ProFormGroup>
-            </ProForm>
+                            width='lg'
+                            name="endTime"
+                            label="截止时间"
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
 
-            <ProTable
-                style={{marginTop: 24}}
-                columns={cols}
-                actionRef={actionRef}
-                cardBordered
-                onRow={(record) => {
-                    return {
-                        onDoubleClick: () => showWeekPlanDetail(record)
-                    }
-                }}
-                request={async (params = {}, sort, filter) => {
-                    return weekPlanListById(location.state.id);
-                }}
-                rowKey="id"
-                search={false}
-                options={{
-                    setting: false,
-                    density: false,
-                    // reload: false
-                }}
-                dateFormatter="string"
-                headerTitle="每月周计划列表"
-                toolBarRender={() => [
-                    <Button
-                        key="button"
-                        icon={<PlusOutlined/>}
-                        onClick={() => onWeekPlan('add')}
-                        type="primary"
-                        // disabled={!isPublisher}
-                    >
-                        新增
-                    </Button>,
-                ]}
-            />
+                        <ProFormSelect
+                            width='lg'
+                            name='status'
+                            label="完成状态"
+                            rules={[{ required: true, message: '这是必填项' }]}
+                            request={() => {
+                                return Promise.resolve(workStatus2)
+                            }}
+                        />
+                        <ProFormSelect
+                            name='executor'
+                            width='lg'
+                            label="责任人"
+                            request={async () => {
+                                const {data = []} = await getBlameList();
+                                return data.map(o => ({label: o.nickName, value: o.id}));
+                            }}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormSelect
+                            name='participant'
+                            width='lg'
+                            label="参与人"
+                            fieldProps={{
+                                mode:'multiple'
+                            }}
+                            request={async () => {
+                                const {data} = await monthPlanUserList();
+                                return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
+                            }}
+                        />
+                    </ProFormGroup>
+                </ProForm>
+
+                <ProTable
+                    style={{marginTop: 24}}
+                    columns={cols}
+                    actionRef={actionRef}
+                    cardBordered
+                    onRow={(record) => {
+                        return {
+                            onDoubleClick: () => showWeekPlanDetail(record)
+                        }
+                    }}
+                    dataSource={weekData}
+                    rowKey="id"
+                    search={false}
+                    options={{
+                        setting: false,
+                        density: false,
+                        reload: false
+                    }}
+                    dateFormatter="string"
+                    headerTitle="每月周计划列表"
+                    toolBarRender={() => [
+                        <Button
+                            key="button"
+                            icon={<PlusOutlined/>}
+                            onClick={() => onWeekPlan('add')}
+                            type="primary"
+                        >
+                            新增
+                        </Button>,
+                    ]}
+                />
+            </Spin>
+
             <ConfirmModal
                 visible={confirmModalVisible}
                 // type={confirmType}
                 setVisible={setConfirmModalVisible}
                 onSuccess={() => {
-                    actionRef?.current?.reload();
+                    initData()
                 }}
                 weekPlanId={weekPlanId} />
-            <AddWeekPlanModal ref={addWeekPlanRef}/>
+            <AddWeekPlanModal ref={addWeekPlanRef}
+                              onSuccess={() => {
+                                  initData()
+                              }}/>
             <WeekPlanDetailModal ref={weekPlanDetailModalRef}/>
         </div>
     );

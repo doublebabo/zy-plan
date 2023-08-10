@@ -275,20 +275,7 @@ const WorkPlan = () => {
 
     // 确认
     function onFinish(record: any) {
-        // confirm({
-        //     icon: null,
-        //     title: <span className={styles.modalTitle}>确认要完成吗？</span>,
-        //     closable: true,
-        //     wrapClassName: styles.logoutModal,
-        //     okText: '确定',
-        //     cancelText: '取消',
-        //     async onOk() {
-        //         await completeMonthPlan(record.id);
-        //         actionRef.current?.reload();
-        //         return true;
-        //     },
-        // });
-        navigate('/work-plan/confirm/' + record.id);
+        navigate('/work-plan/confirm/' + record.id, {state: 'month'});
     }
 
     async function exportData() {

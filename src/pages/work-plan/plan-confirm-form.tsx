@@ -5,6 +5,16 @@ import {ProForm, ProFormRadio, ProFormTextArea} from "@ant-design/pro-components
 import styles from './plan-confirm-form.module.less';
 import {ArrowLeftOutlined} from "@ant-design/icons";
 import {Button} from "antd";
+import {
+    leaderOrEmployeeStatus,
+    monthPlancomment,
+    monthPlanemployee,
+    monthPlanleader,
+    weekPlancomment,
+    weekPlanemployee,
+    weekPlanleader
+} from "../../services";
+import addWeekPlanModal from "./add-week-plan-modal.tsx";
 
 export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
     const {} = props;
@@ -14,18 +24,44 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
     const useparams = useParams();
     const dom = useRef();
 
+    const type = location.state; // month / week
+    console.log(location)
 
-
-    const isPublisher = myLocalstorage.get('role') === 'publisher';
+    const isPublisher = myLocalstorage.get('role') === 'publisher'; // 领导
 
     const [formRefStaff, formRefLeader, formRefThird] = [useRef(), useRef(), useRef()];
 
-    function initData() {
 
+    async function onStaffConfirm(formData: any) {
+        const api = type === 'month' ? monthPlanemployee : weekPlanemployee;
+        const idType = type === 'month' ? 'monthId' : 'weekPlanId'
+        const res = await api({...formData, [idType]: useparams.id})
+        if (res.success) {
+            history.go(-1);
+        }
     }
 
+    async function onLeaderConfirm(formData: any) {
+        const api = type === 'month' ? monthPlanleader : weekPlanleader;
+        const idType = type === 'month' ? 'monthId' : 'weekPlanId'
+        const res = await api({...formData, [idType]: useparams.id})
+        if (res.success) {
+            history.go(-1);
+        }
+    }
+
+
+    async function onThirdConfirm(formData: any) {
+        const api = type === 'month' ? monthPlancomment : weekPlancomment;
+        const idType = type === 'month' ? 'monthId' : 'weekPlanId'
+        const res = await api({...formData, [idType]: useparams.id})
+        if (res.success) {
+            history.go(-1);
+        }
+    }
+
+
     useEffect(() => {
-        initData();
         window.scroll(0, 0);
     }, [useparams.id]);
 
@@ -43,6 +79,9 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                 <ProForm
                     formRef={formRefStaff}
                     autoFocus={false}
+                    disabled={isPublisher}
+                    onFinish={onStaffConfirm}
+
                     submitter={{
                         searchConfig: {
                             submitText: '确认',
@@ -57,18 +96,9 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     }}
                 >
                     <ProFormRadio.Group
-                        name="radio-group"
+                        name="employeeStatus"
                         rules={[{ required: true, message: '这是必填项' }]}
-                        options={[
-                            {
-                                label: '完成',
-                                value: 'a',
-                            },
-                            {
-                                label: '未完成',
-                                value: 'b',
-                            },
-                        ]}
+                        options={leaderOrEmployeeStatus}
                     />
                     <ProFormTextArea
                         name="content"
@@ -79,7 +109,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         rules={[{ required: true, message: '这是必填项' }]}
                     />
                     <ProFormTextArea
-                        name="content"
+                        name="achievement"
                         label="工作成果"
 
                         placeholder="请输入"
@@ -87,7 +117,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         rules={[{ required: true, message: '这是必填项' }]}
                     />
                     <ProFormTextArea
-                        name="content"
+                        name="problem"
                         label="遗留问题"
                         placeholder="请输入"
                         required={true}
@@ -100,11 +130,10 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
 
             <div className={styles.planConfirmFormContentItem}>
                 <div className={styles.planConfirmFormTitle}>部门经理工作计划确认</div>
-
                 <ProForm
                     formRef={formRefLeader}
                     autoFocus={false}
-
+                    disabled={!isPublisher}
                     submitter={{
                         searchConfig: {
                             submitText: '确认',
@@ -117,23 +146,15 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                             },
                         },
                     }}
+                    onFinish={onLeaderConfirm}
                 >
                     <ProFormRadio.Group
-                        name="radio-group"
+                        name="leaderStatus"
                         rules={[{ required: true, message: '这是必填项' }]}
-                        options={[
-                            {
-                                label: '完成',
-                                value: 'a',
-                            },
-                            {
-                                label: '未完成',
-                                value: 'b',
-                            },
-                        ]}
+                        options={leaderOrEmployeeStatus}
                     />
                     <ProFormTextArea
-                        name="content"
+                        name="comment"
                         label="意见"
                         placeholder="请输入"
                         required={true}
@@ -149,6 +170,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     formRef={formRefThird}
                     autoFocus={false}
                     title='第三方意见'
+                    onFinish={onThirdConfirm}
                     submitter={{
                         searchConfig: {
                             submitText: '确认',
@@ -163,7 +185,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     }}
                 >
                     <ProFormTextArea
-                        name="content"
+                        name="comment"
                         label="意见"
                         placeholder="请输入"
                         required={true}

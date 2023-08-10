@@ -410,7 +410,7 @@ export function exportDataOne(params ={}) {
   }));
 }
 
-// 发起部门导出问题报表 todo
+// 发起部门导出问题报表
 export function exportDataTwo(params = {}) {
   return executeAndTryCatch(() => http.post('/issue/end/export', params, {
     responseType: 'blob'
@@ -421,3 +421,54 @@ export const workIsImportantEnum = [
   {label: '重点事项', value: '是'},
   {label: '非重点事项', value: '否'},
 ]
+
+
+// 月计划详情
+export function monthPlanDetail(id: any) {
+  return executeAndTryCatch(() => http.get('/monthPlan/detail', {params: {monthPlanId: id}} ));
+}
+
+export const workStatus2 = [
+  {label: '全部', value: 0},
+  {label: '已完成', value: 1},
+  {label: '未完成', value: 2},
+  {label: '超时已完成', value: 3},
+  {label: '超时未完成', value: 4},
+  // {label: '跨部门问题直接结束', value: 5},
+  // {label: '非跨部门问题直接结束', value: 6},
+]
+
+// 计划周数
+export const planWeeks = Array.from({length: 12}).map((o, oIndex) => ({
+  label: (oIndex + 1) + '月',
+  value: oIndex + 1
+}))
+
+
+
+//4、月计划员工确认的接口是：/monthPlan/employee
+export function monthPlanemployee(params = {}) {
+  return executeAndTryCatch(() => http.post('/monthPlan/employee', params));
+}
+
+
+// 5、月计划领导确认的接口是：/monthPlan/leader
+export function monthPlanleader(params = {}) {
+  return executeAndTryCatch(() => http.post('/monthPlan/leader', params));
+}
+// 6、月计划第三方意见的接口是：/monthPlan/comment
+export function monthPlancomment(params = {}) {
+  return executeAndTryCatch(() => http.post('/monthPlan/comment', params));
+}
+// 7、周计划员工确认的接口是：/weekPlan/employee
+export function weekPlanemployee(params = {}) {
+  return executeAndTryCatch(() => http.post('/weekPlan/employee', params));
+}
+// 8、周计划领导确认的接口是：/weekPlan/leader
+export function weekPlanleader(params = {}) {
+  return executeAndTryCatch(() => http.post('/weekPlan/leader', params));
+}
+// 9、周计划第三方意见的接口是：/weekPlan/comment
+export function weekPlancomment(params = {}) {
+  return executeAndTryCatch(() => http.post('/weekPlan/comment', params));
+}
