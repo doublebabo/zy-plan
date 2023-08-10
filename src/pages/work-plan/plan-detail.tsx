@@ -91,7 +91,8 @@ export default function PlanDetail(prosp: any) {
         setLoading(false);
         if (res.success) {
             setWeekData(res.data.weekPlanList);
-            formRef.current?.setFieldsValue({...res.data?.monthPlan
+            formRef.current?.setFieldsValue({...res.data?.monthPlan,
+                commentList:res.data?.commentList
             });
         }
     }
