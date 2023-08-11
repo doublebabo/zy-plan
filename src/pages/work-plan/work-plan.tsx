@@ -90,7 +90,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
-        width: 50,
+        width: 80,
         align: "center"
     },
     {
@@ -99,7 +99,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         ellipsis: true,
         hideInSearch: true,
         width: 30,
-        align: "center"
+        hideInTable: true
     },
     {
         title: '开始时间',
@@ -164,7 +164,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColu
         ellipsis: true,
         valueEnum: arrayToMap(planStatus),
         hideInSearch: true,
-        width: 15,
+        width: 29,
         align: "center"
     },
     {

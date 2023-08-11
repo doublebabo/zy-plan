@@ -14,7 +14,7 @@ import {
 import styles from './plan-edit.module.less';
 import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
-import {arrayToMap, monthPlanDetail, weekPlanListById, weekStatus, workIsImportantEnum} from "../../services";
+import {arrayToMap, monthPlanDetail, weekPlanListById, weekStatus, workIsImportantEnum, workStatus2} from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
 
@@ -236,11 +236,18 @@ export default function PlanDetail(prosp: any) {
                             />
                         </div>
                         <div className={styles.formRow}>
-                            <ProFormText
-                                name='executorName'
+                            {/* <ProFormText
+                                name='monthStatus'
                                 width='lg'
                                 label="完成状态"
                                 disabled={true}
+                            /> */}
+                            <ProFormSelect
+                                name='monthStatus'
+                                width='lg'
+                                label="完成状态"
+                                disabled={true}
+                                options={workStatus2}
                             />
                             <ProFormText
                                 name='executorName'

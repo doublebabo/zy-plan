@@ -418,8 +418,8 @@ export function exportDataTwo(params = {}) {
 }
 
 export const workIsImportantEnum = [
-  {label: '重点事项', value: '是'},
-  {label: '非重点事项', value: '否'},
+  {label: '重点', value: '是'},
+  {label: '非重点', value: '否'},
 ]
 
 
@@ -429,13 +429,10 @@ export function monthPlanDetail(id: any) {
 }
 
 export const workStatus2 = [
-  {label: '全部', value: 0},
-  {label: '已完成', value: 1},
-  {label: '未完成', value: 2},
-  {label: '超时已完成', value: 3},
-  {label: '超时未完成', value: 4},
-  // {label: '跨部门问题直接结束', value: 5},
-  // {label: '非跨部门问题直接结束', value: 6},
+  {label: '未完成', value: 1},
+  {label: '超时未完成', value: 2},
+  {label: '已完成', value: 3},
+  {label: '超时已完成', value: 4},
 ]
 
 // 计划周数
