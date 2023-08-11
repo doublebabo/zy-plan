@@ -131,12 +131,12 @@ export const planStatus = [
   {label: '超时未完成', value: 2},
   {label: '已完成', value: 3},
   {label: '超时已完成', value: 4},
-  {label: '周计划未发布', value: 5},
-  {label: '周计划已发布', value: 6},
-  {label: '周计划员工未确认', value: 7},
-  {label: '周计划员工已确认', value: 8},
-  {label: '周计划领导未确认', value: 9},
-  {label: '周计划领导已确认', value: 10}
+  // {label: '周计划未发布', value: 5},
+  // {label: '周计划已发布', value: 6},
+  // {label: '周计划员工未确认', value: 7},
+  // {label: '周计划员工已确认', value: 8},
+  // {label: '周计划领导未确认', value: 9},
+  // {label: '周计划领导已确认', value: 10}
 ];
 
 export const weekStatus = [
