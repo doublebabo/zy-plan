@@ -163,7 +163,7 @@ const commonCols = [
         hideInSearch: true,
         title: '解决状态',
         dataIndex: 'statusStr',
-        width: 80,
+        width: 100,
         align: "center",
     },
 ]

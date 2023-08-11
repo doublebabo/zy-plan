@@ -75,7 +75,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         dataIndex: 'deptFirst',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
+        width: 30,
         align: "center"
     },
     {
@@ -83,7 +83,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         dataIndex: 'deptSecond',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
+        width: 30,
         align: "center"
     },
     {
@@ -91,7 +91,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
-        width: 80,
+        width: 100,
         align: "center"
     },
     {
@@ -173,31 +173,6 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         dataIndex: 'executorName',
         ellipsis: true,
         hideInTable: true
-    },
-    {
-        title: '周计划员工确认',
-        dataIndex: 'weekPlanEmployee',
-        ellipsis: true,
-        width: 29,
-        hideInSearch: true,
-        align: "center"
-    },
-    {
-        title: '周计划经理确认',
-        dataIndex: 'weekPlanLeader',
-        ellipsis: true,
-        width: 29,
-        hideInSearch: true,
-        align: "center"
-    },
-    {
-        title: '周计划发布',
-        dataIndex: 'weekPlanPublish',
-        ellipsis: true,
-        width: 29,
-        hideInSearch: true,
-        align: "center"
-        // valueEnum: arrayToMap(yOrN)
     },
     {
         title: '操作',

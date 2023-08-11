@@ -194,7 +194,7 @@ export function monthPlanAdd(data) {
 export const download = (res, name) => {
   const blob = new Blob([res]);
   const elink = document.createElement('a');
-  elink.download = `${name || '月度计划文件.xlsx'}`;
+  elink.download = `${name || '月度计划文件.xls'}`;
   elink.style.display = 'none';
   elink.href = URL.createObjectURL(blob);
   document.body.appendChild(elink);
@@ -363,8 +363,6 @@ export const workStatus = [
   {label: '未完成', value: 2},
   {label: '超时已完成', value: 3},
   {label: '超时未完成', value: 4},
-  {label: '跨部门问题直接结束', value: 5},
-  {label: '非跨部门问题直接结束', value: 6},
 ]
 
 // 本部门经理直接关闭
