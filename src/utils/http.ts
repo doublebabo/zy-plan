@@ -3,8 +3,10 @@ import {notification} from "antd";
 import {clearUserTokenInfo} from "../services/index.ts";
 import myLocalstorage from "./localstorage.ts";
 
+export const baseURL = 'http://122.192.6.227:8010/api';
+
 const http = axios.create({
-  baseURL: 'http://122.192.6.227:8010/api',
+  baseURL: baseURL,
   timeout: 15000,
   // headers: {'Content-Type': 'text/plain'}
 });

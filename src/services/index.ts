@@ -166,8 +166,14 @@ export function arrayToMap(array) {
 }
 
 
-export function exportMonth(params) {
-  return executeAndTryCatch(() => http.post('/monthPlan/export', params, {
+export function exportMonth(data) {
+  const postData = {
+    ...data,
+    "currPage": data.current,
+    "pageSize": data.pageSize
+  }
+  delete postData.current;
+  return executeAndTryCatch(() => http.post('/monthPlan/export', postData, {
     responseType: 'blob'
   }));
 }
@@ -468,4 +474,10 @@ export function weekPlanleader(params = {}) {
 // 9、周计划第三方意见的接口是：/weekPlan/comment
 export function weekPlancomment(params = {}) {
   return executeAndTryCatch(() => http.post('/weekPlan/comment', params));
+}
+
+
+// 月计划导入
+export function monthPlanImport(formdata) {
+  return executeAndTryCatch(() => http.post('/monthPlan/import', formdata));
 }

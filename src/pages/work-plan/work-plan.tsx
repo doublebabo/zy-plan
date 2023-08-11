@@ -2,24 +2,25 @@ import styles from './work-plan.module.less';
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
-import {Button, Modal} from "antd";
+import {Button, message, Modal, Select, Upload, UploadProps} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
 import {
     arrayToMap, completeMonthPlan,
     deptList2,
     download,
-    exportMonth,
+    exportMonth, monthPlanImport,
     monthPlanList,
-    planStatus, workIsImportantEnum,
+    planStatus, planWeeks, workIsImportantEnum,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import AddPlanModal from "./add-plan-modal.tsx";
 import PlanConfirmForm from "./plan-confirm-form.tsx";
+import {baseURL} from "../../utils/http";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ProColumns<any>[] => [
+const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
     {
         title: '序号',
         dataIndex: 'rowNumber',
@@ -256,6 +257,12 @@ const WorkPlan = () => {
 
     const isPublisher = myLocalstorage.get('role') === 'publisher';
 
+    const [uploading, setUploading] = useState(false);
+
+    const [monthVisible, setMonthVisible] = useState(false);
+
+    const [month, setMonth] = useState<any>(1);
+
     function onAdd(type: string, record?: any) {
         // setModalVisible(true);
         // setModalType(type);
@@ -281,10 +288,34 @@ const WorkPlan = () => {
     async function exportData() {
         if (downloading) return;
         setDownloading(true);
-        const res = await exportMonth(params);
+        const res = await exportMonth({...params, month});
+        setMonthVisible(false);
         setDownloading(false);
         download(res);
     }
+
+    const uploadProps: UploadProps = {
+        name: 'file',
+        action: baseURL+'/monthPlan/import',
+        headers: {
+            token: myLocalstorage.get('token') || '', // localstorage的封装，可以设置过期时间
+        },
+        showUploadList: false,
+        onChange(info) {
+            if (info.file.status === 'uploading') {
+                setUploading(true);
+            }
+            if (info.file.status === 'done') {
+                setUploading(false);
+                actionRef?.current?.reload();
+                message.success(`${info.file.response.msg}`);
+            } else if (info.file.status === 'error') {
+                setUploading(false);
+                actionRef?.current?.reload();
+                message.error(`${info.file.response.msg}`);
+            }
+        },
+    };
 
     useEffect(() => {
         const isPublisher = myLocalstorage.get('role') === 'publisher';
@@ -345,18 +376,21 @@ const WorkPlan = () => {
                 toolBarRender={() => [
                     <Button
                       key="button"
-                      onClick={() => exportData()}
+                      onClick={() => setMonthVisible(true)}
                       loading={downloading}
                     >
                         导出月度计划
                     </Button>,
-                    <Button
-                        key="button"
-                        onClick={() => exportData()}
-                        loading={downloading}
-                    >
-                        导入月度计划
-                    </Button>,
+                    <Upload {...uploadProps}>
+                        <Button loading={uploading}>导入月度计划</Button>
+                    </Upload>,
+                    // <Button
+                    //     key="button"
+                    //     onClick={() => monthPlanImport()}
+                    //     loading={downloading}
+                    // >
+                    //     导入月度计划
+                    // </Button>,
                     <Button
                         key="button"
                         icon={<PlusOutlined/>}
@@ -376,6 +410,24 @@ const WorkPlan = () => {
                   actionRef?.current?.reload();
               }}
               type={modalType} visible={modalVisible} setVisible={setModalVisible} isPublisher={isPublisher} record={record}/>
+
+            <Modal
+              title="选择月份"
+              open={monthVisible}
+              onOk={() => exportData()}
+              onCancel={() => setMonthVisible(false)}
+              okText="确认"
+              cancelText="取消"
+              okButtonProps={{loading: downloading}}
+              cancelButtonProps={{loading: downloading}}
+            >
+                <Select
+                  value={month}
+                  style={{ width: 120 }}
+                  onChange={(e) => setMonth(e)}
+                  options={planWeeks}
+                />
+            </Modal>
         </div>
     )
 }
