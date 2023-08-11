@@ -191,10 +191,10 @@ export function monthPlanAdd(data) {
 }
 
 
-export const download = (res) => {
+export const download = (res, name) => {
   const blob = new Blob([res]);
   const elink = document.createElement('a');
-  elink.download = '月度计划文件.xlsx';
+  elink.download = `${name || '月度计划文件.xlsx'}`;
   elink.style.display = 'none';
   elink.href = URL.createObjectURL(blob);
   document.body.appendChild(elink);

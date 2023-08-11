@@ -435,7 +435,7 @@ export default function DeptIssue() {
         setLoading(true);
         const res = await exportDataOne({});
         setLoading(false);
-        download(res);
+        download(res, '责任部门问题表.xlsx');
     }
 
     async function exportDataTableTwo() {
@@ -443,7 +443,8 @@ export default function DeptIssue() {
         setLoading(true);
         const res = await exportDataTwo({});
         setLoading(false);
-        download(res);
+        // download(res);
+        download(res, '发起部门问题表.xlsx');
     }
 
 
