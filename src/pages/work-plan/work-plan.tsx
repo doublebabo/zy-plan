@@ -169,6 +169,14 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         align: "center"
     },
     {
+        title: '重要',
+        dataIndex: 'important',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 15,
+        align: "center"
+    },
+    {
         title: '姓名',
         dataIndex: 'executorName',
         ellipsis: true,
