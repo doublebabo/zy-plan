@@ -323,8 +323,10 @@ const WorkPlan = () => {
                 // scroll={{x: 2600}}
                 rowKey="id"
                 search={{
-                    labelWidth: 'auto',
-                    defaultColsNumber: 12,
+                    // span: 6,
+                    // labelWidth: 'auto',
+                    defaultColsNumber: 4,
+                    // searchGutter: 24
                 }}
                 options={{
                     setting: false,

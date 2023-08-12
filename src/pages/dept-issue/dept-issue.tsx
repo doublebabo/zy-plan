@@ -478,7 +478,7 @@ export default function DeptIssue() {
                 }}
                 search={{
                     labelWidth: 'auto',
-                    defaultColsNumber: 12,
+                    defaultColsNumber: 4,
                 }}
                 options={{
                     setting: false,
@@ -515,7 +515,7 @@ export default function DeptIssue() {
                 }}
                 search={{
                     labelWidth: 'auto',
-                    defaultColsNumber: 12,
+                    defaultColsNumber: 4,
                 }}
                 options={{
                     setting: false,
