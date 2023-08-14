@@ -100,17 +100,17 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         rules={[{ required: true, message: '这是必填项' }]}
                         options={leaderOrEmployeeStatus}
                     />
-                    <ProFormTextArea
+                    {/* <ProFormTextArea
                         name="content"
                         label="工作内容"
 
                         placeholder="请输入"
                         required={true}
                         rules={[{ required: true, message: '这是必填项' }]}
-                    />
+                    /> */}
                     <ProFormTextArea
                         name="achievement"
-                        label="工作成果"
+                        label="工作结果"
 
                         placeholder="请输入"
                         required={true}
