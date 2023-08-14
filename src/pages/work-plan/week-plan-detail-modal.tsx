@@ -72,7 +72,7 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
                         />
                         <ProFormTextArea
                             name="achievement"
-                            label="工作成果"
+                            label="工作结果"
                             placeholder="请输入"
                             disabled={true}
                         />

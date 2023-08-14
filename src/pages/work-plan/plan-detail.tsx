@@ -176,7 +176,7 @@ export default function PlanDetail(prosp: any) {
                         />
                         <ProFormTextArea
                             name="achievement"
-                            label="工作成果"
+                            label="工作结果"
                             width='lg'
                             placeholder=""
                             disabled={true}
