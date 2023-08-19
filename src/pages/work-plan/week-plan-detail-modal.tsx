@@ -51,7 +51,7 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
         <Modal
             open={visible}
             title='周计划详情'
-            width={600}
+            width={870}
             onCancel={() => setVisible(false)}
             onOk={onOk}
         >

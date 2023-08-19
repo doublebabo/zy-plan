@@ -1,16 +1,16 @@
 import {useLocation, useNavigate, useParams} from "react-router";
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import myLocalstorage from "../../utils/localstorage.ts";
-import {ProForm, ProFormRadio, ProFormTextArea} from "@ant-design/pro-components";
+import {ProForm, ProFormInstance, ProFormRadio, ProFormTextArea} from "@ant-design/pro-components";
 import styles from './plan-confirm-form.module.less';
 import {ArrowLeftOutlined} from "@ant-design/icons";
-import {Button} from "antd";
+import {Button, Spin} from "antd";
 import {
     leaderOrEmployeeStatus,
-    monthPlancomment,
+    monthPlancomment, monthPlanDetail,
     monthPlanemployee,
     monthPlanleader,
-    weekPlancomment,
+    weekPlancomment, weekPlanDetail,
     weekPlanemployee,
     weekPlanleader
 } from "../../services";
@@ -23,13 +23,13 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
     const location = useLocation();
     const useparams = useParams();
     const dom = useRef();
+    const [loading, setLoading] = useState(false);
 
     const type = location.state; // month / week
-    console.log(location)
 
     const isPublisher = myLocalstorage.get('role') === 'publisher'; // 领导
 
-    const [formRefStaff, formRefLeader, formRefThird] = [useRef(), useRef(), useRef()];
+    const [formRefStaff, formRefLeader, formRefThird] = [useRef<ProFormInstance>(), useRef<ProFormInstance>(), useRef<ProFormInstance>()];
 
 
     async function onStaffConfirm(formData: any) {
@@ -63,7 +63,31 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
 
     useEffect(() => {
         window.scroll(0, 0);
-    }, [useparams.id]);
+        let api: any;
+        if (location.state === 'week') {
+            // 获取详情
+            api = weekPlanDetail;
+        }
+        else if (location.state === 'month') {
+            // 获取详情
+            api = monthPlanDetail;
+        }
+        setLoading(true)
+        api?.(useparams.id).then((res: any) => {
+            formRefStaff.current?.setFieldsValue({
+                ...(res?.data?.monthPlan || {})
+            })
+            formRefLeader.current?.setFieldsValue({
+                ...(res?.data?.monthPlan || {})
+            })
+            formRefThird.current?.setFieldsValue({
+                ...(res?.data?.monthPlan || {})
+            })
+        }).finally(() => {
+            setLoading(false);
+        })
+    }, [useparams.id, location.state]);
+
 
     return (
         <div className={styles.planConfirmForm} ref={dom}>
@@ -72,35 +96,35 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     window.history.go(-1);
                 }}></Button>工作确认
             </div>
+            <Spin spinning={loading}>
+                <div className={styles.planConfirmFormContentItem}>
 
-            <div className={styles.planConfirmFormContentItem}>
+                    <div className={styles.planConfirmFormTitle}>员工工作计划完成描述</div>
+                    <ProForm
+                        formRef={formRefStaff}
+                        autoFocus={false}
+                        disabled={isPublisher}
+                        onFinish={onStaffConfirm}
 
-                <div className={styles.planConfirmFormTitle}>员工工作计划完成描述</div>
-                <ProForm
-                    formRef={formRefStaff}
-                    autoFocus={false}
-                    disabled={isPublisher}
-                    onFinish={onStaffConfirm}
-
-                    submitter={{
-                        searchConfig: {
-                            submitText: '确认',
-                        },
-                        // 配置按钮的属性
-                        resetButtonProps: {
-                            style: {
-                                // 隐藏重置按钮
-                                display: 'none',
+                        submitter={{
+                            searchConfig: {
+                                submitText: '确认',
                             },
-                        },
-                    }}
-                >
-                    <ProFormRadio.Group
-                        name="employeeStatus"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                        options={leaderOrEmployeeStatus}
-                    />
-                    {/* <ProFormTextArea
+                            // 配置按钮的属性
+                            resetButtonProps: {
+                                style: {
+                                    // 隐藏重置按钮
+                                    display: 'none',
+                                },
+                            },
+                        }}
+                    >
+                        <ProFormRadio.Group
+                            name="employeeStatus"
+                            rules={[{ required: true, message: '这是必填项' }]}
+                            options={leaderOrEmployeeStatus}
+                        />
+                        {/* <ProFormTextArea
                         name="content"
                         label="工作内容"
 
@@ -108,91 +132,93 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         required={true}
                         rules={[{ required: true, message: '这是必填项' }]}
                     /> */}
-                    <ProFormTextArea
-                        name="achievement"
-                        label="工作结果"
+                        <ProFormTextArea
+                            name="achievement"
+                            label="工作结果"
 
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                    <ProFormTextArea
-                        name="problem"
-                        label="遗留问题"
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormTextArea
+                            name="problem"
+                            label="遗留问题"
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
 
-                </ProForm>
+                    </ProForm>
 
-            </div>
+                </div>
 
-            <div className={styles.planConfirmFormContentItem}>
-                <div className={styles.planConfirmFormTitle}>部门经理工作计划确认</div>
-                <ProForm
-                    formRef={formRefLeader}
-                    autoFocus={false}
-                    disabled={!isPublisher}
-                    submitter={{
-                        searchConfig: {
-                            submitText: '确认',
-                        },
-                        // 配置按钮的属性
-                        resetButtonProps: {
-                            style: {
-                                // 隐藏重置按钮
-                                display: 'none',
+                <div className={styles.planConfirmFormContentItem}>
+                    <div className={styles.planConfirmFormTitle}>部门经理工作计划确认</div>
+                    <ProForm
+                        formRef={formRefLeader}
+                        autoFocus={false}
+                        disabled={!isPublisher}
+                        submitter={{
+                            searchConfig: {
+                                submitText: '确认',
                             },
-                        },
-                    }}
-                    onFinish={onLeaderConfirm}
-                >
-                    <ProFormRadio.Group
-                        name="leaderStatus"
-                        rules={[{ required: true, message: '这是必填项' }]}
-                        options={leaderOrEmployeeStatus}
-                    />
-                    <ProFormTextArea
-                        name="comment"
-                        label="意见"
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                </ProForm>
-            </div>
-
-
-            <div className={styles.planConfirmFormContentItem}>
-                <div className={styles.planConfirmFormTitle}>第三方意见</div>
-                <ProForm
-                    formRef={formRefThird}
-                    autoFocus={false}
-                    title='第三方意见'
-                    onFinish={onThirdConfirm}
-                    submitter={{
-                        searchConfig: {
-                            submitText: '确认',
-                        },
-                        // 配置按钮的属性
-                        resetButtonProps: {
-                            style: {
-                                // 隐藏重置按钮
-                                display: 'none',
+                            // 配置按钮的属性
+                            resetButtonProps: {
+                                style: {
+                                    // 隐藏重置按钮
+                                    display: 'none',
+                                },
                             },
-                        },
-                    }}
-                >
-                    <ProFormTextArea
-                        name="comment"
-                        label="意见"
-                        placeholder="请输入"
-                        required={true}
-                        rules={[{ required: true, message: '这是必填项' }]}
-                    />
-                </ProForm>
-            </div>
+                        }}
+                        onFinish={onLeaderConfirm}
+                    >
+                        <ProFormRadio.Group
+                            name="leaderStatus"
+                            rules={[{ required: true, message: '这是必填项' }]}
+                            options={leaderOrEmployeeStatus}
+                        />
+                        <ProFormTextArea
+                            name="comment"
+                            label="意见"
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                    </ProForm>
+                </div>
+
+
+                <div className={styles.planConfirmFormContentItem}>
+                    <div className={styles.planConfirmFormTitle}>第三方意见</div>
+                    <ProForm
+                        formRef={formRefThird}
+                        autoFocus={false}
+                        title='第三方意见'
+                        onFinish={onThirdConfirm}
+                        submitter={{
+                            searchConfig: {
+                                submitText: '确认',
+                            },
+                            // 配置按钮的属性
+                            resetButtonProps: {
+                                style: {
+                                    // 隐藏重置按钮
+                                    display: 'none',
+                                },
+                            },
+                        }}
+                    >
+                        <ProFormTextArea
+                            name="comment"
+                            label="意见"
+                            placeholder="请输入"
+                            required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                    </ProForm>
+                </div>
+            </Spin>
+
         </div>
     )
 });
