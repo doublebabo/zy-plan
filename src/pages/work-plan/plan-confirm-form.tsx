@@ -74,15 +74,28 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
         }
         setLoading(true)
         api?.(useparams.id).then((res: any) => {
-            formRefStaff.current?.setFieldsValue({
-                ...(res?.data?.monthPlan || {})
-            })
-            formRefLeader.current?.setFieldsValue({
-                ...(res?.data?.monthPlan || {})
-            })
-            formRefThird.current?.setFieldsValue({
-                ...(res?.data?.monthPlan || {})
-            })
+            if (location.state === 'month') {
+                formRefStaff.current?.setFieldsValue({
+                    ...(res?.data?.monthPlan || {})
+                })
+                formRefLeader.current?.setFieldsValue({
+                    ...(res?.data?.monthPlan || {})
+                })
+                formRefThird.current?.setFieldsValue({
+                    ...(res?.data?.monthPlan || {})
+                })
+            } else if (location.state === 'week') {
+                formRefStaff.current?.setFieldsValue({
+                    ...(res?.data?.weekPlan || {})
+                })
+                formRefLeader.current?.setFieldsValue({
+                    ...(res?.data?.weekPlan || {})
+                })
+                formRefThird.current?.setFieldsValue({
+                    ...(res?.data?.weekPlan || {})
+                })
+            }
+
         }).finally(() => {
             setLoading(false);
         })

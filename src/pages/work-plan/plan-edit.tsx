@@ -60,7 +60,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): P
         width: 100
     },
     {
-        title: '完成时间',
+        title: '确认时间',
         dataIndex: 'finishTime',
         ellipsis: true,
         hideInSearch: true,
