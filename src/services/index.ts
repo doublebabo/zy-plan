@@ -86,9 +86,16 @@ export function editUser(data) {
   return executeAndTryCatch(() => http.post('/user/modify', vals));
 }
 
-//查询一级/二级部门列表
-export function deptList2() {
-  return executeAndTryCatch(() => http.get('/monthPlan/dept/list'));
+//查询一级部门列表
+export function getDeptFirstList() {
+  return executeAndTryCatch(() => http.get('/monthPlan/dept/first'));
+}
+
+//查询二级部门列表
+export function getDeptSecondList(deptFirstList: string[]) {
+  return executeAndTryCatch(() => http.post('/monthPlan/dept/second', {
+    deptFirstList
+  }));
 }
 
 //查询月度计划

@@ -7,7 +7,8 @@ import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
 import {
     arrayToMap, completeMonthPlan,
-    deptList2,
+    getDeptFirstList,
+    getDeptSecondList,
     download,
     exportMonth, monthPlanImport,
     monthPlanList,
@@ -35,8 +36,8 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         ellipsis: true,
         valueType: 'select',
         request: async () => {
-            const {data} = await deptList2();
-            return (data?.first).map(o => ({label: o.name, value: o.name}));
+            const {data = []} = await getDeptFirstList();
+            return data.map(o => ({label: o.name, value: o.name}));
         },
         fieldProps: {
             mode: 'multiple'
@@ -44,6 +45,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         hideInTable: true,
     },
     {
+        hideInTable: true,
         title: '二级部门',
         dataIndex: 'deptSecondList',
         valueType: 'select',
@@ -51,11 +53,11 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
             mode: 'multiple'
         },
         ellipsis: true,
-        request: async () => {
-            const {data} = await deptList2();
-            return (data?.second).map(o => ({label: o.name, value: o.name}));
+        dependencies: ['deptFirstList'],
+        request: async ({deptFirstList = []}) => {
+            const {data = []} = await getDeptSecondList(deptFirstList);
+            return data.map(o => ({label: o.name, value: o.name}));
         },
-        hideInTable: true,
     },
     {
         title: '工作分类',
