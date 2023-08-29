@@ -118,7 +118,6 @@ const commonCols = [
         dataIndex: 'description',
         hideInSearch: true,
         // width: 500,
-        align: "center",
     },
     {
         title: '协商时间',
