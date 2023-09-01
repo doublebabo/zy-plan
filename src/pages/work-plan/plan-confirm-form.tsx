@@ -191,7 +191,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                             options={leaderOrEmployeeStatus}
                         />
                         <ProFormTextArea
-                            name="comment"
+                            name="leaderComment"
                             label="意见"
                             placeholder="请输入"
                             required={true}
