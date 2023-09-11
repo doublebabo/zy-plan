@@ -163,7 +163,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
     },
     {
         title: '状态',
-        dataIndex: 'monthStatus',
+        dataIndex: 'statusString',
         ellipsis: true,
         valueEnum: arrayToMap(planStatus),
         hideInSearch: true,

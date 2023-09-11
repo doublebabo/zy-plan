@@ -68,7 +68,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): P
     },
     {
         title: '完成状态',
-        dataIndex: 'status',
+        dataIndex: 'statusString',
         ellipsis: true,
         hideInSearch: true,
         valueEnum: arrayToMap(weekStatus),
