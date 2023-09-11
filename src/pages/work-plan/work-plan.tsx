@@ -171,11 +171,11 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
         align: "center"
     },
     {
-        title: '重要',
+        title: '工作分类',
         dataIndex: 'important',
         ellipsis: true,
         hideInSearch: true,
-        width: 15,
+        width: 20,
         align: "center"
     },
     {
