@@ -136,7 +136,7 @@ export default function PlanEdit(prosp: any) {
         if (type === 'add') {
             addWeekPlanRef.current.show();
         } else if (type === 'edit') {
-            addWeekPlanRef.current.show(record.id);
+            addWeekPlanRef.current.show(record.id, record);
         }
     }
 

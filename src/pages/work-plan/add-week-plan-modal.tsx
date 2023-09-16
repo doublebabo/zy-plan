@@ -36,9 +36,12 @@ export default React.forwardRef(function (props: any, ref) {
     }
 
     useImperativeHandle(ref, () => ({
-        show: (id = null) => {
+        show: (id = null, records?) => {
             setVisible(true);
             formRef.current?.resetFields();
+            if (records) {
+                formRef.current?.setFieldsValue({content: records.content});
+            }
             setWeekPlanId(id);
         },
         hide: () => {

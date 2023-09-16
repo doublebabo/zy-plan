@@ -12,7 +12,7 @@ import {
     download,
     exportMonth, monthPlanImport,
     monthPlanList,
-    planStatus, planWeeks, workIsImportantEnum,
+    planStatus, planWeeks, workIsImportantEnum, monthPlanDel,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import AddPlanModal from "./add-plan-modal.tsx";
@@ -21,7 +21,7 @@ import {baseURL} from "../../utils/http";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
+const getColumns = (navigate: any, {onAdd, onFinish, isPublisher, onDel}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
     {
         title: '序号',
         dataIndex: 'rowNumber',
@@ -218,6 +218,14 @@ const getColumns = (navigate: any, {onAdd, onFinish, isPublisher}: any): ({ hide
                 确认
             </a>
             ,
+            <a
+                onClick={() => {
+                    onDel(record)
+                }}
+                key="finish">
+                删除
+            </a>
+            ,
         ],
     },
 ];
@@ -248,6 +256,8 @@ const WorkPlan = () => {
 
     const [month, setMonth] = useState<any>(1);
 
+    const [modalLoading, setModalLoading] = useState(false);
+
     function onAdd(type: string, record?: any) {
         // setModalVisible(true);
         // setModalType(type);
@@ -259,6 +269,22 @@ const WorkPlan = () => {
         else if (type === 'edit') {
             navigate('/work-plan/edit/' + record.id);
         }
+    }
+
+    function onDel(record: any) {
+         Modal.confirm({
+            title: '提示',
+            content: '请确认是否删除该计划？',
+            onOk: async () => {
+                return new Promise(resolve => {
+                    monthPlanDel(record.id).then().finally(() => {
+                        actionRef?.current?.reload();
+                        resolve(true);
+                    })
+                })
+
+            },
+        })
     }
 
     function showPlanDetail(record: any) {
@@ -305,7 +331,7 @@ const WorkPlan = () => {
     useEffect(() => {
         const isPublisher = myLocalstorage.get('role') === 'publisher';
 
-        setCols(getColumns(navigate, {onAdd,onFinish, isPublisher}));
+        setCols(getColumns(navigate, {onAdd,onFinish, isPublisher, onDel}));
     }, []);
     return (
         <div className={styles.container}>

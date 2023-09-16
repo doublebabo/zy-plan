@@ -1,10 +1,11 @@
 import styles from "./layout.module.less";
-import {Button, Menu, MenuProps, Modal, notification, Popconfirm} from "antd";
+import {Button, Menu, MenuProps, message, Modal, notification, Popconfirm} from "antd";
 import {Outlet, useLocation} from "react-router-dom";
-import {clearUserTokenInfo, userLogout} from "../../services";
+import {clearUserTokenInfo, userLogout, userUpdatePassword} from "../../services";
 import {useNavigate} from "react-router";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import myLocalstorage from "../../utils/localstorage.ts";
+import {ProForm, ProFormInstance, ProFormText} from "@ant-design/pro-components";
 
 const {confirm} = Modal;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -37,6 +38,12 @@ const Layout = () => {
     const myLocation = useLocation();
     const [current, setCurrent] = useState('');
 
+    const [pwdChangeVisible, setPwdChangeVisible] = useState(false);
+
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
+    const formRef = useRef<ProFormInstance>();
+
     function onExit() {
         confirm({
             icon: null,
@@ -53,6 +60,24 @@ const Layout = () => {
                 console.log('Cancel');
             },
         });
+    }
+
+    function onChangePwd() {
+        formRef.current?.validateFields?.().then(async (values: any) => {
+            if (values.p1 !== values.p2) {
+                message.warning('两次密码输入不一致');
+                return;
+            }
+            setConfirmLoading(true);
+            await userUpdatePassword({
+                userId: myLocalstorage.get('id'),
+                password: values.p1,
+            });
+            setConfirmLoading(false);
+            setPwdChangeVisible(false);
+            await userLogout();
+            navigate('/');
+        })
     }
 
     function onMenuClick(e: any) {
@@ -79,6 +104,12 @@ const Layout = () => {
                         <span style={{marginRight: 16, cursor: 'pointer'}}>
                             欢迎您！{(localStorage.getItem('name') || '').replace(/"/g, '')}
                           </span>
+                        <Button type='primary' style={{backgroundColor: '#7cb305'}} onClick={() => {
+                            setPwdChangeVisible(true)
+                            formRef.current.resetFields();
+                        }}>
+                            修改密码
+                        </Button>
                         <Button type='primary' danger onClick={onExit}>
                             退出登录
                         </Button>
@@ -88,6 +119,33 @@ const Layout = () => {
                     <Outlet/>
                 </div>
             </div>
+            <Modal
+                open={pwdChangeVisible}
+                onOk={onChangePwd}
+                onCancel={() => setPwdChangeVisible(false)}
+                confirmLoading={confirmLoading}
+            >
+                <ProForm
+                    formRef={formRef}
+                    submitter={false}
+                >
+                    <ProFormText.Password
+                        name="p1"
+                        required
+                        label="新密码"
+                        placeholder="请输入"
+                        rules={[{ required: true, message: '这是必填项' }]}
+                    />
+                    <ProFormText.Password
+                        name="p2"
+                        required
+                        label="确认密码"
+                        placeholder="请输入"
+                        rules={[{ required: true, message: '这是必填项' }]}
+                    />
+                </ProForm>
+            </Modal>
+
         </>
 
     )

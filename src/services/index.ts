@@ -488,3 +488,15 @@ export function weekPlancomment(params = {}) {
 export function monthPlanImport(formdata) {
   return executeAndTryCatch(() => http.post('/monthPlan/import', formdata));
 }
+
+
+// 修改密码
+export function userUpdatePassword(formdata) {
+  return executeAndTryCatch(() => http.post('/user/updatePassword', formdata));
+}
+
+// 删除月度计划
+export function monthPlanDel(id) {
+  return executeAndTryCatch(() => http.get('/monthPlan/delete?monthPlanId=' + id));
+
+}
