@@ -31,7 +31,9 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
 
     const [formRefStaff, formRefLeader, formRefThird] = [useRef<ProFormInstance>(), useRef<ProFormInstance>(), useRef<ProFormInstance>()];
 
-    const [disableAll, setDisableAll] = useState(false);
+    const [disableEmployee, setDisableEmployee] = useState(false);
+
+    const [disableLeader, setDisableLeader] = useState(false);
 
     async function onStaffConfirm(formData: any) {
         const api = type === 'month' ? monthPlanemployee : weekPlanemployee;
@@ -77,10 +79,10 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
         api?.(useparams.id).then((res: any) => {
 
             if (location.state === 'month') {
-                if ([0, 1].includes(res?.data?.monthPlan) || [0, 1].includes(res?.data?.monthPlan)) {
-                    setDisableAll(true);
-                } else {
-                    setDisableAll(false);
+                if ([1, 2].includes(res?.data?.monthPlan.employeeStatus)) {
+                    setDisableEmployee(true);
+                } else if ([1, 2].includes(res?.data?.monthPlan.leaderStatus) || res?.data?.monthPlan.employeeStatus === 0) {
+                    setDisableLeader(true);
                 }
                 formRefStaff.current?.setFieldsValue({
                     ...(res?.data?.monthPlan || {})
@@ -92,10 +94,10 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     ...(res?.data?.monthPlan || {})
                 });
             } else if (location.state === 'week') {
-                if ([0, 1].includes(res?.data?.weekPlan.employeeStatus) || [0, 1].includes(res?.data?.weekPlan.leaderStatus)) {
-                    setDisableAll(true);
-                } else {
-                    setDisableAll(false);
+                if ([1, 2].includes(res?.data?.weekPlan.employeeStatus)) {
+                    setDisableEmployee(true);
+                } else if ([1, 2].includes(res?.data?.weekPlan.leaderStatus) || res?.data?.weekPlan.employeeStatus === 0) {
+                    setDisableLeader(true);
                 }
                 formRefStaff.current?.setFieldsValue({
                     ...(res?.data?.weekPlan || {})
@@ -128,7 +130,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     <ProForm
                         formRef={formRefStaff}
                         autoFocus={false}
-                        disabled={isPublisher || disableAll}
+                        disabled={isPublisher || disableEmployee}
                         onFinish={onStaffConfirm}
 
                         submitter={{
@@ -182,7 +184,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     <ProForm
                         formRef={formRefLeader}
                         autoFocus={false}
-                        disabled={!isPublisher || disableAll}
+                        disabled={!isPublisher || disableLeader}
                         submitter={{
                             searchConfig: {
                                 submitText: '确认',
@@ -220,7 +222,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         autoFocus={false}
                         title='第三方意见'
                         onFinish={onThirdConfirm}
-                        disabled={disableAll}
+                        disabled={!isPublisher}
                         submitter={{
                             searchConfig: {
                                 submitText: '确认',
