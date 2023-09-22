@@ -130,7 +130,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     <ProForm
                         formRef={formRefStaff}
                         autoFocus={false}
-                        disabled={isPublisher || disableEmployee}
+                        disabled={disableEmployee}
                         onFinish={onStaffConfirm}
 
                         submitter={{
