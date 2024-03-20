@@ -7,76 +7,6 @@ import myLocalstorage from "../../utils/localstorage.ts";
 const getColumns = (type: string): ProColumns<any>[]  => {
     return [
         {
-            title: '权限',
-            dataIndex: 'authority',
-            valueType: 'select',
-            fieldProps: {
-                mode: 'multiple',
-                showSearch: true
-            },
-            request: async () => {
-                const {data} = await deptList(myLocalstorage.get('id'));
-                return (data || []).map(o => ({label: o.name, value: o.id}))
-            },
-        },
-        {
-            title: '部门',
-            dataIndex: 'deptId',
-            valueType: 'treeSelect',
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: '此项为必填项',
-                    },
-                ],
-            },
-            fieldProps: {
-                // disabled: type === 'edit',
-                fieldNames: {
-                    label: 'name',
-                    value: 'id'
-                },
-                showSearch: true
-            },
-            request: async () => {
-                const {data} = await deptTree();
-                return (data || []);
-            },
-        },
-        {
-            title: '角色',
-            dataIndex: 'roleId',
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: '此项为必填项',
-                    },
-                ],
-            },
-            fieldProps: {
-                showSearch: true
-            },
-            request: async () => {
-                const {data} = await roleList();
-                return (data || []).map(o => ({label: o.remark, value: o.id}))
-            },
-        },
-        {
-            title: '姓名',
-            dataIndex: 'nickName',
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: '此项为必填项',
-                    },
-                ],
-            },
-            
-        },
-        {
             title: '登录账号',
             dataIndex: 'userName',
             formItemProps: {
@@ -103,12 +33,11 @@ const getColumns = (type: string): ProColumns<any>[]  => {
                     },
                 ],
             },
-            
+
         },
         {
-            title: '确认密码',
-            dataIndex: 'password2',
-            valueType: 'password',
+            title: '姓名',
+            dataIndex: 'nickName',
             formItemProps: {
                 rules: [
                     {
@@ -117,7 +46,69 @@ const getColumns = (type: string): ProColumns<any>[]  => {
                     },
                 ],
             },
-            
+
+        },
+
+        {
+            title: '部门',
+            dataIndex: 'deptId',
+            valueType: 'treeSelect',
+            formItemProps: {
+                rules: [
+                    {
+                        required: true,
+                        message: '此项为必填项',
+                    },
+                ],
+            },
+            fieldProps: {
+                // disabled: type === 'edit',
+                fieldNames: {
+                    label: 'name',
+                    value: 'id'
+                },
+                showSearch: true
+            },
+            request: async () => {
+                const {data} = await deptTree();
+                return (data || []);
+            },
+        },
+
+        {
+            title: '直接领导',
+            dataIndex: '直接领导',
+            formItemProps: {
+                rules: [],
+            },
+            valueType: 'select',
+            fieldProps: {
+                mode: 'multipart',
+            }
+        },
+        {
+            title: '是否管理者',
+            dataIndex: '是否管理者',
+            valueType: 'switch',
+            fieldProps: {
+                checkedChildren: '是',
+                unCheckedChildren: '否',
+            },
+            formItemProps: {
+                rules: [],
+            },
+        },
+        {
+            title: '是否管理员',
+            dataIndex: '是否管理员',
+            valueType: 'switch',
+            fieldProps: {
+                checkedChildren: '是',
+                unCheckedChildren: '否',
+            },
+            formItemProps: {
+                rules: [],
+            },
         },
     ];
 }
@@ -154,7 +145,7 @@ export default function ModifyModal(props: any) {
         if (visible) {
             formRef?.current?.resetFields();
         }
-        setCols(getColumns(type));
+        setCols([...getColumns(type)]);
         if (record) {
             const formData = {...record};
             formData.password = '';

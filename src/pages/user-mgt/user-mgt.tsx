@@ -30,26 +30,11 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
         dataIndex: 'deptName',
         ellipsis: true,
     },
-    // {
-    //     title: '二级部门',
-    //     dataIndex: 'title',
-    //     ellipsis: true,
-    // },
-    {
-        title: '权限',
-        dataIndex: 'authorityName',
-        ellipsis: true,
-    },
     {
         title: '账号',
         dataIndex: 'userName',
         ellipsis: true,
     },
-    // {
-    //     title: '创建时间',
-    //     dataIndex: 'title',
-    //     ellipsis: true,
-    // },
     {
         title: '操作',
         dataIndex: 'title',
@@ -110,7 +95,7 @@ const UserMgt = () => {
     }
 
     useEffect(() => {
-        setCols(getColumns(navigate, {onDelete, onShowModal}));
+        setCols([...getColumns(navigate, {onDelete, onShowModal})]);
     }, []);
 
     return (
