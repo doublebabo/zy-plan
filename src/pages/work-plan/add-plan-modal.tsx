@@ -8,7 +8,7 @@ import {
     ProFormText,
     ProFormTextArea
 } from "@ant-design/pro-components";
-import {getBlameList, monthPlanAdd, monthPlanUserList, workIsImportantEnum} from "../../services";
+import {getBlameList, importantEnum, monthPlanAdd, monthPlanUserList, workIsImportantEnum} from "../../services";
 
 export default React.forwardRef(function AddPlan(props: any, ref: any) {
 
@@ -80,6 +80,18 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
+                <ProFormText
+                    name="milestone"
+                    label="里程碑"
+                    required={true}
+                    rules={[{ required: true, message: '这是必填项' }]}
+                />
+                <ProFormSelect
+                    name='important'
+                    label="是否重要事项"
+                    request={() => Promise.resolve(importantEnum)}
+                    rules={[{ required: true, message: '这是必填项' }]}
+                />
                 <ProFormDatePicker
                     fieldProps={{
                         style: {width: '100%'}
@@ -96,32 +108,8 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
                     label="截止时间"
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
-                <ProFormSelect
-                    name='important'
-                    label="工作分类"
-                    request={() => Promise.resolve(workIsImportantEnum)}
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
-                <ProFormSelect
-                    name='executor'
-                    label="责任人"
-                    request={async () => {
-                        const {data = []} = await getBlameList();
-                        return data.map(o => ({label: o.nickName, value: o.id + '#' + o.nickName}));
-                    }}
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
-                <ProFormSelect
-                    name='participant'
-                    label="协助人"
-                    fieldProps={{
-                        mode:'multiple'
-                    }}
-                    request={async () => {
-                        const {data} = await monthPlanUserList();
-                        return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
-                    }}
-                />
+
+
             </ProForm>
 
 

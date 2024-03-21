@@ -2,7 +2,7 @@ import styles from './work-plan.module.less';
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
-import {Button, message, Modal, Select, Upload, UploadProps} from "antd";
+import {Button, message, Modal, Select, Tooltip, Upload, UploadProps} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
 import {
@@ -21,15 +21,14 @@ import {baseURL} from "../../utils/http";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
+const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): any => [
     {
         title: '序号',
         dataIndex: 'rowNumber',
-        width: 11,
+        width: 9,
         hideInSearch: true,
         align: "center"
     },
-
     {
         title: '一级部门',
         dataIndex: 'deptFirstList',
@@ -43,6 +42,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
             mode: 'multiple'
         },
         hideInTable: true,
+        hideInSearch: true,
     },
     {
         hideInTable: true,
@@ -58,6 +58,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
             const {data = []} = await getDeptSecondList(deptFirstList);
             return data.map(o => ({label: o.name, value: o.name}));
         },
+        hideInSearch: true,
     },
     {
         title: '工作分类',
@@ -71,6 +72,15 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
             return workIsImportantEnum;
         },
         hideInTable: true,
+        hideInSearch: true,
+    },
+    {
+        title: '责任人',
+        dataIndex: 'executorName',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 30,
+        align: "center"
     },
     {
         title: '一级部门',
@@ -89,7 +99,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
         align: "center"
     },
     {
-        title: '工作名称',
+        title: '任务名称',
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
@@ -121,14 +131,6 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
         align: "center"
     },
     {
-        title: '剩余时间',
-        dataIndex: 'overTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 20,
-        align: "center"
-    },
-    {
         title: '完成时间',
         dataIndex: 'finishTime',
         ellipsis: true,
@@ -137,11 +139,27 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
         align: "center"
     },
     {
-        title: '责任人',
-        dataIndex: 'executorName',
+        title: '工作描述',
+        dataIndex: 'finishTime',
         ellipsis: true,
         hideInSearch: true,
-        width: 15,
+        width: 25,
+        align: "center"
+    },
+    {
+        title: '达成目标或量化指标',
+        dataIndex: 'finishTime',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 25,
+        align: "center"
+    },
+    {
+        title: '完成措施或关键节点',
+        dataIndex: 'finishTime',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 25,
         align: "center"
     },
     // {
@@ -154,8 +172,7 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
     // },
     {
         title: '状态',
-        dataIndex: 'planStatus',
-        // ellipsis: true,
+        dataIndex: 'status',
         request: () => {
             return planStatus;
         },
@@ -166,24 +183,26 @@ const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({
         dataIndex: 'statusString',
         ellipsis: true,
         valueEnum: arrayToMap(planStatus),
-        hideInSearch: true,
         width: 29,
-        align: "center"
-    },
-    {
-        title: '工作分类',
-        dataIndex: 'important',
-        ellipsis: true,
+        align: "center",
+        hideInTable: true,
         hideInSearch: true,
-        width: 20,
-        align: "center"
     },
-    {
-        title: '姓名',
-        dataIndex: 'executorName',
-        ellipsis: true,
-        hideInTable: true
-    },
+    // {
+    //     title: '工作分类',
+    //     dataIndex: 'important',
+    //     ellipsis: true,
+    //     hideInSearch: true,
+    //     width: 20,
+    //     align: "center"
+    // },
+    // {
+    //     title: '姓名',
+    //     dataIndex: 'executorName',
+    //     ellipsis: true,
+    //     hideInTable: true,
+    //     hideInSearch: true,
+    // },
     {
         title: '操作',
         dataIndex: 'title',
@@ -336,7 +355,14 @@ const WorkPlan = () => {
     return (
         <div className={styles.container}>
             <ProTable
-                columns={cols}
+                columns={cols.map(col => ({
+                    ...col,
+                    title: (
+                        <Tooltip title={col.title} placement='topLeft'>
+                            {col.title}
+                        </Tooltip>
+                    )
+                }))}
                 actionRef={actionRef}
                 cardBordered
                 request={async (params = {}, sort, filter) => {
@@ -365,8 +391,8 @@ const WorkPlan = () => {
                     syncToUrl: (values, type) => {
                         const results: any = values
                         if (type === 'get') {
-                            if (!['', void 0, null].includes(results.planStatus)) {
-                                results.planStatus = +results.planStatus
+                            if (!['', void 0, null].includes(results.status)) {
+                                results.status = +results.status
                             }
                             if (results.deptFirstList && !(results.deptFirstList instanceof Array)) {
                                 results.deptFirstList = [results.deptFirstList]
@@ -378,7 +404,8 @@ const WorkPlan = () => {
                         }
                         return results;
                     },
-                    syncToInitialValues: false
+                    syncToInitialValues: false,
+                    initialValues: {status: 0}
                 }}
                 pagination={{
                     pageSize: 10,
@@ -392,11 +419,11 @@ const WorkPlan = () => {
                       onClick={() => setMonthVisible(true)}
                       loading={downloading}
                     >
-                        导出月度计划
+                        导出工作计划表
                     </Button>,
-                    <Upload {...uploadProps}>
-                        <Button loading={uploading}>导入月度计划</Button>
-                    </Upload>,
+                    // <Upload key='upload' {...uploadProps}>
+                    //     <Button loading={uploading}>导入月度计划</Button>
+                    // </Upload>,
                     // <Button
                     //     key="button"
                     //     onClick={() => monthPlanImport()}

@@ -85,7 +85,7 @@ const getColumns = ({type}): ProColumns<any>[] => {
       },
       request: async () => {
         const {data} = await getManagersOfStaff(myLocalstorage.get('name'));
-        return (data || []).map(o => ({label: `${o.name}(${o.deptName})`, value: o.id}));
+        return (data || []).map(o => ({label: `${o.name}(${o.deptName})`, value: o.account}));
       },
     },
     {

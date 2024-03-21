@@ -14,7 +14,15 @@ import {
 import styles from './plan-edit.module.less';
 import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
-import {arrayToMap, monthPlanDetail, weekPlanListById, weekStatus, workIsImportantEnum, workStatus2} from "../../services";
+import {
+    arrayToMap,
+    importantEnum,
+    monthPlanDetail,
+    weekPlanListById,
+    weekStatus,
+    workIsImportantEnum,
+    workStatus2
+} from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
 
@@ -51,25 +59,37 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
         ellipsis: true
     },
     {
-        title: '完成时间',
-        dataIndex: 'finishTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
+        title: '工作结果',
+        dataIndex: 'outcome',
+        ellipsis: true
     },
     {
-        title: '完成状态',
-        dataIndex: 'status',
-        ellipsis: true,
-        hideInSearch: true,
-        valueEnum: arrayToMap(weekStatus),
-        width: 100
+        title: '工作问题',
+        dataIndex: 'problem',
+        ellipsis: true
     },
+    // {
+    //     title: '完成时间',
+    //     dataIndex: 'finishTime',
+    //     ellipsis: true,
+    //     hideInSearch: true,
+    //     width: 100
+    // },
+    // {
+    //     title: '完成状态',
+    //     dataIndex: 'status',
+    //     ellipsis: true,
+    //     hideInSearch: true,
+    //     valueEnum: arrayToMap(weekStatus),
+    //     width: 100
+    // },
 
 ];
 
 
-export default function PlanDetail(prosp: any) {
+export default function MonthPlanDetail(prosp: any) {
+    // 月计划详情
+
     const navigate = useNavigate();
     const location = useLocation();
     const useparams = useParams();
@@ -80,6 +100,7 @@ export default function PlanDetail(prosp: any) {
 
     const addWeekPlanRef: any = useRef();
     const weekPlanDetailModalRef: any = useRef();
+    const isManager = myLocalstorage.get('manager') === 1;
 
     const [weekData, setWeekData] = useState([]);
 
@@ -91,7 +112,8 @@ export default function PlanDetail(prosp: any) {
         setLoading(false);
         if (res.success) {
             setWeekData(res.data.weekPlanList);
-            formRef.current?.setFieldsValue({...res.data?.monthPlan,
+            formRef.current?.setFieldsValue({
+                ...res.data,
                 commentList:res.data?.commentList
             });
         }
@@ -111,7 +133,6 @@ export default function PlanDetail(prosp: any) {
 
     useEffect(() => {
         initData();
-        const isManager = myLocalstorage.get('manager') === 1;
         setCols(getColumns(navigate, {onWeekPlan}));
     }, [useparams.id]);
 
@@ -136,12 +157,12 @@ export default function PlanDetail(prosp: any) {
                         <div className={styles.formRow}>
                             <ProFormSelect
                                 width='lg'
-                                name='deptFirst'
+                                name='firstDeptName'
                                 label="一级部门"
                                 disabled={true}
                             />
                             <ProFormSelect
-                                name='deptSecond'
+                                name='secondDeptName'
                                 label="二级部门"
                                 width='lg'
                                 disabled={true}
@@ -149,9 +170,9 @@ export default function PlanDetail(prosp: any) {
                             <ProFormSelect
                                 name='important'
                                 width='lg'
-                                label="工作分类"
+                                label="是否重要事项"
                                 disabled={true}
-                                options={workIsImportantEnum}
+                                options={importantEnum}
                             />
                         </div>
                         <ProFormText
@@ -175,44 +196,53 @@ export default function PlanDetail(prosp: any) {
                             disabled={true}
                         />
                         <ProFormTextArea
-                            name="achievement"
-                            label="工作结果"
+                            name="milestone"
+                            label="里程碑"
                             width='lg'
                             placeholder=""
                             disabled={true}
                         />
-                        <ProFormTextArea
-                            name="problem"
-                            label="遗留问题"
-                            width='lg'
-                            placeholder=""
-                            disabled={true}
-                        />
-                        <ProFormTextArea
-                            name="leaderComment"
-                            label="部门经理意见"
-                            width='lg'
-                            placeholder=""
-                            disabled={true}
-                        />
-                        <ProFormList
-                            name="commentList"
-                            className={styles.formList}
-                            creatorButtonProps={{
-                                style: {
-                                    display: 'none'
-                                }
-                            }}
-                            colProps={{
-                                style: {display: 'none'}
-                            }}
-                            actionRender={() => []}
-                        >
-                            <div className={styles.formListRow}>
-                                <ProFormText name="comment" label="第三方意见" />
-                                <ProFormText name="commentator" label="评论人" />
-                            </div>
-                        </ProFormList>
+                        {/*<ProFormTextArea*/}
+                        {/*    name="achievement"*/}
+                        {/*    label="工作结果"*/}
+                        {/*    width='lg'*/}
+                        {/*    placeholder=""*/}
+                        {/*    disabled={true}*/}
+                        {/*/>*/}
+                        {/*<ProFormTextArea*/}
+                        {/*    name="problem"*/}
+                        {/*    label="遗留问题"*/}
+                        {/*    width='lg'*/}
+                        {/*    placeholder=""*/}
+                        {/*    disabled={true}*/}
+                        {/*/>*/}
+                        {/*<ProFormTextArea*/}
+                        {/*    name="leaderComment"*/}
+                        {/*    label="部门经理意见"*/}
+                        {/*    width='lg'*/}
+                        {/*    placeholder=""*/}
+                        {/*    disabled={true}*/}
+                        {/*/>*/}
+
+                        {/*<ProFormList*/}
+                        {/*    name="commentList"*/}
+                        {/*    className={styles.formList}*/}
+                        {/*    creatorButtonProps={{*/}
+                        {/*        style: {*/}
+                        {/*            display: 'none'*/}
+                        {/*        }*/}
+                        {/*    }}*/}
+                        {/*    colProps={{*/}
+                        {/*        style: {display: 'none'}*/}
+                        {/*    }}*/}
+                        {/*    actionRender={() => []}*/}
+                        {/*>*/}
+                        {/*    <div className={styles.formListRow}>*/}
+                        {/*        <ProFormText name="comment" label="第三方意见" />*/}
+                        {/*        <ProFormText name="commentator" label="评论人" />*/}
+                        {/*    </div>*/}
+                        {/*</ProFormList>*/}
+                        {/*<ProFormText name="comment" label="意见" />*/}
                         <div className={styles.formRow}>
                             <ProFormDatePicker
                                 name="startTime"
@@ -243,24 +273,24 @@ export default function PlanDetail(prosp: any) {
                                 disabled={true}
                             /> */}
                             <ProFormSelect
-                                name='monthStatus'
+                                name='status'
                                 width='lg'
                                 label="完成状态"
                                 disabled={true}
                                 options={workStatus2}
                             />
-                            <ProFormText
-                                name='executorName'
-                                width='lg'
-                                label="责任人"
-                                disabled={true}
-                            />
-                            <ProFormText
-                                name='participant'
-                                width='lg'
-                                label="参与人"
-                                disabled={true}
-                            />
+                            {/*<ProFormText*/}
+                            {/*    name='executorName'*/}
+                            {/*    width='lg'*/}
+                            {/*    label="责任人"*/}
+                            {/*    disabled={true}*/}
+                            {/*/>*/}
+                            {/*<ProFormText*/}
+                            {/*    name='participant'*/}
+                            {/*    width='lg'*/}
+                            {/*    label="参与人"*/}
+                            {/*    disabled={true}*/}
+                            {/*/>*/}
                         </div>
 
                     </div>

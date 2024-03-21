@@ -15,7 +15,7 @@ import styles from './plan-edit.module.less';
 import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
-    arrayToMap, getBlameList,
+    arrayToMap, getBlameList, importantEnum,
     monthPlanDetail, monthPlanEdit, monthPlanUserList,
     weekPlanListById,
     weekStatus,
@@ -104,7 +104,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
 ];
 
 
-export default function PlanEdit(prosp: any) {
+export default function MonthPlanEdit(prosp: any) {
     const navigate = useNavigate();
     const location = useLocation();
     const useparams = useParams();
@@ -124,9 +124,7 @@ export default function PlanEdit(prosp: any) {
         if (res.success) {
             setWeekData(res.data.weekPlanList);
             formRef.current?.setFieldsValue({
-                ...res.data?.monthPlan,
-                participant: res.data?.monthPlan?.participant?.split(','),
-                status: res.data?.monthPlan?.monthStatus
+                ...res.data,
             });
         }
     }
@@ -192,12 +190,12 @@ export default function PlanEdit(prosp: any) {
                     <ProFormGroup>
                         <ProFormSelect
                             width='lg'
-                            name='deptFirst'
+                            name='firstDeptName'
                             label="一级部门"
                             disabled={true}
                         />
                         <ProFormSelect
-                            name='deptSecond'
+                            name='secondDeptName'
                             label="二级部门"
                             width='lg'
                             disabled={true}
@@ -205,14 +203,17 @@ export default function PlanEdit(prosp: any) {
                         <ProFormSelect
                             name='important'
                             width='lg'
-                            label="工作分类"
-                            options={workIsImportantEnum}
-                            rules={[{ required: true, message: '这是必填项' }]}
+                            label="是否重要事项"
+                            options={importantEnum}
+                            disabled={true}
+
+                            // rules={[{ required: true, message: '这是必填项' }]}
                         />
                         <ProFormText
                             name="title"
                             width='lg'
                             label="工作名称"
+                            rules={[{ required: true, message: '这是必填项' }]}
 
                         />
                         <ProFormTextArea
@@ -229,6 +230,13 @@ export default function PlanEdit(prosp: any) {
                             width='lg'
                             placeholder="请输入"
                             required={true}
+                            rules={[{ required: true, message: '这是必填项' }]}
+                        />
+                        <ProFormTextArea
+                            name="milestone"
+                            label="里程碑"
+                            width='lg'
+                            placeholder=""
                             rules={[{ required: true, message: '这是必填项' }]}
                         />
                         <ProFormDatePicker
@@ -250,33 +258,34 @@ export default function PlanEdit(prosp: any) {
                             width='lg'
                             name='status'
                             label="完成状态"
-                            rules={[{ required: true, message: '这是必填项' }]}
+                            disabled={true}
+                            // rules={[{ required: true, message: '这是必填项' }]}
                             request={() => {
                                 return Promise.resolve(workStatus2)
                             }}
                         />
-                        <ProFormSelect
-                            name='executor'
-                            width='lg'
-                            label="责任人"
-                            request={async () => {
-                                const {data = []} = await getBlameList();
-                                return data.map(o => ({label: o.nickName, value: o.id}));
-                            }}
-                            rules={[{ required: true, message: '这是必填项' }]}
-                        />
-                        <ProFormSelect
-                            name='participant'
-                            width='lg'
-                            label="参与人"
-                            fieldProps={{
-                                mode:'multiple'
-                            }}
-                            request={async () => {
-                                const {data} = await monthPlanUserList();
-                                return (data || []).map(o => ({label: o.nickName, value: o.nickName}))
-                            }}
-                        />
+                        {/*<ProFormSelect*/}
+                        {/*    name='executor'*/}
+                        {/*    width='lg'*/}
+                        {/*    label="责任人"*/}
+                        {/*    request={async () => {*/}
+                        {/*        const {data = []} = await getBlameList();*/}
+                        {/*        return data.map(o => ({label: o.nickName, value: o.id}));*/}
+                        {/*    }}*/}
+                        {/*    rules={[{ required: true, message: '这是必填项' }]}*/}
+                        {/*/>*/}
+                        {/*<ProFormSelect*/}
+                        {/*    name='participant'*/}
+                        {/*    width='lg'*/}
+                        {/*    label="参与人"*/}
+                        {/*    fieldProps={{*/}
+                        {/*        mode:'multiple'*/}
+                        {/*    }}*/}
+                        {/*    request={async () => {*/}
+                        {/*        const {data} = await monthPlanUserList();*/}
+                        {/*        return (data || []).map(o => ({label: o.nickName, value: o.nickName}))*/}
+                        {/*    }}*/}
+                        {/*/>*/}
                     </ProFormGroup>
                 </ProForm>
 
