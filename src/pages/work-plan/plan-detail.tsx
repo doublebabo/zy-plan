@@ -19,7 +19,7 @@ import myLocalstorage from "../../utils/localstorage.ts";
 import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
 
 
-const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): ProColumns<any>[] => [
+const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): ProColumns<any>[] => [
     {
         title: '序号',
         dataIndex: 'index',
@@ -111,7 +111,7 @@ export default function PlanDetail(prosp: any) {
 
     useEffect(() => {
         initData();
-        const isPublisher = myLocalstorage.get('role') === 'publisher';
+        const isManager = myLocalstorage.get('manager') === 1;
         setCols(getColumns(navigate, {onWeekPlan}));
     }, [useparams.id]);
 

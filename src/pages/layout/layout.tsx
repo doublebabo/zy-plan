@@ -89,7 +89,7 @@ const Layout = () => {
         setCurrent(myLocation.pathname);
     }, [myLocation])
 
-    const isPublisher = myLocalstorage.get('role') === 'publisher';
+    const isManager = myLocalstorage.get('manager') === 1;
 
     return (
         <>
@@ -98,7 +98,7 @@ const Layout = () => {
                     <div className={styles.headLeft}>泽宇智能工作管理</div>
                     <div className={styles.headMid}>
                         <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
-                              items={isPublisher ? items : items.filter(o => o.key !== '/user-mgt')}/>
+                              items={isManager ? items : items.filter(o => o.key !== '/user-mgt')}/>
                     </div>
                     <div className={styles.headRight}>
                         <span style={{marginRight: 16, cursor: 'pointer'}}>

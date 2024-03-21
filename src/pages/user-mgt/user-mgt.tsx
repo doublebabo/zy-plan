@@ -4,7 +4,7 @@ import {useNavigate} from "react-router";
 import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Modal} from "antd";
 import ModifyModal from "./modify-modal.tsx";
-import {delUser, userList} from "../../services";
+import {delUser, userList, yesOrNoEnumValue} from "../../services";
 import {PlusOutlined} from "@ant-design/icons";
 
 const {confirm} = Modal;
@@ -22,7 +22,7 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     },
     {
         title: '姓名',
-        dataIndex: 'nickName',
+        dataIndex: 'name',
         ellipsis: true,
     },
     {
@@ -32,9 +32,21 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     },
     {
         title: '账号',
-        dataIndex: 'userName',
+        dataIndex: 'account',
         ellipsis: true,
     },
+  {
+    title: '是否管理者',
+    dataIndex: 'manager',
+    ellipsis: true,
+    valueEnum: yesOrNoEnumValue
+  },
+  {
+    title: '是否管理员',
+    dataIndex: 'admin',
+    ellipsis: true,
+    valueEnum: yesOrNoEnumValue
+  },
     {
         title: '操作',
         dataIndex: 'title',
@@ -104,9 +116,7 @@ const UserMgt = () => {
                 columns={cols}
                 actionRef={actionRef}
                 cardBordered
-                request={async (params = {}, sort, filter) => {
-                    return userList(params);
-                }}
+                request={async (params = {}, sort, filter) => userList(params)}
                 rowKey="id"
                 search={false}
                 options={{

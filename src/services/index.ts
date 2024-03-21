@@ -14,17 +14,21 @@ async function executeAndTryCatch(func) {
 
 export function clearUserTokenInfo() {
   localStorage.setItem('token', '');
-  localStorage.setItem('role', '');
+  // localStorage.setItem('role', '');
   localStorage.setItem('name', '');
+  localStorage.setItem('admin', '');
+  localStorage.setItem('manager', '');
 }
 
 export function userLogin(data) {
   return executeAndTryCatch(() => http.post('/user/login', data).then(res => {
     if (res.success) {
       myLocalstorage.set('token', res.data?.token);
-      myLocalstorage.set('role', res.data?.role);
+      // myLocalstorage.set('role', res.data?.role);
       myLocalstorage.set('name', res.data?.name);
       myLocalstorage.set('id', res.data?.id);
+      myLocalstorage.set('admin', res.data?.admin);
+      myLocalstorage.set('manager', res.data?.manager);
     }
     return res
   }));
@@ -43,7 +47,7 @@ export function userList(data) {
     "currPage": data.current,
     "pageSize": data.pageSize
   }
-  return executeAndTryCatch(() => http.post('/user/list', postData).then(res => {
+  return executeAndTryCatch(() => http.post('/user/page', postData).then(res => {
     if (res.success) {
       return {
         data: res?.data?.obj || [],
@@ -76,13 +80,13 @@ export function deptList(id) {
 }
 
 export function addUser(data) {
-  const vals = {...data, authority: data?.authority?.join(',') || null}
+  const vals = {...data, admin: +data.admin, manager: +data.manager}
   return executeAndTryCatch(() => http.post('/user/add', vals));
 }
 
 
 export function editUser(data) {
-  const vals = {...data, authority: data?.authority?.join(',') || null}
+  const vals = {...data, admin: +data.admin, manager: +data.manager}
   return executeAndTryCatch(() => http.post('/user/modify', vals));
 }
 
@@ -498,5 +502,22 @@ export function userUpdatePassword(formdata) {
 // 删除月度计划
 export function monthPlanDel(id) {
   return executeAndTryCatch(() => http.get('/monthPlan/delete?monthPlanId=' + id));
+
+}
+
+export const yesOrNoEnumValue =  {
+  1: {
+    text: '是',
+    status: 'Success',
+  },
+  0: {
+    text: '否',
+    status: 'Error',
+  },
+}
+
+// 新建用户时，选择上级领导
+export function getManagersOfStaff(name) {
+  return executeAndTryCatch(() => http.get('/user/all?name=' + name));
 
 }

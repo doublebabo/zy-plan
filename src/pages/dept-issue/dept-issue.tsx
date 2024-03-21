@@ -168,7 +168,7 @@ const commonCols = [
 ]
 
 
-const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const employeeTable1Cols = ({isManager, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     // {
     //     title: '是否确认完成时间',
@@ -194,11 +194,11 @@ const employeeTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     },
 ]
 
-const employeeTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const employeeTable2Cols = ({isManager, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
 ]
 
-const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const leaderTable1Cols = ({isManager, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
         title: '操作',
@@ -208,7 +208,7 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         width: 150,
         align: "center",
         render: (text, record, _, action) => [
-            isPublisher && (record.status === '2' || record.status === '0') && <a
+            isManager && (record.status === '2' || record.status === '0') && <a
                 key="editable"
                 target="_blank"
                 onClick={() => {
@@ -217,14 +217,14 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
             >
                 <span>问题确认</span>
             </a>,
-            isPublisher && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
+            isManager && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
                                                             onClick={() => {
                                                                 onFinish(record);
                                                             }}
             >
                 问题结束
             </a>,
-            isPublisher && record.status === '5' && <a target="_blank" key="view"
+            isManager && record.status === '5' && <a target="_blank" key="view"
                                                        onClick={() => {
                                                            onDoneOk(record);
                                                        }}
@@ -235,7 +235,7 @@ const leaderTable1Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
     },
 ];
 
-const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
+const leaderTable2Cols = ({isManager, onConfirm, onFinish, onDoneOk}) => [
     ...commonCols,
     {
         title: '操作',
@@ -245,7 +245,7 @@ const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
         width: 150,
         align: 'center',
         render: (text, record, _, action) => [
-            isPublisher && (record.status === '2' || record.status === '0') && <a
+            isManager && (record.status === '2' || record.status === '0') && <a
                 key="editable"
                 target="_blank"
                 onClick={() => {
@@ -254,7 +254,7 @@ const leaderTable2Cols = ({isPublisher, onConfirm, onFinish, onDoneOk}) => [
             >
                 <span>问题确认</span>
             </a>,
-            isPublisher && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
+            isManager && (record.status === '2' || record.status === '0') && <a target="_blank" key="view"
                                                             onClick={() => {
                                                                 onFinish(record);
                                                             }}
@@ -391,7 +391,7 @@ export default function DeptIssue() {
             okButtonProps: {loading: loading},
             async onOk() {
                 let request: any = null;
-                if (isPublisher) {
+                if (isManager) {
                     request = issueEndLeaderFinish;
                 } else {
                     request = issueEndEmployeeFinish;
@@ -448,16 +448,16 @@ export default function DeptIssue() {
 
 
     // 领导
-    const isPublisher = myLocalstorage.get('role') === 'publisher';
+    const isManager = myLocalstorage.get('manager') === 1;
 
     let cols1: any = [];
     let cols2: any = [];
-    if (isPublisher) {
-        cols1 = leaderTable1Cols({isPublisher, onConfirm, onFinish, onDoneOk})
-        cols2 = leaderTable2Cols({isPublisher, onConfirm, onFinish, onDoneOk})
+    if (isManager) {
+        cols1 = leaderTable1Cols({isManager, onConfirm, onFinish, onDoneOk})
+        cols2 = leaderTable2Cols({isManager, onConfirm, onFinish, onDoneOk})
     } else {
-        cols1 = employeeTable1Cols({isPublisher, onConfirm, onFinish, onDoneOk});
-        cols2 = employeeTable2Cols({isPublisher, onConfirm, onFinish, onDoneOk});
+        cols1 = employeeTable1Cols({isManager, onConfirm, onFinish, onDoneOk});
+        cols2 = employeeTable2Cols({isManager, onConfirm, onFinish, onDoneOk});
     }
 
     function tableOne() {

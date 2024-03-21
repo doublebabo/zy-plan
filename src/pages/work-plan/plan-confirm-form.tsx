@@ -27,7 +27,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
 
     const type = location.state; // month / week
 
-    const isPublisher = myLocalstorage.get('role') === 'publisher'; // 领导
+    const isManager = myLocalstorage.get('manager') === 1; // 领导
 
     const [formRefStaff, formRefLeader, formRefThird] = [useRef<ProFormInstance>(), useRef<ProFormInstance>(), useRef<ProFormInstance>()];
 
@@ -184,7 +184,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                     <ProForm
                         formRef={formRefLeader}
                         autoFocus={false}
-                        disabled={!isPublisher || disableLeader}
+                        disabled={!isManager || disableLeader}
                         submitter={{
                             searchConfig: {
                                 submitText: '确认',
@@ -222,7 +222,7 @@ export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
                         autoFocus={false}
                         title='第三方意见'
                         onFinish={onThirdConfirm}
-                        disabled={!isPublisher}
+                        disabled={!isManager}
                         submitter={{
                             searchConfig: {
                                 submitText: '确认',

@@ -9,7 +9,7 @@ import ConfirmModal from "./confirm-modal.tsx";
 import {arrayToMap, planStatus, weekStatus, weekPlanListById} from "../../../services";
 import myLocalstorage from "../../../utils/localstorage.ts";
 
-const getColumns = (navigate: any, {onWeekPlan, onConfirm, isPublisher}: any): ProColumns<any>[] => [
+const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): ProColumns<any>[] => [
     {
         title: '序号',
         dataIndex: 'index',
@@ -146,7 +146,7 @@ const WeekPlan = () => {
 
     const [record, setRecord] = useState<any>();
 
-    const isPublisher = myLocalstorage.get('role') === 'publisher';
+    const isManager = myLocalstorage.get('manager') === 1;
     let location = useLocation();
 
     function onWeekPlan(type: string,record?: any) {
@@ -159,8 +159,8 @@ const WeekPlan = () => {
 
     function onConfirm(record?: any) {
         setConfirmModalVisible(true);
-        // const isPublisher = myLocalstorage.get('role') === 'publisher';
-        // if (!isPublisher) {
+        // const isManager = myLocalstorage.get('manager') === 1;
+        // if (!isManager) {
         //     setConfirmType('staff');
         // } else if (record.employeeStatus === 0) {
         //     setConfirmType('staff');
@@ -173,8 +173,8 @@ const WeekPlan = () => {
     }
 
     useEffect(() => {
-        const isPublisher = myLocalstorage.get('role') === 'publisher';
-        setCols(getColumns(navigate, {onWeekPlan, onConfirm, isPublisher}));
+        const isManager = myLocalstorage.get('manager') === 1;
+        setCols(getColumns(navigate, {onWeekPlan, onConfirm, isManager}));
     }, []);
     return (
         <div className={styles.container}>
@@ -217,7 +217,7 @@ const WeekPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onWeekPlan('add')}
                         type="primary"
-                        // disabled={!isPublisher}
+                        // disabled={!isManager}
                     >
                         新增
                     </Button>,

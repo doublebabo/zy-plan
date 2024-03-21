@@ -35,7 +35,7 @@ const router = createBrowserRouter([
     element: <Layout/>,
     errorElement: <ErrorPage/>,
     loader: async () => {
-      if (myLocalstorage.get('role') !== 'publisher') {
+      if (myLocalstorage.get('manager') !== 1) {
         return redirect('/work-plan')
       }
       return null

@@ -21,7 +21,7 @@ import {baseURL} from "../../utils/http";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onAdd, onFinish, isPublisher, onDel}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
+const getColumns = (navigate: any, {onAdd, onFinish, isManager, onDel}: any): ({ hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: { mode: string }; title: string; ellipsis: boolean } | { request: () => Promise<any>; hideInTable: boolean; dataIndex: string; valueType: string; fieldProps: {}; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; hideInTable: boolean; dataIndex: string; width: number; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { request: () => any; hideInTable: boolean; dataIndex: string; title: string } | { hideInSearch: boolean; dataIndex: string; valueEnum: any; width: number; title: string; align: string; ellipsis: boolean } | { hideInTable: boolean; dataIndex: string; title: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { hideInSearch: boolean; dataIndex: string; width: number; title: string; align: string; ellipsis: boolean } | { dataIndex: string; valueType: string; width: number; fixed: string; title: string; render: (text, record, _, action) => JSX.Element[] })[] => [
     {
         title: '序号',
         dataIndex: 'rowNumber',
@@ -248,7 +248,7 @@ const WorkPlan = () => {
 
     const addModalRef: any = useRef();
 
-    const isPublisher = myLocalstorage.get('role') === 'publisher';
+    const isManager = myLocalstorage.get('manager') === 1;
 
     const [uploading, setUploading] = useState(false);
 
@@ -329,9 +329,9 @@ const WorkPlan = () => {
     };
 
     useEffect(() => {
-        const isPublisher = myLocalstorage.get('role') === 'publisher';
+        const isManager = myLocalstorage.get('manager') === 1;
 
-        setCols(getColumns(navigate, {onAdd,onFinish, isPublisher, onDel}));
+        setCols(getColumns(navigate, {onAdd,onFinish, isManager, onDel}));
     }, []);
     return (
         <div className={styles.container}>
@@ -409,7 +409,7 @@ const WorkPlan = () => {
                         icon={<PlusOutlined/>}
                         onClick={() => onAdd('add')}
                         type="primary"
-                        // disabled={!isPublisher}
+                        // disabled={!isManager}
                     >
                         新增
                     </Button>,
@@ -422,7 +422,7 @@ const WorkPlan = () => {
               onSuccess={() => {
                   actionRef?.current?.reload();
               }}
-              type={modalType} visible={modalVisible} setVisible={setModalVisible} isPublisher={isPublisher} record={record}/>
+              type={modalType} visible={modalVisible} setVisible={setModalVisible} isManager={isManager} record={record}/>
 
             <Modal
               title="选择月份"

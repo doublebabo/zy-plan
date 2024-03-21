@@ -167,10 +167,10 @@ export default function ConfirmModal(props: any) {
             formRef2?.current?.resetFields();
             weekPlanDetail(weekPlanId).then(res => {
                 const {employeeStatus, leaderStatus} = res?.data;
-                const isPublisher = myLocalstorage.get('role') === 'publisher';
+                const isManager = myLocalstorage.get('manager') === 1;
                 let canEmployeeEdit = false;
                 // 员工打开这个页面时，领导的部分是灰色的，员工的部分只有当 employeeStatus 是 0 的时候可以进行输入和选择完成未完成
-                if (!isPublisher) {
+                if (!isManager) {
                     if (employeeStatus === 0) {
                         canEmployeeEdit = true
                     }
@@ -181,7 +181,7 @@ export default function ConfirmModal(props: any) {
                 }
                 // 领导打开这个页面时候，分别看 employeeStatus 和 leaderStatus，哪个是 0，哪个就可以输入，否则是灰色
                 let canLeaderEdit = false;
-                if (isPublisher && leaderStatus === 0) {
+                if (isManager && leaderStatus === 0) {
                     canLeaderEdit = true
                 }
                 formRef?.current?.setFieldsValue({

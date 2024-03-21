@@ -10,7 +10,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 const columns: ProFormColumnsType<any>[] = [
     {
         title: '',
-        dataIndex: 'userName',
+        dataIndex: 'account',
         formItemProps: {
             rules: [
                 {
@@ -43,7 +43,7 @@ const columns: ProFormColumnsType<any>[] = [
             size: 'large',
             placeholder: '密码',
             prefix: <LockOutlined style={{color: '#00000073'}}/>,
-            style: {'marginTop': '5px'}
+            style: {'marginTop': '5px'},
         },
         width: 'm',
     },

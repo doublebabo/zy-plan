@@ -14,6 +14,7 @@ const http = axios.create({
 // request拦截器
 http.interceptors.request.use((config: any) => {
   if (config.url !== '/user/login') {
+    // eslint-disable-next-line no-param-reassign
     config.headers = {
       ...config.headers,
       token: myLocalstorage.get('token') || '', // localstorage的封装，可以设置过期时间
@@ -39,9 +40,11 @@ http.interceptors.response.use((res) => {
       }
       if (res.data?.code === 401) {
         clearUserTokenInfo();
-        setTimeout(() => {
-          location.href = '/';
-        }, 1000)
+        if (location.pathname !== '/') {
+          setTimeout(() => {
+            location.href = '/';
+          }, 777)
+        }
       }
     }
   }
