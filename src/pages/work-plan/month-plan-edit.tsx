@@ -152,7 +152,7 @@ export default function MonthPlanEdit(prosp: any) {
     return (
         <div className={styles.planEdit}>
             <Spin spinning={loading}>
-                <div style={{fontSize: 16}}>
+                <div style={{fontSize: 16,fontWeight: 'bold'}}>
                     <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
                         window.history.go(-1);
                     }}></Button>月计划编辑

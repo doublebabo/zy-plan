@@ -35,7 +35,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'title',
         ellipsis: true,
         hideInSearch: true,
-        width: 100,
+        // width: 100,
         align: "center"
     },
     {
