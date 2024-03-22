@@ -14,7 +14,7 @@ import {
     weekPlanemployee,
     weekPlanleader
 } from "../../services";
-import addWeekPlanModal from "./add-week-plan-modal.tsx";
+import addWeekPlanModal from "./week-plan-modal.tsx";
 
 export default React.forwardRef(function PlanConfirmForm(props: any, ref: any) {
     const {} = props;

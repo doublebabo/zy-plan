@@ -24,7 +24,7 @@ import {
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import ConfirmModal from "./week-plan/confirm-modal.tsx";
-import AddWeekPlanModal from "./add-week-plan-modal.tsx";
+import AddWeekPlanModal from "./week-plan-modal.tsx";
 import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
 
 
