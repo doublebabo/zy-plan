@@ -273,10 +273,7 @@ export function weekHistory(id) {
 
 // 修改周计划
 export function weekPlanEdit(data) {
-    return executeAndTryCatch(() => http.post('/weekPlan/modify', {
-        content: data.content,
-        weekPlanId: data.weekPlanId
-    }));
+    return executeAndTryCatch(() => http.post('/weekPlan/modify', data));
 }
 
 // 完成月计划

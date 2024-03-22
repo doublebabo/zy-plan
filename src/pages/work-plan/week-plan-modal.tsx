@@ -40,7 +40,7 @@ export default React.forwardRef(function (props: any, ref) {
             setVisible(true);
             formRef.current?.resetFields();
             if (records) {
-                formRef.current?.setFieldsValue({content: records.content});
+                formRef.current?.setFieldsValue(records);
             }
             setWeekPlanId(id);
         },
