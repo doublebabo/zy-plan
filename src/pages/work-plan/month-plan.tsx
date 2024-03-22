@@ -1,23 +1,20 @@
-import styles from './work-plan.module.less';
+import styles from './month-plan.module.less';
 import React, {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
-import {ActionType, ProColumns, ProTable} from '@ant-design/pro-components';
+import {ActionType,  ProTable} from '@ant-design/pro-components';
 import {Button, message, Modal, Select, Tooltip, Upload, UploadProps} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
 import {
-    arrayToMap, completeMonthPlan,
-    getDeptFirstList,
-    getDeptSecondList,
+
     download,
-    exportMonth, monthPlanImport,
+    exportMonth,
     monthPlanList,
-    planStatus, planWeeks, workIsImportantEnum, monthPlanDel,
+    planStatus, planMonths,  monthPlanDel,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import AddPlanModal from "./add-plan-modal.tsx";
-import PlanConfirmForm from "./plan-confirm-form.tsx";
-import {baseURL} from "../../utils/http";
+ import {baseURL} from "../../utils/http";
 
 const {confirm} = Modal;
 
@@ -33,7 +30,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '任务名称',
         dataIndex: 'title',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         // width: 100,
         align: "center"
@@ -41,7 +38,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '开始时间',
         dataIndex: 'startTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100,
         align: "center"
@@ -49,7 +46,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '截止时间',
         dataIndex: 'endTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100,
         align: "center"
@@ -57,7 +54,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '完成时间',
         dataIndex: 'finishTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100,
         align: "center"
@@ -65,21 +62,21 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '工作描述',
         dataIndex: 'content',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         align: "center"
     },
     {
         title: '达成目标或量化指标',
         dataIndex: 'objective',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         align: "center"
     },
     {
         title: '完成措施或关键节点',
         dataIndex: 'milestone',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         align: "center"
     },
@@ -87,7 +84,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         title: '状态',
         dataIndex: 'status',
         valueType: 'select',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: false,
         hideInTable: true,
         request: () => {
@@ -257,6 +254,8 @@ const MonthPlan = () => {
                         if (type === 'get') {
                             if (!['', void 0, null].includes(results.status)) {
                                 results.status = +results.status
+                            } else {
+                              results.status =0
                             }
                             if (results.deptFirstList && !(results.deptFirstList instanceof Array)) {
                                 results.deptFirstList = [results.deptFirstList]
@@ -268,7 +267,6 @@ const MonthPlan = () => {
                         }
                         return results;
                     },
-                    initialValues: {status: 0}
                 }}
                 pagination={{
                     pageSize: 10,
@@ -310,7 +308,7 @@ const MonthPlan = () => {
                   value={month}
                   style={{ width: 120 }}
                   onChange={(e) => setMonth(e)}
-                  options={planWeeks}
+                  options={planMonths}
                 />
             </Modal>
         </div>

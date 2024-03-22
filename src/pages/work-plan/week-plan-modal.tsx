@@ -1,7 +1,7 @@
-import React, {useImperativeHandle, useRef, useState} from "react";
+import React, {useEffect, useImperativeHandle, useRef, useState} from "react";
 import {ProForm, ProFormInstance, ProFormSelect, ProFormTextArea} from "@ant-design/pro-components";
 import {Modal} from "antd";
-import {planWeeks, weekPlanAdd, weekPlanEdit} from "../../services";
+import {planMonths, weekPlanAdd, weekPlanEdit} from "../../services";
 import {useParams} from "react-router";
 
 export default React.forwardRef(function (props: any, ref) {
@@ -17,6 +17,8 @@ export default React.forwardRef(function (props: any, ref) {
     const useparams = useParams();
 
     const [weekPlanId, setWeekPlanId] = useState<any>(null);
+
+    const recordRef = useRef<any>();
 
     function onOk() {
         if (loading) return;
@@ -38,16 +40,20 @@ export default React.forwardRef(function (props: any, ref) {
     useImperativeHandle(ref, () => ({
         show: (id = null, records?) => {
             setVisible(true);
-            formRef.current?.resetFields();
-            if (records) {
-                formRef.current?.setFieldsValue(records);
-            }
             setWeekPlanId(id);
+            recordRef.current = records;
+            formRef.current?.resetFields();
         },
         hide: () => {
             onCancel();
         },
     }));
+
+    useEffect(() => {
+        if (visible && recordRef.current) {
+            formRef.current?.setFieldsValue(recordRef.current);
+        }
+    }, [visible])
 
     return(
 

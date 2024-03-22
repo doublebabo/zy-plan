@@ -1,7 +1,7 @@
 import styles from "./layout.module.less";
-import {Button, Menu, MenuProps, message, Modal, notification, Popconfirm} from "antd";
+import {Button, Menu, MenuProps, message, Modal} from "antd";
 import {Outlet, useLocation} from "react-router-dom";
-import {clearUserTokenInfo, userLogout, userUpdatePassword} from "../../services";
+import {userLogout, userUpdatePassword} from "../../services";
 import {useNavigate} from "react-router";
 import React, {useEffect, useRef, useState} from "react";
 import myLocalstorage from "../../utils/localstorage.ts";
@@ -29,7 +29,10 @@ function getItem(
 const items: MenuProps['items'] = [
     getItem('工作计划编辑', '/work-plan', null,),
     getItem('部门问题管理', '/dept-issue', null,),
+    getItem('工作计划检查', '/work-plan-check', null,),
     getItem('用户管理', '/user-mgt', null,),
+    getItem('办公室统计', '/office-summary', null,),
+    getItem('检查结果', '/self-check', null,),
 ];
 
 
@@ -92,14 +95,28 @@ const Layout = () => {
     const isManager = myLocalstorage.get('manager') === 1;
     const isAdmin = myLocalstorage.get('admin') === 1;
 
+  function filterItems() {
+    let _items = [...items];
+    if (!isManager) {
+      _items = _items.filter((o: any) => !['/user-mgt', '/work-plan-check'].includes(o.key))
+    }
+    if (!isAdmin) {
+      _items = _items.filter((o: any) => !['/office-summary'].includes(o.key))
+    }
+    return _items;
+  }
+
     return (
         <>
             <div className={styles.context}>
                 <div className={styles.head}>
                     <div className={styles.headLeft}>泽宇智能工作管理</div>
                     <div className={styles.headMid}>
-                        <Menu className={styles.menus} onClick={onMenuClick} selectedKeys={[current]} mode="horizontal"
-                              items={isManager || isAdmin ? items : items.filter(o => o.key !== '/user-mgt')}/>
+                        <Menu className={styles.menus}
+                              onClick={onMenuClick}
+                              selectedKeys={[current]}
+                              mode="horizontal"
+                              items={filterItems()}/>
                     </div>
                     <div className={styles.headRight}>
                         <span style={{marginRight: 16, cursor: 'pointer'}}>
@@ -146,9 +163,7 @@ const Layout = () => {
                     />
                 </ProForm>
             </Modal>
-
         </>
-
     )
 }
 

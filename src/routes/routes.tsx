@@ -11,6 +11,8 @@ import DeptIssue from "../pages/dept-issue/dept-issue.tsx";
 import MonthPlanEdit from "../pages/work-plan/month-plan-edit.tsx";
 import MonthPlanDetail from "../pages/work-plan/month-plan-detail.tsx";
 import PlanConfirmForm from "../pages/work-plan/plan-confirm-form.tsx";
+import WorkPlanCheck from "../pages/work-plan-check/work-plan-check.tsx";
+import OfficeSummary from "../pages/office-summary/office-summary.tsx";
 
 async function loginLoader() {
   if (myLocalstorage.get('token')) {
@@ -41,7 +43,7 @@ const router = createBrowserRouter([
       return null
     },
     children: [
-      { index: true, element: <UserMgt /> },
+      {index: true, element: <UserMgt/>},
     ],
   },
   {
@@ -57,11 +59,11 @@ const router = createBrowserRouter([
       return null
     },
     children: [
-      { index: true, element: <MonthPlan /> },
-      { path: '/work-plan/week-plan/:id', element: <WeekPlan /> },
-      { path: '/work-plan/edit/:id', element: <MonthPlanEdit /> },
-      { path: '/work-plan/detail/:id', element: <MonthPlanDetail /> },
-      { path: '/work-plan/confirm/:id', element: <PlanConfirmForm /> },
+      {index: true, element: <MonthPlan/>},
+      {path: '/work-plan/week-plan/:id', element: <WeekPlan/>},
+      {path: '/work-plan/edit/:id', element: <MonthPlanEdit/>},
+      {path: '/work-plan/detail/:id', element: <MonthPlanDetail/>},
+      {path: '/work-plan/confirm/:id', element: <PlanConfirmForm/>},
     ],
   },
   {
@@ -77,9 +79,60 @@ const router = createBrowserRouter([
       return null
     },
     children: [
-      { index: true, element: <DeptIssue /> },
+      {index: true, element: <DeptIssue/>},
     ],
-  }
+  },
+  //   工作计划检查
+  {
+    path: "/work-plan-check",
+    element: <Layout/>,
+    errorElement: <ErrorPage/>,
+    loader: async () => {
+      // if (myLocalstorage.get('token')) {
+      //   await useInfo();
+      // } else {
+      //   return redirect('/');
+      // }
+      return null
+    },
+    children: [
+      {index: true, element: <WorkPlanCheck/>},
+    ],
+  },
+//   办公室统计
+  {
+    path: "/office-summary",
+    element: <Layout/>,
+    errorElement: <ErrorPage/>,
+    loader: async () => {
+      // if (myLocalstorage.get('token')) {
+      //   await useInfo();
+      // } else {
+      //   return redirect('/');
+      // }
+      return null
+    },
+    children: [
+      {index: true, element: <OfficeSummary key='office-summary' />},
+    ],
+  },
+    // 检查结果
+  {
+    path: "/self-check",
+    element: <Layout/>,
+    errorElement: <ErrorPage/>,
+    loader: async () => {
+      // if (myLocalstorage.get('token')) {
+      //   await useInfo();
+      // } else {
+      //   return redirect('/');
+      // }
+      return null
+    },
+    children: [
+      {index: true, element: <OfficeSummary key='self-check' type='self-check'/>},
+    ],
+  },
 ]);
 
 export default router;

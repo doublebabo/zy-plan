@@ -243,28 +243,7 @@ export default function MonthPlanEdit(prosp: any) {
                                 return Promise.resolve(planStatus)
                             }}
                         />
-                        {/*<ProFormSelect*/}
-                        {/*    name='executor'*/}
-                        {/*    width='lg'*/}
-                        {/*    label="责任人"*/}
-                        {/*    request={async () => {*/}
-                        {/*        const {data = []} = await getBlameList();*/}
-                        {/*        return data.map(o => ({label: o.nickName, value: o.id}));*/}
-                        {/*    }}*/}
-                        {/*    rules={[{ required: true, message: '这是必填项' }]}*/}
-                        {/*/>*/}
-                        {/*<ProFormSelect*/}
-                        {/*    name='participant'*/}
-                        {/*    width='lg'*/}
-                        {/*    label="参与人"*/}
-                        {/*    fieldProps={{*/}
-                        {/*        mode:'multiple'*/}
-                        {/*    }}*/}
-                        {/*    request={async () => {*/}
-                        {/*        const {data} = await monthPlanUserList();*/}
-                        {/*        return (data || []).map(o => ({label: o.nickName, value: o.nickName}))*/}
-                        {/*    }}*/}
-                        {/*/>*/}
+
                     </ProFormGroup>
                 </ProForm>
 
