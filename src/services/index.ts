@@ -531,8 +531,8 @@ export const yesOrNoEnumValue = {
 }
 
 // 新建用户时，选择上级领导
-export function getManagersOfStaff(name) {
-    return executeAndTryCatch(() => http.get('/user/all?name=' + name));
+export function getManagersOfStaff() {
+    return executeAndTryCatch(() => http.get('/user/all'));
 
 }
 
