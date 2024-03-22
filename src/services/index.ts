@@ -43,9 +43,11 @@ export function userLogout() {
 
 export function userList(data) {
     const postData = {
+        ...data,
         "currPage": data.current,
-        "pageSize": data.pageSize
+        "pageSize": data.pageSize,
     }
+    delete postData.current;
     return executeAndTryCatch(() => http.post('/user/page', postData).then(res => {
         if (res.success) {
             return {
@@ -124,34 +126,18 @@ export function monthPlanList(data) {
     }));
 }
 
-// // 0、 全部
-// // 1、 未完成
-// // 2、 超时未完成
-// // 3、 已完成
-// // 4、 超时已完成
-// // 5、 周计划未发布
-// // 6、 周计划已发布
-// // 7、 周计划员工未确认
-// // 8、 周计划员工已确认
-// // 9、 周计划领导未确认
-// // 10、周计划领导已确认
 export const planStatus = [
-    {label: '全部', value: 0},
-    {label: '未完成', value: 1},
-    {label: '超时未完成', value: 2},
-    {label: '已完成', value: 3},
-    {label: '超时已完成', value: 4},
-    // {label: '周计划未发布', value: 5},
-    // {label: '周计划已发布', value: 6},
-    // {label: '周计划员工未确认', value: 7},
-    // {label: '周计划员工已确认', value: 8},
-    // {label: '周计划领导未确认', value: 9},
-    // {label: '周计划领导已确认', value: 10}
+    {label: '未完成', value: 0},
+    {label: '已完成', value: 1},
+    {label: '超时', value: 2},
 ];
 
 export const weekStatus = [
-    {label: '未完成', value: 1},
-    {label: '已完成', value: 2}
+    // {label: '未完成', value: 1},
+    // {label: '已完成', value: 2}
+  {label: '未完成', value: 0},
+  {label: '已完成', value: 1},
+  {label: '超时', value: 2},
 ];
 
 export const yOrN = [

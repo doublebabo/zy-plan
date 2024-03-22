@@ -5,7 +5,7 @@ import Layout from "../pages/layout/layout.tsx";
 import {redirect} from "react-router";
 import myLocalstorage from "../utils/localstorage.ts";
 import UserMgt from "../pages/user-mgt/user-mgt.tsx";
-import WorkPlan from "../pages/work-plan/work-plan.tsx";
+import MonthPlan from "../pages/work-plan/month-plan.tsx";
 import WeekPlan from "../pages/work-plan/week-plan/week-plan.tsx";
 import DeptIssue from "../pages/dept-issue/dept-issue.tsx";
 import MonthPlanEdit from "../pages/work-plan/month-plan-edit.tsx";
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
       return null
     },
     children: [
-      { index: true, element: <WorkPlan /> },
+      { index: true, element: <MonthPlan /> },
       { path: '/work-plan/week-plan/:id', element: <WeekPlan /> },
       { path: '/work-plan/edit/:id', element: <MonthPlanEdit /> },
       { path: '/work-plan/detail/:id', element: <MonthPlanDetail /> },

@@ -12,13 +12,16 @@ const {confirm} = Modal;
 const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     {
         dataIndex: 'id',
-        hideInTable: true
+        hideInTable: true,
+        hideInSearch: true,
     },
     {
         title: '序号',
         dataIndex: 'index',
         width: 48,
-        valueType: 'index'
+        valueType: 'index',
+        hideInSearch: true,
+
     },
     {
         title: '姓名',
@@ -29,24 +32,32 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
         title: '部门',
         dataIndex: 'deptName',
         ellipsis: true,
+        hideInSearch: true,
+
     },
     {
         title: '账号',
         dataIndex: 'account',
         ellipsis: true,
+        hideInSearch: true,
+
     },
-  {
-    title: '是否管理者',
-    dataIndex: 'manager',
-    ellipsis: true,
-    valueEnum: yesOrNoEnumValue
-  },
-  {
-    title: '是否管理员',
-    dataIndex: 'admin',
-    ellipsis: true,
-    valueEnum: yesOrNoEnumValue
-  },
+    {
+        title: '是否管理者',
+        dataIndex: 'manager',
+        ellipsis: true,
+        valueEnum: yesOrNoEnumValue,
+        hideInSearch: true,
+
+    },
+    {
+        title: '是否管理员',
+        dataIndex: 'admin',
+        ellipsis: true,
+        valueEnum: yesOrNoEnumValue,
+        hideInSearch: true,
+
+    },
     {
         title: '操作',
         dataIndex: 'title',
@@ -87,7 +98,7 @@ const UserMgt = () => {
     function onDelete(record: any) {
         confirm({
             icon: null,
-            title: <span className={styles.modalTitle}>确认要删除吗？</span>  ,
+            title: <span className={styles.modalTitle}>确认要删除吗？</span>,
             closable: true,
             wrapClassName: styles.logoutModal,
             okText: '确定',
@@ -116,9 +127,19 @@ const UserMgt = () => {
                 columns={cols}
                 actionRef={actionRef}
                 cardBordered
-                request={async (params = {}, sort, filter) => userList(params)}
+                request={async (params = {}, sort, filter) => {
+                  return  userList({...params,name: params?.name?.trim()})
+                }}
                 rowKey="id"
-                search={false}
+                search={{
+                    defaultColsNumber: 4,
+                }}
+                form={{
+                    syncToUrl: (values, type) => {
+                        return values;
+                    },
+                    // initialValues: {name: null}
+                }}
                 options={{
                     setting: false,
                     density: false
@@ -143,7 +164,7 @@ const UserMgt = () => {
             />
             <ModifyModal visible={modalVisible} onSuccess={() => {
                 actionRef?.current?.reload();
-            }} setVisible={setModalVisible} type={modalType} record={record} />
+            }} setVisible={setModalVisible} type={modalType} record={record}/>
         </div>
     )
 }

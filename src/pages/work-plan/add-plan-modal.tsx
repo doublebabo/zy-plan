@@ -49,12 +49,11 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
     return (
         <Modal
             open={visible}
-            title='新增总计划'
+            title='新增月计划'
             width='80%'
             onCancel={() => setVisible(false)}
             onOk={onOk}
             confirmLoading={loading}
-
         >
             <ProForm
                 formRef={formRef}
@@ -62,57 +61,47 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
             >
                 <ProFormText
                     name="title"
-                    label="工作名称"
+                    label="任务名称"
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
+              <ProFormDatePicker
+                  fieldProps={{
+                    style: {width: '100%'}
+                  }}
+                  name="startTime"
+                  label="开始时间"
+                  rules={[{ required: true, message: '这是必填项' }]}
+              />
+              <ProFormDatePicker
+                  fieldProps={{
+                    style: {width: '100%'}
+                  }}
+                  name="endTime"
+                  label="截止时间"
+                  rules={[{ required: true, message: '这是必填项' }]}
+              />
                 <ProFormTextArea
                     name="content"
-                    label="工作内容"
+                    label="工作描述"
                     placeholder="请输入"
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormTextArea
                     name="objective"
-                    label="工作目标"
+                    label="达成目标或量化指标"
                     placeholder="请输入"
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormText
                     name="milestone"
-                    label="里程碑"
+                    label="完成措施或关键节点"
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
-                <ProFormSelect
-                    name='important'
-                    label="是否重要事项"
-                    request={() => Promise.resolve(importantEnum)}
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
-                <ProFormDatePicker
-                    fieldProps={{
-                        style: {width: '100%'}
-                    }}
-                    name="startTime"
-                    label="开始时间"
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
-                <ProFormDatePicker
-                    fieldProps={{
-                        style: {width: '100%'}
-                    }}
-                    name="endTime"
-                    label="截止时间"
-                    rules={[{ required: true, message: '这是必填项' }]}
-                />
-
-
             </ProForm>
-
-
         </Modal>
     )
 })
