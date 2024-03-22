@@ -7,7 +7,7 @@ import {userLogin} from "../../services";
 import bk from './../../assets/bk.svg'
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 
-const columns: ProFormColumnsType<any>[] = [
+const columns = ({onConfirm}) => [
     {
         title: '',
         dataIndex: 'account',
@@ -44,6 +44,11 @@ const columns: ProFormColumnsType<any>[] = [
             placeholder: '密码',
             prefix: <LockOutlined style={{color: '#00000073'}}/>,
             style: {'marginTop': '5px'},
+          onKeyPress: (e) => {
+            if (e.charCode === 13) {
+              onConfirm();
+            }
+          }
         },
         width: 'm',
     },
@@ -75,8 +80,9 @@ const Login = () => {
             <div className={styles.loginBox}>
                 <div className={styles.header}>用户登录</div>
                 <BetaSchemaForm
-                    columns={columns}
+                    columns={columns({onConfirm})}
                     formRef={formRef}
+
                     submitter={{
                         render: () => {
                             return [
