@@ -15,13 +15,13 @@ import styles from './plan-edit.module.less';
 import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
-    arrayToMap,
-    importantEnum,
-    monthPlanDetail,
-    weekPlanListById,
-    weekStatus,
-    workIsImportantEnum,
-    workStatus2
+  arrayToMap,
+  importantEnum,
+  monthPlanDetail, planStatus,
+  weekPlanListById,
+  weekStatus,
+  workIsImportantEnum,
+  workStatus2
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
@@ -31,27 +31,8 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
     {
         title: '序号',
         dataIndex: 'index',
-        width: 48,
+        width: 60,
         valueType: 'index'
-    },
-    {
-        title: '开始时间',
-        dataIndex: 'startTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
-    },
-
-    {
-        title: '截止时间',
-        dataIndex: 'endTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
-    },
-    {
-        dataIndex: 'id',
-        hideInTable: true,
     },
     {
         title: '工作内容',
@@ -64,26 +45,28 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
         ellipsis: true
     },
     {
-        title: '工作问题',
+        title: '问题和风险',
         dataIndex: 'problem',
         ellipsis: true
     },
-    // {
-    //     title: '完成时间',
-    //     dataIndex: 'finishTime',
-    //     ellipsis: true,
-    //     hideInSearch: true,
-    //     width: 100
-    // },
-    // {
-    //     title: '完成状态',
-    //     dataIndex: 'status',
-    //     ellipsis: true,
-    //     hideInSearch: true,
-    //     valueEnum: arrayToMap(weekStatus),
-    //     width: 100
-    // },
-
+    {
+        title: '开始时间',
+        dataIndex: 'startTime',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 100
+    },
+    {
+        title: '截止时间',
+        dataIndex: 'endTime',
+        ellipsis: true,
+        hideInSearch: true,
+        width: 100
+    },
+    {
+        dataIndex: 'id',
+        hideInTable: true,
+    },
 ];
 
 
@@ -143,7 +126,7 @@ export default function MonthPlanDetail(prosp: any) {
                 <div style={{fontSize: 16}}>
                     <Button icon={<ArrowLeftOutlined/>} style={{marginRight: 14}} shape="round" onClick={() => {
                         window.history.go(-1);
-                    }}></Button>总计划详情
+                    }}></Button>月计划详情
                 </div>
                 <ProForm
                     className={styles.planEditForm}
@@ -167,13 +150,7 @@ export default function MonthPlanDetail(prosp: any) {
                                 width='lg'
                                 disabled={true}
                             />
-                            <ProFormSelect
-                                name='important'
-                                width='lg'
-                                label="是否重要事项"
-                                disabled={true}
-                                options={importantEnum}
-                            />
+
                         </div>
                         <ProFormText
                             name="title"
@@ -190,59 +167,18 @@ export default function MonthPlanDetail(prosp: any) {
                         />
                         <ProFormTextArea
                             name="objective"
-                            label="工作目标"
+                            label="达成目标或量化指标"
                             width='lg'
                             placeholder=""
                             disabled={true}
                         />
                         <ProFormTextArea
                             name="milestone"
-                            label="里程碑"
+                            label="完成措施或关键节点"
                             width='lg'
                             placeholder=""
                             disabled={true}
                         />
-                        {/*<ProFormTextArea*/}
-                        {/*    name="achievement"*/}
-                        {/*    label="工作结果"*/}
-                        {/*    width='lg'*/}
-                        {/*    placeholder=""*/}
-                        {/*    disabled={true}*/}
-                        {/*/>*/}
-                        {/*<ProFormTextArea*/}
-                        {/*    name="problem"*/}
-                        {/*    label="遗留问题"*/}
-                        {/*    width='lg'*/}
-                        {/*    placeholder=""*/}
-                        {/*    disabled={true}*/}
-                        {/*/>*/}
-                        {/*<ProFormTextArea*/}
-                        {/*    name="leaderComment"*/}
-                        {/*    label="部门经理意见"*/}
-                        {/*    width='lg'*/}
-                        {/*    placeholder=""*/}
-                        {/*    disabled={true}*/}
-                        {/*/>*/}
-
-                        {/*<ProFormList*/}
-                        {/*    name="commentList"*/}
-                        {/*    className={styles.formList}*/}
-                        {/*    creatorButtonProps={{*/}
-                        {/*        style: {*/}
-                        {/*            display: 'none'*/}
-                        {/*        }*/}
-                        {/*    }}*/}
-                        {/*    colProps={{*/}
-                        {/*        style: {display: 'none'}*/}
-                        {/*    }}*/}
-                        {/*    actionRender={() => []}*/}
-                        {/*>*/}
-                        {/*    <div className={styles.formListRow}>*/}
-                        {/*        <ProFormText name="comment" label="第三方意见" />*/}
-                        {/*        <ProFormText name="commentator" label="评论人" />*/}
-                        {/*    </div>*/}
-                        {/*</ProFormList>*/}
-                        {/*<ProFormText name="comment" label="意见" />*/}
                         <div className={styles.formRow}>
                             <ProFormDatePicker
                                 name="startTime"
@@ -259,7 +195,7 @@ export default function MonthPlanDetail(prosp: any) {
                             />
                             <ProFormDatePicker
 
-                                name="endTime"
+                                name="finishTime"
                                 width='lg'
                                 label="完成时间"
                                 disabled={true}
@@ -277,7 +213,7 @@ export default function MonthPlanDetail(prosp: any) {
                                 width='lg'
                                 label="完成状态"
                                 disabled={true}
-                                options={workStatus2}
+                                options={planStatus}
                             />
                             {/*<ProFormText*/}
                             {/*    name='executorName'*/}

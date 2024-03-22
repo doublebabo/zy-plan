@@ -15,12 +15,12 @@ import styles from './plan-edit.module.less';
 import {Button, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
-    arrayToMap, getBlameList, importantEnum,
-    monthPlanDetail, monthPlanEdit, monthPlanUserList,
-    weekPlanListById,
-    weekStatus,
-    workIsImportantEnum,
-    workStatus, workStatus2
+  arrayToMap, getBlameList, importantEnum,
+  monthPlanDetail, monthPlanEdit, monthPlanUserList, planStatus,
+  weekPlanListById,
+  weekStatus,
+  workIsImportantEnum,
+  workStatus, workStatus2
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import ConfirmModal from "./week-plan/confirm-modal.tsx";
@@ -29,68 +29,55 @@ import WeekPlanDetailModal from "./week-plan-detail-modal.tsx";
 
 
 const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): ProColumns<any>[] => [
-    {
-        title: '序号',
-        dataIndex: 'index',
-        width: 48,
-        valueType: 'index'
-    },
-    {
-        dataIndex: 'id',
-        hideInTable: true,
-
-    },
-    {
-        title: '工作内容',
-        dataIndex: 'content',
-        ellipsis: true
-    },
-    {
-        title: '开始时间',
-        dataIndex: 'startTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
-    },
-    {
-        title: '截止时间',
-        dataIndex: 'endTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
-    },
-    {
-        title: '确认时间',
-        dataIndex: 'finishTime',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 100
-    },
-    {
-        title: '完成状态',
-        dataIndex: 'statusString',
-        ellipsis: true,
-        hideInSearch: true,
-        valueEnum: arrayToMap(weekStatus),
-        width: 100
-    },
+  {
+    title: '序号',
+    dataIndex: 'index',
+    width: 60,
+    valueType: 'index'
+  },
+  {
+    title: '工作内容',
+    dataIndex: 'content',
+    ellipsis: true
+  },
+  {
+    title: '工作结果',
+    dataIndex: 'outcome',
+    ellipsis: true
+  },
+  {
+    title: '问题和风险',
+    dataIndex: 'problem',
+    ellipsis: true
+  },
+  {
+    title: '开始时间',
+    dataIndex: 'startTime',
+    ellipsis: true,
+    hideInSearch: true,
+    width: 100
+  },
+  {
+    title: '截止时间',
+    dataIndex: 'endTime',
+    ellipsis: true,
+    hideInSearch: true,
+    width: 100
+  },
+  {
+    dataIndex: 'id',
+    hideInTable: true,
+  },
     {
         title: '操作',
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 140,
+        width: 70,
         render: (text, record, _, action) => {
 
             return [
-                <a
-                    key="editable"
-                    onClick={() => {
-                        onConfirm(record);
-                    }}
-                >
-                    结果确认
-                </a>,
+
                 <a
                     target="_blank" rel="noopener noreferrer" key="view"   onClick={() => {
                     onWeekPlan('edit',record);
@@ -168,7 +155,7 @@ export default function MonthPlanEdit(prosp: any) {
                 <div style={{fontSize: 16}}>
                     <Button icon={<ArrowLeftOutlined /> } style={{marginRight: 14}} shape="round"  onClick={() => {
                         window.history.go(-1);
-                    }}></Button>总计划编辑
+                    }}></Button>月计划编辑
                 </div>
                 <ProForm
                     className={styles.planEditForm}
@@ -200,15 +187,7 @@ export default function MonthPlanEdit(prosp: any) {
                             width='lg'
                             disabled={true}
                         />
-                        <ProFormSelect
-                            name='important'
-                            width='lg'
-                            label="是否重要事项"
-                            options={importantEnum}
-                            disabled={true}
 
-                            // rules={[{ required: true, message: '这是必填项' }]}
-                        />
                         <ProFormText
                             name="title"
                             width='lg'
@@ -226,7 +205,7 @@ export default function MonthPlanEdit(prosp: any) {
                         />
                         <ProFormTextArea
                             name="objective"
-                            label="工作目标"
+                            label="达成目标或量化指标"
                             width='lg'
                             placeholder="请输入"
                             required={true}
@@ -234,7 +213,7 @@ export default function MonthPlanEdit(prosp: any) {
                         />
                         <ProFormTextArea
                             name="milestone"
-                            label="里程碑"
+                            label="完成措施或关键节点"
                             width='lg'
                             placeholder=""
                             rules={[{ required: true, message: '这是必填项' }]}
@@ -261,7 +240,7 @@ export default function MonthPlanEdit(prosp: any) {
                             disabled={true}
                             // rules={[{ required: true, message: '这是必填项' }]}
                             request={() => {
-                                return Promise.resolve(workStatus2)
+                                return Promise.resolve(planStatus)
                             }}
                         />
                         {/*<ProFormSelect*/}

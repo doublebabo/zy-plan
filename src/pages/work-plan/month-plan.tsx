@@ -25,77 +25,9 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
     {
         title: '序号',
         dataIndex: 'rowNumber',
-        width: 9,
+        width: 60,
         hideInSearch: true,
-        align: "center"
-    },
-    {
-        title: '一级部门',
-        dataIndex: 'deptFirstList',
         ellipsis: true,
-        valueType: 'select',
-        request: async () => {
-            const {data = []} = await getDeptFirstList();
-            return data.map(o => ({label: o.name, value: o.name}));
-        },
-        fieldProps: {
-            mode: 'multiple'
-        },
-        hideInTable: true,
-        hideInSearch: true,
-    },
-    {
-        hideInTable: true,
-        title: '二级部门',
-        dataIndex: 'deptSecondList',
-        valueType: 'select',
-        fieldProps: {
-            mode: 'multiple'
-        },
-        ellipsis: true,
-        dependencies: ['deptFirstList'],
-        request: async ({deptFirstList = []}) => {
-            const {data = []} = await getDeptSecondList(deptFirstList);
-            return data.map(o => ({label: o.name, value: o.name}));
-        },
-        hideInSearch: true,
-    },
-    {
-        title: '工作分类',
-        dataIndex: 'important',
-        valueType: 'select',
-        fieldProps: {
-            // mode: 'multiple'
-        },
-        ellipsis: true,
-        request: async () => {
-            return workIsImportantEnum;
-        },
-        hideInTable: true,
-        hideInSearch: true,
-    },
-    {
-        title: '责任人',
-        dataIndex: 'executorName',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 30,
-        align: "center"
-    },
-    {
-        title: '一级部门',
-        dataIndex: 'deptFirst',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 30,
-        align: "center"
-    },
-    {
-        title: '二级部门',
-        dataIndex: 'deptSecond',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 30,
         align: "center"
     },
     {
@@ -107,19 +39,11 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         align: "center"
     },
     {
-        title: '工作内容',
-        dataIndex: 'content',
-        ellipsis: true,
-        hideInSearch: true,
-        width: 30,
-        hideInTable: true
-    },
-    {
         title: '开始时间',
         dataIndex: 'startTime',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
+        width: 100,
         align: "center"
     },
     {
@@ -127,7 +51,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'endTime',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
+        width: 100,
         align: "center"
     },
     {
@@ -135,93 +59,49 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'finishTime',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
+        width: 100,
         align: "center"
     },
     {
         title: '工作描述',
-        dataIndex: 'finishTime',
+        dataIndex: 'content',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
         align: "center"
     },
     {
         title: '达成目标或量化指标',
-        dataIndex: 'finishTime',
+        dataIndex: 'objective',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
         align: "center"
     },
     {
         title: '完成措施或关键节点',
-        dataIndex: 'finishTime',
+        dataIndex: 'milestone',
         ellipsis: true,
         hideInSearch: true,
-        width: 25,
         align: "center"
     },
-    // {
-    //     title: '参与人',
-    //     dataIndex: 'participant',
-    //     ellipsis: true,
-    //     hideInSearch: true,
-    //     width: 30,
-    //     align: "center"
-    // },
     {
         title: '状态',
         dataIndex: 'status',
+        valueType: 'select',
+        ellipsis: true,
+        hideInSearch: false,
+        hideInTable: true,
         request: () => {
             return planStatus;
         },
-        hideInTable: true
     },
-    {
-        title: '状态',
-        dataIndex: 'statusString',
-        ellipsis: true,
-        valueEnum: arrayToMap(planStatus),
-        width: 29,
-        align: "center",
-        hideInTable: true,
-        hideInSearch: true,
-    },
-    // {
-    //     title: '工作分类',
-    //     dataIndex: 'important',
-    //     ellipsis: true,
-    //     hideInSearch: true,
-    //     width: 20,
-    //     align: "center"
-    // },
-    // {
-    //     title: '姓名',
-    //     dataIndex: 'executorName',
-    //     ellipsis: true,
-    //     hideInTable: true,
-    //     hideInSearch: true,
-    // },
     {
         title: '操作',
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 40,
-        render: (text, record, _, action) => [
-            // <a
-            //     key="editable"
-            //     onClick={() => {
-            //         navigate('/work-plan/week-plan/' + record.id,
-            //             {
-            //                 state: record
-            //             }
-            //         )
-            //     }}
-            // >
-            //     周计划
-            // </a>,
+        width: 60,
+        render: (_, record,) => [
+
             <a
                 onClick={() => {
                     onAction('edit', record)
@@ -229,22 +109,6 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
                 key="view">
                 编辑
             </a>,
-            <a
-                onClick={() => {
-                    onFinish(record)
-                }}
-                key="finish">
-                确认
-            </a>
-            ,
-            <a
-                onClick={() => {
-                    onDel(record)
-                }}
-                key="finish">
-                删除
-            </a>
-            ,
         ],
     },
 ];
@@ -404,7 +268,6 @@ const MonthPlan = () => {
                         }
                         return results;
                     },
-                    syncToInitialValues: false,
                     initialValues: {status: 0}
                 }}
                 pagination={{
@@ -412,7 +275,6 @@ const MonthPlan = () => {
                     pageSizeOptions: [10, 20, 50],
                 }}
                 dateFormatter="string"
-                headerTitle="每月计划列表"
                 toolBarRender={() => [
                     <Button
                         key="button"
