@@ -10,7 +10,7 @@ import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from 
   apiStatisticsMonthPlanList,
   arrayToMap,
   download,
-  exportDataOne,
+  exportDataOne, getAllUsersWhoAreUnderManaged,
   planMonths,
 
   planStatus,
@@ -168,6 +168,10 @@ const getColumns = ({isSelfCheckPage}: any): any => [
         dataIndex: 'userId',
         hideInSearch: false,
         hideInTable: true,
+        request: async () => {
+          const res = await getAllUsersWhoAreUnderManaged()
+          return (res?.data || []).map(o => ({label: o.name, value: o.id}));
+        },
       },
     ])
 
