@@ -285,7 +285,7 @@ const WorkPlanCheck = () => {
             formRef={formRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
-              const postData = {...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: usersRef.current?.[0]?.value}
+              const postData = {...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: usersRef.current?.[0]?.value || null}
               // setParams(postData)
                return apiWorkPlanCheckList(postData);
                // return apiWorkPlanCheckList(params);
