@@ -261,6 +261,9 @@ const WorkPlanCheck = () => {
     if (res.data.length) {
       formRef.current.setFieldsValue({userId: res.data?.[0].id, status: 0})
       setInitialValues({userId: res.data?.[0].id || null, status: 0})
+    } else {
+      setInitialValues({userId: null, status: 0})
+
     }
     usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
     // actionRef.current.reload();
