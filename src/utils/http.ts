@@ -26,31 +26,33 @@ http.interceptors.request.use((config: any) => {
   return Promise.reject(error)
 });
 
+let tokenIsExpired = false;
 // response拦截器
 http.interceptors.response.use((res) => {
-  if (res?.status !== 200) {
-    notification.error({message: res.data?.msg || '服务器开小差~', duration: 1.5, description: null})
-    throw new Error(res.data?.msg);
+  if (res.data?.code === 401) {
+    if (!tokenIsExpired) {
+      notification.error({message: res.data?.msg, duration: 1.17, description: null, closeIcon: false});
+    }
+    tokenIsExpired = true;
+    clearUserTokenInfo();
+    if (location.pathname !== '/') {
+      setTimeout(() => {
+        location.href = '/';
+      }, 777)
+    }
   } else {
-    if (res.data?.msg) {
+    tokenIsExpired = false;
+    if (res.data.msg) {
       if (res.data.success) {
-        notification.success({message: res.data?.msg, duration: 1.5, description: null});
+        notification.success({message: res.data?.msg, duration: 1.17, description: null});
       } else {
-        notification.error({message: res.data?.msg, duration: 1.5, description: null});
-      }
-      if (res.data?.code === 401) {
-        clearUserTokenInfo();
-        if (location.pathname !== '/') {
-          setTimeout(() => {
-            location.href = '/';
-          }, 777)
-        }
+        notification.error({message: res.data?.msg, duration: 1.17, description: null});
       }
     }
   }
   return res.data
 }, (error) => {
-  notification.error({message: error.message || '服务器开小差~', duration: 1.5, description: null})
+  notification.error({message: error.message || '服务器开小差~', duration: 1.17, description: error.config.baseURL})
   return Promise.reject(error)
 });
 

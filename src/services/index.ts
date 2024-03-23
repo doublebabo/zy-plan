@@ -1,8 +1,6 @@
 import http from "../utils/http.ts";
 import myLocalstorage from "../utils/localstorage.ts";
 import dayjs from 'dayjs';
-import localstorage from "../utils/localstorage.ts";
-
 
 async function executeAndTryCatch(func) {
   try {
@@ -22,14 +20,13 @@ function handlePagePostData(data) {
 
 export function clearUserTokenInfo() {
   localStorage.setItem('token', '');
-  // localStorage.setItem('role', '');
   localStorage.setItem('name', '');
   localStorage.setItem('admin', '');
   localStorage.setItem('manager', '');
 }
 
 export function userLogin(data) {
-  return executeAndTryCatch(() => http.post('/user/login', data).then(res => {
+  return executeAndTryCatch(() => http.post('/user/login', data).then((res: any) => {
     if (res.success) {
       myLocalstorage.set('token', res.data?.token);
       // myLocalstorage.set('role', res.data?.role);
@@ -57,7 +54,7 @@ export function userList(data) {
     "pageSize": data.pageSize,
   }
   delete postData.current;
-  return executeAndTryCatch(() => http.post('/user/page', postData).then(res => {
+  return executeAndTryCatch(() => http.post('/user/page', postData).then((res: any) => {
     if (res.success) {
       return {
         data: res?.data?.obj || [],
@@ -120,7 +117,7 @@ export function monthPlanList(data) {
     "pageSize": data.pageSize,
   }
   delete postData.current;
-  return executeAndTryCatch(() => http.post('/monthPlan/myList', postData).then(res => {
+  return executeAndTryCatch(() => http.post('/monthPlan/myList', postData).then((res: any) => {
     if (res.success) {
       return {
         data: res?.data?.obj || [],
@@ -531,7 +528,7 @@ export function getManagersOfStaff() {
 
 // 查询所管理的所有用户
 export function getAllUsersWhoAreUnderManaged() {
-  return executeAndTryCatch(() => http.get('/user/list' + name));
+  return executeAndTryCatch(() => http.get('/user/list'));
 }
 
 //important字段含义是是否重要事项，只需要传（是/否）

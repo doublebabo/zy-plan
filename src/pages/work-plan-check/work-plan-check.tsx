@@ -3,24 +3,19 @@ import React, {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router";
 import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
-import {ExportOutlined} from "@ant-design/icons";
-import {
+ import {
   apiFinishMonthPlan,
-  apiWorkPlanCheckList, arrayToMap,
+  apiWorkPlanCheckList, arrayToMap, getAllUsersWhoAreUnderManaged,
 
-  download,
-  exportMonth,
 
   planStatus,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
-import {baseURL} from "../../utils/http";
-import PlanCorrectionCol from "./plan-correction-col.tsx";
-import {useLocation} from "react-router-dom";
+ import PlanCorrectionCol from "./plan-correction-col.tsx";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onAction, isManager}: any): any => [
+const getColumns = ( {onAction, isManager, navigate}: any): any => [
   {
     title: '序号',
     dataIndex: 'rowNumber',
@@ -128,6 +123,10 @@ const getColumns = (navigate: any, {onAction, isManager}: any): any => [
       dataIndex: 'name',
       hideInSearch: false,
       hideInTable: true,
+      request: async () => {
+        const res = await getAllUsersWhoAreUnderManaged()
+        return (res?.data || []).map(o => ({label: o.name, value: o.id}));
+      },
     },
   ],
   {
@@ -245,7 +244,7 @@ const WorkPlanCheck = () => {
 
 
   useEffect(() => {
-    setCols(getColumns(navigate, {onAction, isManager}));
+    setCols(getColumns({navigate, onAction, isManager}));
   }, []);
 
   return (

@@ -614,7 +614,9 @@ export default function DeptIssue() {
                             message: '此项为必填项',
                         },
                     ]}
-                    width='100%'
+                    style={{
+                      width: '100%'
+                    }}
                     dataFormat={'YYYY-MM-DD'}
                 >
                 </ProFormDatePicker>
@@ -636,4 +638,4 @@ export default function DeptIssue() {
             />
         </div>
     );
-};
+}
