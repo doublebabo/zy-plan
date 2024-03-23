@@ -5,7 +5,7 @@ import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
  import {
   apiDeptFirstList,
-  apiDeptSecondList, apiMonthPlanMylist,
+  apiDeptSecondList, apiEmployeeList, apiMonthPlanMylist,
   apiStatisticsExport,
   apiStatisticsMonthPlanList,
   arrayToMap,
@@ -154,25 +154,28 @@ const getColumns = ({isSelfCheckPage}: any): any => [
           return res.data.map(o => ({label: o.name, value: o.id}))
         },
       },
-      {
-        title: '月份选择',
-        valueType: 'select',
-        dataIndex: 'month',
-        hideInSearch: false,
-        hideInTable: true,
-        request: () => planMonths
-      },
 
       {
         title: '姓名',
         dataIndex: 'userId',
         hideInSearch: false,
         hideInTable: true,
-        request: async () => {
-          const res = await getAllUsersWhoAreUnderManaged()
+        dependencies: ['deptSecondId', 'deptFirstId'],
+        request: async ({deptSecondId, deptFirstId}) => {
+          if ([null, void 0 ,''].includes(deptFirstId)) return [];
+          const res = await apiEmployeeList({deptSecondId: [null, void 0 ,''].includes(deptSecondId) ? null : deptSecondId, deptFirstId})
           return (res?.data || []).map(o => ({label: o.name, value: o.id}));
         },
       },
+    {
+      title: '月份选择',
+      valueType: 'dateMonth',
+      dataIndex: 'month',
+      hideInSearch: false,
+      hideInTable: true,
+      initialValue: null
+      // request: () => planMonths
+    },
     ])
 
   ],
@@ -194,6 +197,7 @@ const OfficeSummary = (props: any) => {
 
   const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<any>();
   const [cols, setCols] = useState<any>([]);
 
   const [downloading, setDownloading] = useState(false);
@@ -289,6 +293,7 @@ const OfficeSummary = (props: any) => {
               )
             }))}
             actionRef={actionRef}
+            formRef={formRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
               const postData = {...params};
@@ -326,6 +331,21 @@ const OfficeSummary = (props: any) => {
                   return results;
                 }
                 return results;
+              },
+              initialValues: {status: 0},
+              onValuesChange: (changedValues, values) => {
+                console.log('changedValues, values', changedValues, values);
+                if ('deptFirstId' in changedValues || !('deptFirstId' in values)) {
+                  formRef.current.setFieldsValue({
+                    deptSecondId: null,
+                    userId: null
+                  })
+                }
+                if ('deptSecondId' in changedValues || !('deptSecondId' in values)) {
+                  formRef.current.setFieldsValue({
+                    userId: null
+                  })
+                }
               },
             }}
             pagination={{

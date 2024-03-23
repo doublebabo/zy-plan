@@ -86,7 +86,7 @@ const UserMgt = () => {
   const isManager = myLocalstorage.get('manager') === 1;
   const isAdmin = myLocalstorage.get('admin') === 1;
 
-  if (!isManager || !isAdmin) {
+  if (!isManager && !isAdmin) {
     throw Error('没有权限')
   }
 
