@@ -5,8 +5,8 @@ import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
  import {
   apiDeptFirstList,
-  apiDeptSecondList,
-   apiStatisticsExport,
+  apiDeptSecondList, apiMonthPlanMylist,
+  apiStatisticsExport,
   apiStatisticsMonthPlanList,
   arrayToMap,
   download,
@@ -282,13 +282,13 @@ const OfficeSummary = (props: any) => {
             cardBordered
             request={async (params = {}, sort, filter) => {
               const postData = {...params};
-
+              let api = apiStatisticsMonthPlanList
               if (isSelfCheckPage) {
                 postData.useId = localstorage.get('id');
+                api = apiMonthPlanMylist
               }
               paramsRef.current = postData;
-
-              return apiStatisticsMonthPlanList(postData);
+              return api(postData);
             }}
             // scroll={{x: 2600}}
             rowKey="id"

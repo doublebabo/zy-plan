@@ -7,7 +7,7 @@ export const baseURL = 'http://122.192.6.227:8010/api';
 
 const http = axios.create({
   baseURL: baseURL,
-  timeout: 15000,
+  timeout: 60000 * 60, // 一小时
   // headers: {'Content-Type': 'text/plain'}
 });
 

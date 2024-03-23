@@ -45,7 +45,7 @@ export default function PlanCorrectionCol(props: any) {
           setQuality(e.target.value);
         }}>
           <Radio value={1}>合格</Radio>
-          <Radio value={0}>不合格</Radio>
+          <Radio value={2}>不合格</Radio>
         </Radio.Group>
         <Space.Compact style={{width: '100%'}}>
           <Input size='small'

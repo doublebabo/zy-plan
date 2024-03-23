@@ -540,7 +540,9 @@ export const importantEnum = [
 ///api/monthPlan/checkList 工作计划检查页面--经理查询所管辖人员的月计划列表
 export function apiWorkPlanCheckList(data) {
   return executeAndTryCatch(() => http.post('/monthPlan/checkList', {
-        ...handlePagePostData({...data, userId: data.userId !== void 0 ? data.userId : null }),
+        ...handlePagePostData({
+          ...data,
+          userId: !['', void 0, null].includes(data.status) ? data.userId : null }),
       }
   ).then((res: any) => {
     if (res.success) {
@@ -630,6 +632,25 @@ export function apiStatisticsMonthPlanList(data) {
   }));
 }
 
+// 查询结果页面
+export function apiMonthPlanMylist(data) {
+  return executeAndTryCatch(() => http.post('/monthPlan/myList', {
+    ...handlePagePostData(data),
+  }).then((res: any) => {
+    if (res.success) {
+      return {
+        data: res?.data?.obj || [],
+        // success 请返回 true，
+        // 不然 table 会停止解析数据，即使有数据
+        success: res.success,
+        // 不传会使用 data 的长度，如果是分页一定要传
+        total: res?.data.total,
+      }
+    }
+    return res;
+  }));
+}
+
 //122.192.6.227:8010/api/statistics/export
 // 办公室统计页面--导出月计划
 // {
@@ -650,5 +671,6 @@ export function apiStatisticsExport(data) {
 
 export const qualityEnum = [
   {label: '合格', value: 1, status: 'success'},
-  {label: '不合格', value: 0, status: 'error'},
+  {label: '不合格', value: 2, status: 'error'},
+  {label: '未批改', value: 0, status: 'default'},
 ]

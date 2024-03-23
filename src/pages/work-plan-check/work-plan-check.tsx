@@ -15,7 +15,7 @@ import myLocalstorage from "../../utils/localstorage.ts";
 
 const {confirm} = Modal;
 
-const getColumns = ( {onAction, isManager, navigate, initValues}: any): any => [
+const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
   {
     title: '序号',
     dataIndex: 'rowNumber',
@@ -127,6 +127,7 @@ const getColumns = ( {onAction, isManager, navigate, initValues}: any): any => [
         const res = await getAllUsersWhoAreUnderManaged()
         return (res?.data || []).map(o => ({label: o.name, value: o.id}));
       },
+      initialValue: ''
     },
   ],
   {
@@ -162,11 +163,17 @@ const getColumns = ( {onAction, isManager, navigate, initValues}: any): any => [
 const WorkPlanCheck = () => {
   const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<any>();
   const [cols, setCols] = useState<any>([]);
 
   const [downloading, setDownloading] = useState(false);
 
   const [loading, setLoading] = useState(false)
+
+  const [params, setParams] = useState<any>({});
+
+  // const [users, setUsers] = useState<any>(null);
+  const usersRef = useRef<any>();
 
   const isManager = myLocalstorage.get('manager') === 1;
 
@@ -246,14 +253,22 @@ const WorkPlanCheck = () => {
   async function allUsersWhoAreUnderManaged() {
     setLoading(true);
     const res = await getAllUsersWhoAreUnderManaged();
+    if (res.data.length) {
+      formRef.current.setFieldsValue({userId: res.data?.[0].id, status: 0})
+    }
+    usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
+    actionRef.current.reload();
     setLoading(false);
-    setCols(getColumns({navigate, onAction, isManager, values: {userId: res?.data?.[0]?.id || null}}));
   }
+
 
 
   useEffect(() => {
     allUsersWhoAreUnderManaged();
+    setCols(getColumns({navigate, onAction, isManager}));
   }, []);
+
+
 
   return (
       <div className={styles.container}>
@@ -267,12 +282,16 @@ const WorkPlanCheck = () => {
               )
             }))}
             actionRef={actionRef}
+            formRef={formRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
-               // return apiWorkPlanCheckList({...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: users[0].value});
-               return apiWorkPlanCheckList(params);
+              const postData = {...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: usersRef.current?.[0]?.value}
+              // setParams(postData)
+               return apiWorkPlanCheckList(postData);
+               // return apiWorkPlanCheckList(params);
             }}
-            // scroll={{x: 2600}}
+            // params={params}
+            // manualRequest={true}
             rowKey="id"
             search={{
               // span: 6,
@@ -286,7 +305,7 @@ const WorkPlanCheck = () => {
             }}
             form={{
               // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-              syncToUrl: (values, type) => {
+              syncToUrl: async (values, type) => {
                 const results: any = values
                 if (type === 'get') {
                   if (!['', void 0, null].includes(results.status)) {
@@ -294,13 +313,14 @@ const WorkPlanCheck = () => {
                   } else {
                     results.status = 0
                   }
-                  if (!['', void 0, null].includes(results.status)) {
-                    results.userId = +results.userId || null
+                  if (!['', void 0, null].includes(results.userId)) {
+                    results.userId = +results.userId
                   }
                   return results;
                 }
                 return results;
               },
+              initialValues: {status: 0, userId: usersRef.current?.[0]?.value}
             }}
             pagination={{
               defaultPageSize: 10,

@@ -13,14 +13,16 @@ import MonthPlanDetail from "../pages/work-plan/month-plan-detail.tsx";
 import PlanConfirmForm from "../pages/work-plan/plan-confirm-form.tsx";
 import WorkPlanCheck from "../pages/work-plan-check/work-plan-check.tsx";
 import OfficeSummary from "../pages/office-summary/office-summary.tsx";
+import {clearUserTokenInfo} from "../services";
 
 async function loginLoader() {
-  if (myLocalstorage.get('token')) {
+  // if (myLocalstorage.get('token')) {
     // const res = await useInfo();
     // if (res?.code === 200) {
-      return redirect('/work-plan');
+    //   return redirect('/work-plan');
     // }
-  }
+  // }
+  clearUserTokenInfo();
   return null
 }
 
