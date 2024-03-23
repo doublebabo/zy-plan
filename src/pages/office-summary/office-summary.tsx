@@ -327,7 +327,7 @@ const OfficeSummary = (props: any) => {
               title: '每月计划列表'
             }}
             toolBarRender={() => [
-              <Button
+              !isSelfCheckPage && <Button
                   key="button"
                   onClick={() => onAction('export')}
               >
