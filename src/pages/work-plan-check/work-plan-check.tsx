@@ -260,7 +260,7 @@ const WorkPlanCheck = () => {
      const res = await getAllUsersWhoAreUnderManaged();
     if (res.data.length) {
       formRef.current.setFieldsValue({userId: res.data?.[0].id, status: 0})
-      setInitialValues({userId: res.data?.[0].id, status: 0})
+      setInitialValues({userId: res.data?.[0].id || null, status: 0})
     }
     usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
     // actionRef.current.reload();
@@ -294,8 +294,9 @@ const WorkPlanCheck = () => {
             formRef={formRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
-              const postData = {...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: usersRef.current?.[0]?.value || null}
+              const postData = {...params, ...initialValues};
               // setParams(postData)
+              console.log('postData===>', postData);
                return apiWorkPlanCheckList(postData);
                // return apiWorkPlanCheckList(params);
             }}

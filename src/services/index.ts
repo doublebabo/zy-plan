@@ -540,11 +540,7 @@ export const importantEnum = [
 ///api/monthPlan/checkList 工作计划检查页面--经理查询所管辖人员的月计划列表
 export function apiWorkPlanCheckList(data) {
   return executeAndTryCatch(() => http.post('/monthPlan/checkList', {
-        ...handlePagePostData({
-          ...data,
-          userId: !['', void 0, null].includes(data.status) ? data.userId : null }),
-      }
-  ).then((res: any) => {
+        ...handlePagePostData(data)}).then((res: any) => {
     if (res.success) {
       return {
         data: res?.data?.obj || [],
