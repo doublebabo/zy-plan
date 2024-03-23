@@ -273,6 +273,10 @@ const WorkPlanCheck = () => {
     setCols(getColumns({navigate, onAction, isManager}));
   }, []);
 
+  useEffect(() => {
+    actionRef.current.reload();
+  }, [initialValues])
+
 
 
   return (
@@ -296,7 +300,7 @@ const WorkPlanCheck = () => {
                // return apiWorkPlanCheckList(params);
             }}
             // params={params}
-            // manualRequest={true}
+            manualRequest={true}
             rowKey="id"
             search={{
               // span: 6,
