@@ -1,16 +1,22 @@
-import { useRouteError } from "react-router";
+import {useRouteError} from "react-router";
+import React from "react";
+import {Button, Result} from "antd";
 
 export default function ErrorPage() {
   const error: any = useRouteError();
   console.error(error);
 
   return (
-    <div id="error-page" style={{textAlign: 'center'}}>
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>
-        <i>{error.statusText || error.message}</i>
-      </p>
-    </div>
+      <Result
+          title={error.statusText || error.message}
+          status='warning'
+          extra={
+            <Button type="primary" key="console" onClick={() => {
+              history.back();
+            }}>
+              返回
+            </Button>
+          }
+      />
   );
 }

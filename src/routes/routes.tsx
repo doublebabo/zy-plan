@@ -14,6 +14,7 @@ import PlanConfirmForm from "../pages/work-plan/plan-confirm-form.tsx";
 import WorkPlanCheck from "../pages/work-plan-check/work-plan-check.tsx";
 import OfficeSummary from "../pages/office-summary/office-summary.tsx";
 import {clearUserTokenInfo} from "../services";
+import localstorage from "../utils/localstorage.ts";
 
 async function loginLoader() {
   // if (myLocalstorage.get('token')) {
@@ -39,9 +40,9 @@ const router = createBrowserRouter([
     element: <Layout/>,
     errorElement: <ErrorPage/>,
     loader: async () => {
-      if (myLocalstorage.get('manager') !== 1 && myLocalstorage.get('admin') !== 1) {
-        return redirect('/work-plan')
-      }
+      // if (myLocalstorage.get('manager') !== 1 && myLocalstorage.get('admin') !== 1) {
+      //   return redirect('/work-plan')
+      // }
       return null
     },
     children: [
@@ -72,7 +73,7 @@ const router = createBrowserRouter([
     path: "/dept-issue",
     element: <Layout/>,
     errorElement: <ErrorPage/>,
-    loader: async () => {
+    loader: async (loader) => {
       // if (myLocalstorage.get('token')) {
       //   await useInfo();
       // } else {
@@ -89,7 +90,7 @@ const router = createBrowserRouter([
     path: "/work-plan-check",
     element: <Layout/>,
     errorElement: <ErrorPage/>,
-    loader: async () => {
+    loader: async (loader) => {
       // if (myLocalstorage.get('token')) {
       //   await useInfo();
       // } else {
@@ -112,7 +113,10 @@ const router = createBrowserRouter([
       // } else {
       //   return redirect('/');
       // }
-      return null
+      if (localstorage.get('admin') !== 0) {
+        return false
+      }
+      return null;
     },
     children: [
       {index: true, element: <OfficeSummary key='office-summary' />},

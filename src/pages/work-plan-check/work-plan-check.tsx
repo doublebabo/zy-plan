@@ -117,6 +117,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
       request: () => {
         return planStatus;
       },
+      initialValue: 0
     },
     {
       title: '姓名',
@@ -127,7 +128,6 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
         const res = await getAllUsersWhoAreUnderManaged()
         return (res?.data || []).map(o => ({label: o.name, value: o.id}));
       },
-      initialValue: ''
     },
   ],
   {
@@ -140,6 +140,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
       <Button
           size='small'
           type='primary'
+          disabled={record.status === 1}
           onClick={() => {
             onAction('complete', record)
           }}
@@ -161,21 +162,28 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
 
 
 const WorkPlanCheck = () => {
+
+
+  const isManager = myLocalstorage.get('manager') === 1;
+  const isAdmin = myLocalstorage.get('admin') === 1;
+
+  if (!isManager) {
+    throw Error('没有权限')
+  }
+
   const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
   const formRef = useRef<any>();
   const [cols, setCols] = useState<any>([]);
 
-  const [downloading, setDownloading] = useState(false);
-
-  const [loading, setLoading] = useState(false)
-
-  const [params, setParams] = useState<any>({});
 
   // const [users, setUsers] = useState<any>(null);
   const usersRef = useRef<any>();
 
-  const isManager = myLocalstorage.get('manager') === 1;
+  const [initialValues, setInitialValues] = useState({
+    status: 0,
+    userId: null
+  });
 
   function onAction(type: string, record?: any) {
 
@@ -183,11 +191,9 @@ const WorkPlanCheck = () => {
       Modal.confirm({
         title: '是否确定完成？',
         onOk: async () => {
-          setLoading(true);
-          const res = await apiFinishMonthPlan(record.id);
+           const res = await apiFinishMonthPlan(record.id);
           actionRef.current.reload();
-          setLoading(false);
-        }
+         }
       })
     }
     else if (type === 'reload') {
@@ -251,14 +257,13 @@ const WorkPlanCheck = () => {
   }
 
   async function allUsersWhoAreUnderManaged() {
-    setLoading(true);
-    const res = await getAllUsersWhoAreUnderManaged();
+     const res = await getAllUsersWhoAreUnderManaged();
     if (res.data.length) {
       formRef.current.setFieldsValue({userId: res.data?.[0].id, status: 0})
+      setInitialValues({userId: res.data?.[0].id, status: 0})
     }
     usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
-    actionRef.current.reload();
-    setLoading(false);
+    // actionRef.current.reload();
   }
 
 
@@ -298,10 +303,11 @@ const WorkPlanCheck = () => {
               // labelWidth: 'auto',
               defaultColsNumber: 4,
               // searchGutter: 24
+
             }}
             options={{
               setting: false,
-              density: false
+              density: false,
             }}
             form={{
               // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
@@ -320,7 +326,7 @@ const WorkPlanCheck = () => {
                 }
                 return results;
               },
-              initialValues: {status: 0, userId: usersRef.current?.[0]?.value}
+              initialValues: initialValues,
             }}
             pagination={{
               defaultPageSize: 10,

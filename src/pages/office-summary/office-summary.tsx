@@ -186,6 +186,12 @@ const OfficeSummary = (props: any) => {
 
   const isSelfCheckPage = type === 'self-check'; // 检查结果页面
 
+  const isManager = myLocalstorage.get('manager') === 1;
+  const isAdmin = myLocalstorage.get('admin') === 1;
+  if (!isAdmin && !isSelfCheckPage) {
+    throw Error('没有权限')
+  }
+
   const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
   const [cols, setCols] = useState<any>([]);
@@ -194,7 +200,7 @@ const OfficeSummary = (props: any) => {
 
   const [loading, setLoading] = useState(false)
 
-  const isManager = myLocalstorage.get('manager') === 1;
+
 
   const paramsRef = useRef<any>();
 

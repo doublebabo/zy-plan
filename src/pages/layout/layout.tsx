@@ -97,14 +97,18 @@ const Layout = () => {
   const isAdmin = myLocalstorage.get('admin') === 1;
 
   function filterItems() {
-    let _items = [...items];
-    if (!isManager) {
-      _items = _items.filter((o: any) => !['/user-mgt', '/work-plan-check'].includes(o.key))
-    }
-    if (!isAdmin) {
-      _items = _items.filter((o: any) => !['/office-summary'].includes(o.key))
-    }
-    return _items;
+    if (isManager && isAdmin) return items
+    // 普通用户：
+    // manager=0, 他可以看到“工作计划编辑”、“检查结果”、“问题管理”页面
+    //
+    // 部门经理：
+    // manager=1, 他可以看到“工作计划编辑”、“检查结果”、“工作计划检查”、“问题管理”、“用户管理”页面
+    //
+    // 管理员：
+    // admin=1,他可以看到“办公室统计”、“问题管理”、“用户管理”页面
+    if (isManager) return items.filter((o: any) => ['/self-check','/work-plan','/user-mgt', '/work-plan-check', '/dept-issue' ].includes(o.key));
+    if (isAdmin) return items.filter((o: any) => ['/dept-issue','/office-summary', '/user-mgt'].includes(o.key))
+    return items.filter((o: any) => ['/self-check','/work-plan', '/dept-issue' ].includes(o.key));
   }
 
   return (

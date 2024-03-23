@@ -6,6 +6,7 @@ import {Button, Modal} from "antd";
 import ModifyModal from "./modify-modal.tsx";
 import {delUser, userList, yesOrNoEnumValue} from "../../services";
 import {PlusOutlined} from "@ant-design/icons";
+import myLocalstorage from "../../utils/localstorage.ts";
 
 const {confirm} = Modal;
 
@@ -81,6 +82,14 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
 ]
 
 const UserMgt = () => {
+
+  const isManager = myLocalstorage.get('manager') === 1;
+  const isAdmin = myLocalstorage.get('admin') === 1;
+
+  if (!isManager || !isAdmin) {
+    throw Error('没有权限')
+  }
+
     const navigate = useNavigate();
     const actionRef = useRef<ActionType>();
     const [cols, setCols] = useState<any>([]);
