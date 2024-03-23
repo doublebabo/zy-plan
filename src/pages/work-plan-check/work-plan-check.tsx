@@ -15,7 +15,7 @@ import myLocalstorage from "../../utils/localstorage.ts";
 
 const {confirm} = Modal;
 
-const getColumns = ( {onAction, isManager, navigate}: any): any => [
+const getColumns = ( {onAction, isManager, navigate, initValues}: any): any => [
   {
     title: '序号',
     dataIndex: 'rowNumber',
@@ -120,7 +120,7 @@ const getColumns = ( {onAction, isManager, navigate}: any): any => [
     },
     {
       title: '姓名',
-      dataIndex: 'name',
+      dataIndex: 'userId',
       hideInSearch: false,
       hideInTable: true,
       request: async () => {
@@ -239,12 +239,20 @@ const WorkPlanCheck = () => {
         options={false}
         dataSource={record?.weekPlanList || []}
         pagination={false}
+        rowKey='id'
     />
+  }
+
+  async function allUsersWhoAreUnderManaged() {
+    setLoading(true);
+    const res = await getAllUsersWhoAreUnderManaged();
+    setLoading(false);
+    setCols(getColumns({navigate, onAction, isManager, values: {userId: res?.data?.[0]?.id || null}}));
   }
 
 
   useEffect(() => {
-    setCols(getColumns({navigate, onAction, isManager}));
+    allUsersWhoAreUnderManaged();
   }, []);
 
   return (
@@ -261,6 +269,7 @@ const WorkPlanCheck = () => {
             actionRef={actionRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
+               // return apiWorkPlanCheckList({...params, userId: ![null, void 0, ''].includes(params.userId) ? params.userId: users[0].value});
                return apiWorkPlanCheckList(params);
             }}
             // scroll={{x: 2600}}
@@ -284,6 +293,9 @@ const WorkPlanCheck = () => {
                     results.status = +results.status
                   } else {
                     results.status = 0
+                  }
+                  if (!['', void 0, null].includes(results.status)) {
+                    results.userId = +results.userId || null
                   }
                   return results;
                 }
