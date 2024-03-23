@@ -297,6 +297,7 @@ const OfficeSummary = (props: any) => {
               // labelWidth: 'auto',
               defaultColsNumber: 4,
               // searchGutter: 24
+              // filterType: 'light'
             }}
             options={{
               setting: false,
@@ -318,7 +319,7 @@ const OfficeSummary = (props: any) => {
               },
             }}
             pagination={{
-              pageSize: 10,
+              defaultPageSize: 10,
               pageSizeOptions: [10, 20, 50],
             }}
             dateFormatter="string"

@@ -472,7 +472,7 @@ export default function DeptIssue() {
                 }}
                 rowKey="id"
                 pagination={{
-                    pageSize: 10,
+                  defaultPageSize: 10,
                     pageSizeOptions: [10, 20, 50],
                 }}
                 search={{
@@ -509,7 +509,7 @@ export default function DeptIssue() {
                 }}
                 rowKey="id"
                 pagination={{
-                    pageSize: 10,
+                  defaultPageSize: 10,
                     pageSizeOptions: [10, 20, 50],
                 }}
                 search={{

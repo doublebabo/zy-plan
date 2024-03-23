@@ -254,7 +254,7 @@ export default function MonthPlanEdit(prosp: any) {
                     cardBordered
                     onRow={(record) => {
                         return {
-                            onDoubleClick: () => showWeekPlanDetail(record)
+                            // onDoubleClick: () => showWeekPlanDetail(record)
                         }
                     }}
                     dataSource={weekData}

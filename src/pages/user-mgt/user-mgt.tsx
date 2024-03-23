@@ -121,52 +121,52 @@ const UserMgt = () => {
         setCols([...getColumns(navigate, {onDelete, onShowModal})]);
     }, []);
 
-    return (
-        <div className={styles.container}>
-            <ProTable
-                columns={cols}
-                actionRef={actionRef}
-                cardBordered
-                request={async (params = {}, sort, filter) => {
-                  return  userList({...params,name: params?.name?.trim()})
-                }}
-                rowKey="id"
-                search={{
-                    defaultColsNumber: 4,
-                }}
-                form={{
-                    syncToUrl: (values, type) => {
-                        return values;
-                    },
-                    // initialValues: {name: null}
-                }}
-                options={{
-                    setting: false,
-                    density: false
-                }}
-                pagination={{
-                    pageSize: 10,
-                    pageSizeOptions: [10, 20, 50],
-                    onChange: (page) => console.log(page),
-                }}
-                dateFormatter="string"
-                headerTitle="用户列表"
-                toolBarRender={() => [
-                    <Button
-                        key="button"
-                        icon={<PlusOutlined/>}
-                        type="primary"
-                        onClick={() => onShowModal('add')}
-                    >
-                        创建用户
-                    </Button>,
-                ]}
-            />
-            <ModifyModal visible={modalVisible} onSuccess={() => {
-                actionRef?.current?.reload();
-            }} setVisible={setModalVisible} type={modalType} record={record}/>
-        </div>
-    )
+  return (
+      <div className={styles.container}>
+        <ProTable
+            columns={cols}
+            actionRef={actionRef}
+            cardBordered
+            request={async (params = {}, sort, filter) => {
+              return userList({...params, name: params?.name?.trim()})
+            }}
+            rowKey="id"
+            search={{
+              defaultColsNumber: 4,
+            }}
+            form={{
+              syncToUrl: (values, type) => {
+                return values;
+              },
+              // initialValues: {name: null}
+            }}
+            options={{
+              setting: false,
+              density: false
+            }}
+            pagination={{
+              // pageSize: 10,
+              defaultPageSize: 10,
+              pageSizeOptions: [10, 20, 50],
+            }}
+            dateFormatter="string"
+            headerTitle="用户列表"
+            toolBarRender={() => [
+              <Button
+                  key="button"
+                  icon={<PlusOutlined/>}
+                  type="primary"
+                  onClick={() => onShowModal('add')}
+              >
+                创建用户
+              </Button>,
+            ]}
+        />
+        <ModifyModal visible={modalVisible} onSuccess={() => {
+          actionRef?.current?.reload();
+        }} setVisible={setModalVisible} type={modalType} record={record}/>
+      </div>
+  );
 }
 
 export default UserMgt;

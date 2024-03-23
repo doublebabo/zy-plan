@@ -52,7 +52,7 @@ http.interceptors.response.use((res) => {
   }
   return res.data
 }, (error) => {
-  notification.error({message: error.message || '服务器开小差~', duration: 1.17, description: error.config.baseURL})
+  notification.error({message: error.message || '服务器开小差~', duration: 1.17, description: error.config.baseURL + error.config.url})
   return Promise.reject(error)
 });
 

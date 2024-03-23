@@ -269,7 +269,7 @@ const MonthPlan = () => {
                     },
                 }}
                 pagination={{
-                    pageSize: 10,
+                  defaultPageSize: 10,
                     pageSizeOptions: [10, 20, 50],
                 }}
                 dateFormatter="string"
