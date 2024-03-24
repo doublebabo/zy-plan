@@ -152,18 +152,28 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     ],
   },
   {
-    title: '计划批改情况',
+    title: '合理性',
     valueType: 'option',
     fixed: 'right',
-    width: 370,
+    width: 190,
     align: "center",
     render: (_, record,) => {
       return(
-          <div className={styles.auditBox}>
-            <PlanCorrectionCol key='check' type='monthQuality' record={record} reload={() => onAction('reload')}/>
-            <PlanCorrectionCol key='check2' type='monthResult' record={record} reload={() => onAction('reload')}/>
-          </div>
-          )
+          <PlanCorrectionCol key='check' type='monthQuality' record={record} reload={() => onAction('reload')}/>
+
+      )
+    },
+  },
+  {
+    title: '结果',
+    valueType: 'option',
+    fixed: 'right',
+    width: 190,
+    align: "center",
+    render: (_, record,) => {
+      return(
+          <PlanCorrectionCol key='check2' type='monthResult' record={record} reload={() => onAction('reload')}/>
+      )
     },
   },
 ];
@@ -248,17 +258,27 @@ const WorkPlanCheck = () => {
             dataIndex: 'problem',
            },
           {
-            title: '计划批改情况',
+            title: '合理性',
             dataIndex: 'operation',
             key: 'operation',
-            width: 370,
+            width: 190,
             valueType: 'option',
             align: "center",
             render: (_, record) => (
-                <div className={styles.auditBox}>
-                  <PlanCorrectionCol key='checkk' type='weekQuality' record={record} reload={() => onAction('reload')}/>
-                  <PlanCorrectionCol key='checkk2' type='weekResult' record={record} reload={() => onAction('reload')}/>
-                </div>
+                <PlanCorrectionCol key='checkk' type='weekQuality' record={record} reload={() => onAction('reload')}/>
+
+            ),
+          },
+          {
+            title: '结果',
+            dataIndex: 'operation',
+            key: 'operation',
+            width: 190,
+            valueType: 'option',
+            align: "center",
+            render: (_, record) => (
+                <PlanCorrectionCol key='checkk2' type='weekResult' record={record} reload={() => onAction('reload')}/>
+
             ),
           },
         ]}
