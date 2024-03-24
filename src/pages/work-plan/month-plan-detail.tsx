@@ -37,29 +37,29 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
     {
         title: '工作内容',
         dataIndex: 'content',
-        ellipsis: true
+        // ellipsis: true
     },
     {
         title: '工作结果',
         dataIndex: 'outcome',
-        ellipsis: true
+        // ellipsis: true
     },
     {
         title: '问题和风险',
         dataIndex: 'problem',
-        ellipsis: true
+        // ellipsis: true
     },
     {
         title: '开始时间',
         dataIndex: 'startTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100
     },
     {
         title: '截止时间',
         dataIndex: 'endTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100
     },

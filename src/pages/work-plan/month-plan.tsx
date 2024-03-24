@@ -24,7 +24,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'rowNumber',
         width: 60,
         hideInSearch: true,
-        ellipsis: true,
+        // ellipsis: true,
         align: "center"
     },
     {

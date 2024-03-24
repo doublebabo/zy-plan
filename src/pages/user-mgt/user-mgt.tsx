@@ -27,26 +27,26 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     {
         title: '姓名',
         dataIndex: 'name',
-        ellipsis: true,
+        // ellipsis: true,
     },
     {
         title: '部门',
         dataIndex: 'deptName',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
 
     },
     {
         title: '账号',
         dataIndex: 'account',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
 
     },
     {
         title: '是否管理者',
         dataIndex: 'manager',
-        ellipsis: true,
+        // ellipsis: true,
         valueEnum: yesOrNoEnumValue,
         hideInSearch: true,
 
@@ -54,7 +54,7 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     {
         title: '是否管理员',
         dataIndex: 'admin',
-        ellipsis: true,
+        // ellipsis: true,
         valueEnum: yesOrNoEnumValue,
         hideInSearch: true,
 

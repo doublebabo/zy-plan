@@ -24,33 +24,33 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
     {
         title: '工作内容',
         dataIndex: 'content',
-        ellipsis: true
+        // ellipsis: true
     },
     {
         title: '创建时间',
         dataIndex: 'startTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100
     },
     {
         title: '截止时间',
         dataIndex: 'endTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100
     },
     {
         title: '完成时间',
         dataIndex: 'finishTime',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         width: 100
     },
     {
         title: '计划完成状态',
         dataIndex: 'status',
-        ellipsis: true,
+        // ellipsis: true,
         hideInSearch: true,
         valueEnum: arrayToMap(weekStatus),
         width: 100

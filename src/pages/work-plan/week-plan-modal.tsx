@@ -80,15 +80,15 @@ export default React.forwardRef(function (props: any, ref) {
                     name="outcome"
                     label="工作结果"
                     placeholder="请输入"
-                    required={true}
-                    rules={[{ required: true, message: '这是必填项' }]}
+                    // required={true}
+                    // rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormTextArea
                     name="problem"
                     label="问题和风险"
                     placeholder="请输入"
-                    required={true}
-                    rules={[{ required: true, message: '这是必填项' }]}
+                    // required={true}
+                    // rules={[{ required: true, message: '这是必填项' }]}
                 />
             </ProForm>
 
