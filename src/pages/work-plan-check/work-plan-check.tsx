@@ -155,7 +155,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     title: '合理性',
     valueType: 'option',
     fixed: 'right',
-    width: 190,
+    width: 200,
     align: "center",
     render: (_, record,) => {
       return(
@@ -168,7 +168,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     title: '结果',
     valueType: 'option',
     fixed: 'right',
-    width: 190,
+    width: 200,
     align: "center",
     render: (_, record,) => {
       return(
@@ -261,7 +261,7 @@ const WorkPlanCheck = () => {
             title: '合理性',
             dataIndex: 'operation',
             key: 'operation',
-            width: 190,
+            width: 200,
             valueType: 'option',
             align: "center",
             render: (_, record) => (
@@ -273,7 +273,7 @@ const WorkPlanCheck = () => {
             title: '结果',
             dataIndex: 'operation',
             key: 'operation',
-            width: 190,
+            width: 200,
             valueType: 'option',
             align: "center",
             render: (_, record) => (
