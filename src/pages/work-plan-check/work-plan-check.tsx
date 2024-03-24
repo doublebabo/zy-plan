@@ -19,7 +19,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
   {
     title: '序号',
     dataIndex: 'rowNumber',
-    width: 60,
+    // width: 30,
     hideInSearch: true,
     align: "center"
   },
@@ -136,6 +136,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     valueType: 'option',
     fixed: 'right',
     width: 60,
+    align: "center",
     render: (_, record,) => [
 
       <Button
@@ -154,10 +155,11 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     title: '计划批改情况',
     valueType: 'option',
     fixed: 'right',
-    // width: 200,
+    width: 370,
+    align: "center",
     render: (_, record,) => {
       return(
-          <div>
+          <div className={styles.auditBox}>
             <PlanCorrectionCol key='check' type='monthQuality' record={record} reload={() => onAction('reload')}/>
             <PlanCorrectionCol key='check2' type='monthResult' record={record} reload={() => onAction('reload')}/>
           </div>
@@ -249,10 +251,11 @@ const WorkPlanCheck = () => {
             title: '计划批改情况',
             dataIndex: 'operation',
             key: 'operation',
-            width: 200,
+            width: 370,
             valueType: 'option',
+            align: "center",
             render: (_, record) => (
-                <div>
+                <div className={styles.auditBox}>
                   <PlanCorrectionCol key='checkk' type='weekQuality' record={record} reload={() => onAction('reload')}/>
                   <PlanCorrectionCol key='checkk2' type='weekResult' record={record} reload={() => onAction('reload')}/>
                 </div>
