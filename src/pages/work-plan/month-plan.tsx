@@ -267,6 +267,8 @@ const MonthPlan = () => {
                         }
                         return results;
                     },
+                  syncToInitialValues: true,
+
                 }}
                 pagination={{
                   defaultPageSize: 10,

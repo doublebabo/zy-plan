@@ -1,24 +1,65 @@
-import {Button, Input, Modal, Radio, Space} from "antd";
+import {Button, Input, message, Modal, Radio, Space} from "antd";
 import React, {useEffect, useState} from "react";
-import {apiQualityCheckMonthly, apiQualityCheckWeekly} from "../../services";
+import {
+  apiQualityCheckMonthly,
+  apiQualityCheckWeekly,
+  apiResultCheckMonthly,
+  apiResultCheckWeekly
+} from "../../services";
+import styles from './plan-correction-col.module.less'
 
 export default function PlanCorrectionCol(props: any) {
 
-  const {record, reload, type = 'monthPlanId'} = props;
+  const {record, reload, type} = props;
 
   const [quality, setQuality] = useState();
 
   const [comment, setComment] = useState('');
 
+  const [enums, setEnums] = useState<any>([]);
 
-  function onSubmit() {
+
+  function onSubmit(e) {
+    e.stopPropagation();
+    if (!quality) {
+      message.warning('请选择批改状态')
+      return;
+    }
+    if (!comment) {
+      message.warning('输入批改意见')
+      return;
+    }
     Modal.confirm({
       title: '是否确认提交？',
       onOk: async () => {
-        const api = type === 'monthPlanId' ? apiQualityCheckMonthly : apiQualityCheckWeekly;
+        let idName;
+        let api;
+        let singleName;
+        switch (type) {
+          case 'monthResult':
+            idName = 'monthPlanId';
+            api = apiResultCheckMonthly;
+            singleName = 'result';
+            break
+          case 'monthQuality':
+            idName = 'monthPlanId';
+            api = apiQualityCheckMonthly;
+            singleName = 'quality';
+            break
+          case 'weekResult':
+            idName = 'weekPlanId';
+            api = apiResultCheckWeekly;
+            singleName = 'result';
+            break
+          case 'weekQuality':
+            idName = 'weekPlanId';
+            api = apiQualityCheckWeekly;
+            singleName = 'quality';
+            break
+        }
         await api({
-          [type]: record.id,
-          quality,
+          [idName]: record.id,
+          [singleName]: quality,
           comment
         });
         reload?.()
@@ -28,30 +69,46 @@ export default function PlanCorrectionCol(props: any) {
 
   useEffect(() => {
 
-    setComment(record?.comment);
-    setQuality(record?.quality);
-  }, [record]);
+
+  }, [record, type]);
+
+
+  useEffect(() => {
+    if (type?.indexOf('Result') > -1) {
+      setEnums([
+        {label: '合格', value: 1},
+        {label: '不合格', value: 2},
+      ])
+      setComment(record?.resultComment);
+      setQuality(record?.result);
+    } else {
+      setEnums([
+        {label: '合理', value: 1},
+        {label: '不合理', value: 2},
+      ])
+      setComment(record?.qualityComment);
+      setQuality(record?.quality);
+    }
+  }, [type]);
 
   return (
       <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
+          className={styles.box}
+          onClick={e => e.stopPropagation()}
       >
         <Radio.Group value={quality} onChange={e => {
           setQuality(e.target.value);
         }}>
-          <Radio value={1}>合格</Radio>
-          <Radio value={2}>不合格</Radio>
+          {enums.map((o, oIndex) => <Radio key={oIndex} value={o.value}>{o.label}</Radio>)}
+          {/*<Radio value={1}>合格</Radio>*/}
+          {/*<Radio value={2}>不合格</Radio>*/}
         </Radio.Group>
         <Space.Compact style={{width: '100%'}}>
           <Input size='small'
                  value={comment}
                  onChange={(e) => {setComment(e.target.value);}}
                  placeholder='输入批改意见'
+                 onClick={e => e.stopPropagation()}
           />
           <Button size='small' type="primary" onClick={onSubmit}>提交</Button>
         </Space.Compact>

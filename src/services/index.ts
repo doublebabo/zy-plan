@@ -577,6 +577,16 @@ export function apiQualityCheckWeekly(data) {
   return executeAndTryCatch(() => http.post('/weekPlan/qualityCheck', data));
 }
 
+export function apiResultCheckMonthly(data) {
+  return executeAndTryCatch(() => http.post('/monthPlan/resultCheck', data));
+}
+
+
+export function apiResultCheckWeekly(data) {
+  return executeAndTryCatch(() => http.post('/weekPlan/resultCheck', data));
+}
+
+
 // 122.192.6.227:8010/api/statistics/deptFirst
 // 办公室统计页面--一级部门列表
 export function apiDeptFirstList() {
@@ -666,7 +676,22 @@ export function apiStatisticsExport(data) {
 
 
 export const qualityEnum = [
+  {label: '合理', value: 1, status: 'success'},
+  {label: '不合理', value: 2, status: 'error'},
+  {label: '未批改', value: 0, status: 'default'},
+]
+
+export const resultEnum = [
   {label: '合格', value: 1, status: 'success'},
   {label: '不合格', value: 2, status: 'error'},
   {label: '未批改', value: 0, status: 'default'},
+]
+
+// 审核状态
+export const auditEnum = [
+  {label: '全部', value: 0},
+  {label: '月计划未审核', value: 1, status: 'error'},
+  {label: '月计划结果未审核', value: 2, status: 'error'},
+  {label: '下周计划未审核', value: 3, status: 'error'},
+  {label: '本周结果未审核', value: 4, status: 'error'},
 ]

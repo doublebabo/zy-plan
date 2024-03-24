@@ -2,8 +2,6 @@ import {createBrowserRouter} from "react-router-dom";
 import ErrorPage from "../pages/error/error";
 import Login from "../pages/login/login.tsx";
 import Layout from "../pages/layout/layout.tsx";
-import {redirect} from "react-router";
-import myLocalstorage from "../utils/localstorage.ts";
 import UserMgt from "../pages/user-mgt/user-mgt.tsx";
 import MonthPlan from "../pages/work-plan/month-plan.tsx";
 import WeekPlan from "../pages/work-plan/week-plan/week-plan.tsx";

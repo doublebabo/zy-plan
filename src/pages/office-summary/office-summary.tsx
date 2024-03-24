@@ -1,20 +1,17 @@
 import styles from './office-summary.module.less';
 import React, {useEffect, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router";
+import {useNavigate} from "react-router";
 import {ActionType, ProTable} from '@ant-design/pro-components';
-import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
- import {
+import {Button, Modal, Tooltip} from "antd";
+import {
   apiDeptFirstList,
   apiDeptSecondList, apiEmployeeList, apiMonthPlanMylist,
   apiStatisticsExport,
   apiStatisticsMonthPlanList,
   arrayToMap,
   download,
-  exportDataOne, getAllUsersWhoAreUnderManaged,
-  planMonths,
-
   planStatus,
-  qualityEnum,
+  qualityEnum, resultEnum,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import localstorage from "../../utils/localstorage.ts";
@@ -30,20 +27,21 @@ const getColumns = ({isSelfCheckPage}: any): any => [
     hideInSearch: true,
     align: "center"
   },
-  {
+  ...isSelfCheckPage ? [] : [{
     title: '一级部门',
     dataIndex: 'firstDeptName',
     hideInSearch: true,
     // width: 100,
     align: "center",
   },
-  {
-    title: '二级部门',
-    dataIndex: 'secondDeptName',
-    hideInSearch: true,
-    // width: 100,
-    align: "center",
-  },
+    {
+      title: '二级部门',
+      dataIndex: 'secondDeptName',
+      hideInSearch: true,
+      // width: 100,
+      align: "center",
+    }]
+  ,
   {
     title: '姓名',
     dataIndex: 'userName',
@@ -103,22 +101,52 @@ const getColumns = ({isSelfCheckPage}: any): any => [
     hideInSearch: true,
     align: "center"
   },
-  {
-    title: '计划批改情况',
-    dataIndex: 'quality',
-    valueEnum: arrayToMap(qualityEnum),
-    hideInSearch: true,
+    ...isSelfCheckPage ? [
+      {
+        title: '合理性',
+        dataIndex: 'quality',
+        valueEnum: arrayToMap(qualityEnum),
+        hideInSearch: true,
 
-    align: "center"
-  },
-  {
-    title: '批注',
-    valueType: 'text',
-    dataIndex: 'comment',
-    hideInSearch: true,
-    align: "center"
+        align: "center"
+      },
+      {
+        title: '合理性批注',
+        dataIndex: 'qualityComment',
+        hideInSearch: true,
+        align: "center"
+      },
+      {
+        title: '结果',
+        dataIndex: 'result',
+        valueEnum: arrayToMap(resultEnum),
+        hideInSearch: true,
+        align: "center"
+      },
+      {
+        title: '结果批注',
+        dataIndex: 'resultComment',
+        hideInSearch: true,
+        align: "center"
+      },
+    ] : [
+      {
+        title: '计划批改情况',
+        dataIndex: 'result',
+        valueEnum: arrayToMap(resultEnum),
+        hideInSearch: true,
 
-  },
+        align: "center"
+      },
+      {
+        title: '批注',
+        valueType: 'text',
+        dataIndex: 'comment',
+        hideInSearch: true,
+        align: "center"
+
+      },
+    ],
   ...[
     // 搜索表单项
     {
@@ -130,8 +158,9 @@ const getColumns = ({isSelfCheckPage}: any): any => [
       request: () => {
         return planStatus;
       },
+      initialValue: 0
     },
-  ...(isSelfCheckPage ? [] : [
+    ...(isSelfCheckPage ? [] : [
       {
         title: '一级部门',
         dataIndex: 'deptFirstId',
@@ -162,25 +191,28 @@ const getColumns = ({isSelfCheckPage}: any): any => [
         hideInTable: true,
         dependencies: ['deptSecondId', 'deptFirstId'],
         request: async ({deptSecondId, deptFirstId}) => {
-          if ([null, void 0 ,''].includes(deptFirstId)) return [];
-          const res = await apiEmployeeList({deptSecondId: [null, void 0 ,''].includes(deptSecondId) ? null : deptSecondId, deptFirstId})
+          if ([null, void 0, ''].includes(deptFirstId)) return [];
+          const res = await apiEmployeeList({
+            deptSecondId: [null, void 0, ''].includes(deptSecondId) ? null : deptSecondId,
+            deptFirstId
+          })
           return (res?.data || []).map(o => ({label: o.name, value: o.id}));
         },
       },
-    {
-      title: '月份选择',
-      valueType: 'dateMonth',
-      dataIndex: 'month',
-      hideInSearch: false,
-      hideInTable: true,
-      initialValue: null
-      // request: () => planMonths
-    },
+      {
+        title: '月份选择',
+        valueType: 'dateMonth',
+        dataIndex: 'month',
+        hideInSearch: false,
+        hideInTable: true,
+        initialValue: null
+        // request: () => planMonths
+      },
     ])
 
   ],
 
-];
+].filter(o => o);
 
 
 const OfficeSummary = (props: any) => {
@@ -205,7 +237,6 @@ const OfficeSummary = (props: any) => {
   const [loading, setLoading] = useState(false)
 
 
-
   const paramsRef = useRef<any>();
 
   async function onAction(type: string, record?: any) {
@@ -222,7 +253,8 @@ const OfficeSummary = (props: any) => {
   function expandedRowRender(record) {
     return <ProTable
         columns={[
-          { title: '周序号', dataIndex: 'weekIndex',
+          {
+            title: '周序号', dataIndex: 'weekIndex',
             align: "center"
           },
           {
@@ -255,18 +287,51 @@ const OfficeSummary = (props: any) => {
             align: "center",
             dataIndex: 'problem',
           },
-          {
-            title: '计划批改情况',
-            dataIndex: 'quality',
-            valueEnum: arrayToMap(qualityEnum),
-            align: "center"
-          },
-          {
-            title: '批注',
-            valueType: 'text',
-            dataIndex: 'comment',
-            align: "center"
-          },
+          ...isSelfCheckPage ? [
+            {
+              title: '合理性',
+              dataIndex: 'quality',
+              valueEnum: arrayToMap(qualityEnum),
+              hideInSearch: true,
+
+              align: "center"
+            },
+            {
+              title: '合理性批注',
+              dataIndex: 'qualityComment',
+              hideInSearch: true,
+              align: "center"
+            },
+            {
+              title: '结果',
+              dataIndex: 'result',
+              valueEnum: arrayToMap(resultEnum),
+              hideInSearch: true,
+              align: "center"
+            },
+            {
+              title: '结果批注',
+              dataIndex: 'resultComment',
+              hideInSearch: true,
+              align: "center"
+            },
+          ] : [
+            {
+              title: '计划批改情况',
+              dataIndex: 'result',
+              valueEnum: arrayToMap(resultEnum),
+              hideInSearch: true,
+              align: "center"
+            },
+            {
+              title: '批注',
+              valueType: 'text',
+              dataIndex: 'comment',
+              hideInSearch: true,
+              align: "center"
+
+            },
+          ] as any,
         ]}
         headerTitle={false}
         search={false}
@@ -278,7 +343,7 @@ const OfficeSummary = (props: any) => {
 
 
   useEffect(() => {
-    setCols(getColumns( {onAction, isManager, isSelfCheckPage}));
+    setCols(getColumns({onAction, isManager, isSelfCheckPage}));
   }, []);
 
   return (
@@ -332,7 +397,8 @@ const OfficeSummary = (props: any) => {
                 }
                 return results;
               },
-              initialValues: {status: 0},
+              // initialValues: {status: 0},
+              syncToInitialValues: true,
               onValuesChange: (changedValues, values) => {
                 console.log('changedValues, values', changedValues, values);
                 if ('deptFirstId' in changedValues || !('deptFirstId' in values)) {
@@ -361,10 +427,10 @@ const OfficeSummary = (props: any) => {
                   key="button"
                   onClick={() => onAction('export')}
               >
-                导出月计划表
+                  导出月计划表
               </Button>,
             ]}
-            expandable={{ expandedRowRender, expandRowByClick: true }}
+            expandable={{expandedRowRender, expandRowByClick: true}}
         />
       </div>
   )

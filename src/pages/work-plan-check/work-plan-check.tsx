@@ -5,7 +5,7 @@ import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
  import {
   apiFinishMonthPlan,
-  apiWorkPlanCheckList, arrayToMap, getAllUsersWhoAreUnderManaged,
+  apiWorkPlanCheckList, arrayToMap, auditEnum, getAllUsersWhoAreUnderManaged,
 
 
   planStatus,
@@ -22,20 +22,6 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     width: 60,
     hideInSearch: true,
     align: "center"
-  },
-  {
-    title: '一级部门',
-    dataIndex: 'firstDeptName',
-    hideInSearch: true,
-    // width: 100,
-    align: "center",
-  },
-  {
-    title: '二级部门',
-    dataIndex: 'secondDeptName',
-    hideInSearch: true,
-    // width: 100,
-    align: "center",
   },
   {
     title: '姓名',
@@ -109,8 +95,22 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
   ...[
     // 搜索表单项
     {
-      title: '状态',
-      dataIndex: 'status',
+      title: '姓名',
+      dataIndex: 'userIdList',
+      hideInSearch: false,
+      hideInTable: true,
+      valueType: 'select',
+      fieldProps: {
+        mode: 'multiple'
+      },
+      request: async () => {
+        const res = await getAllUsersWhoAreUnderManaged()
+        return (res?.data || []).map(o => ({label: o.name, value: o.id}));
+      },
+    },
+    {
+      title: '月计划状态',
+      dataIndex: 'monthPlanStatus',
       valueType: 'select',
       hideInSearch: false,
       hideInTable: true,
@@ -120,14 +120,15 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
       initialValue: 0
     },
     {
-      title: '姓名',
-      dataIndex: 'userId',
+      title: '审核状态',
+      dataIndex: 'checkStatus',
+      valueType: 'select',
       hideInSearch: false,
       hideInTable: true,
-      request: async () => {
-        const res = await getAllUsersWhoAreUnderManaged()
-        return (res?.data || []).map(o => ({label: o.name, value: o.id}));
+      request: () => {
+        return auditEnum;
       },
+      initialValue: 0
     },
   ],
   {
@@ -155,7 +156,12 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     fixed: 'right',
     // width: 200,
     render: (_, record,) => {
-      return <PlanCorrectionCol record={record} reload={() => onAction('reload')}/>
+      return(
+          <div>
+            <PlanCorrectionCol key='check' type='monthQuality' record={record} reload={() => onAction('reload')}/>
+            <PlanCorrectionCol key='check2' type='monthResult' record={record} reload={() => onAction('reload')}/>
+          </div>
+          )
     },
   },
 ];
@@ -181,8 +187,9 @@ const WorkPlanCheck = () => {
   const usersRef = useRef<any>();
 
   const [initialValues, setInitialValues] = useState({
-    status: 0,
-    userId: null
+    monthPlanStatus: 0,
+    userIdList: [],
+    checkStatus: 0
   });
 
   function onAction(type: string, record?: any) {
@@ -191,7 +198,7 @@ const WorkPlanCheck = () => {
       Modal.confirm({
         title: '是否确定完成？',
         onOk: async () => {
-           const res = await apiFinishMonthPlan(record.id);
+          await apiFinishMonthPlan(record.id);
           actionRef.current.reload();
          }
       })
@@ -244,7 +251,12 @@ const WorkPlanCheck = () => {
             key: 'operation',
             width: 200,
             valueType: 'option',
-            render: (_, record) => <PlanCorrectionCol type='weekPlanId' record={record} reload={() => onAction('reload')}/>,
+            render: (_, record) => (
+                <div>
+                  <PlanCorrectionCol key='checkk' type='weekQuality' record={record} reload={() => onAction('reload')}/>
+                  <PlanCorrectionCol key='checkk2' type='weekResult' record={record} reload={() => onAction('reload')}/>
+                </div>
+            ),
           },
         ]}
         headerTitle={false}
@@ -259,11 +271,10 @@ const WorkPlanCheck = () => {
   async function allUsersWhoAreUnderManaged() {
      const res = await getAllUsersWhoAreUnderManaged();
     if (res.data.length) {
-      formRef.current.setFieldsValue({userId: res.data?.[0].id, status: 0})
-      setInitialValues({userId: res.data?.[0].id || null, status: 0})
+      formRef.current.setFieldsValue({userIdList: [res.data?.[0].id] || []})
+      setInitialValues(pre => ({...pre, userIdList: [res.data?.[0].id] || []}))
     } else {
-      setInitialValues({userId: null, status: 0})
-
+      // setInitialValues({userId: null, status: 0})
     }
     usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
     // actionRef.current.reload();
@@ -297,14 +308,17 @@ const WorkPlanCheck = () => {
             formRef={formRef}
             cardBordered
             request={async (params = {}, sort, filter) => {
-              const postData = {...params, ...initialValues};
+              const postData = {
+                ...params,
+                userIdList: params?.userIdList?.length ? params.userIdList : initialValues.userIdList
+              };
               // setParams(postData)
-              console.log('postData===>', postData);
+              // console.log('postData===>', postData);
                return apiWorkPlanCheckList(postData);
                // return apiWorkPlanCheckList(params);
             }}
             // params={params}
-            manualRequest={true}
+            // manualRequest={true}
             rowKey="id"
             search={{
               // span: 6,
@@ -322,19 +336,30 @@ const WorkPlanCheck = () => {
               syncToUrl: async (values, type) => {
                 const results: any = values
                 if (type === 'get') {
-                  if (!['', void 0, null].includes(results.status)) {
-                    results.status = +results.status
+                  if (!['', void 0, null].includes(results.monthPlanStatus)) {
+                    results.monthPlanStatus = +results.monthPlanStatus
                   } else {
-                    results.status = 0
+                    results.monthPlanStatus = 0
                   }
-                  if (!['', void 0, null].includes(results.userId)) {
-                    results.userId = +results.userId
+                  if (!['', void 0, null].includes(results.checkStatus)) {
+                    results.checkStatus = +results.checkStatus
+                  } else {
+                    results.checkStatus = 0
                   }
-                  return results;
+                  if (results.userIdList) {
+                    try {
+                      results.userIdList = JSON.parse(results.userIdList)
+                    } catch (e) {
+                      delete results.userIdList
+                    }
+                  }
+                } else {
+                  results.userIdList = JSON.stringify(results.userIdList || []);
                 }
                 return results;
               },
               initialValues: initialValues,
+              syncToInitialValues: true,
             }}
             pagination={{
               defaultPageSize: 10,
