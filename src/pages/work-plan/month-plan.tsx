@@ -6,7 +6,7 @@ import {Button, message, Modal, Select, Tooltip, Upload, UploadProps} from "antd
 import {PlusOutlined} from "@ant-design/icons";
 import MonthPlanModal from "./month-plan-modal.tsx";
 import {
-
+    apiFinishMonthPlan,
     download,
     exportMonth,
     monthPlanList,
@@ -96,7 +96,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 60,
+        width: 100,
         render: (_, record,) => [
 
             <a
@@ -106,6 +106,16 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
                 key="view">
                 编辑
             </a>,
+            <Button
+                size='small'
+                type='primary'
+                disabled={record.status === 1}
+                onClick={() => {
+                onAction('complete', record)
+                }}
+                key="view">
+            完成
+            </Button>,
         ],
     },
 ];
@@ -148,7 +158,15 @@ const MonthPlan = () => {
         }
         else if (type === 'edit') {
             navigate('/work-plan/edit/' + record.id);
-        }
+        } else if (type === 'complete') {
+            Modal.confirm({
+              title: '是否确定完成？',
+              onOk: async () => {
+                await apiFinishMonthPlan(record.id);
+                actionRef.current.reload();
+               }
+            })
+          }
     }
 
     function onDel(record: any) {

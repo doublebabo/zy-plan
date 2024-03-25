@@ -48,6 +48,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
   {
     title: '问题和风险',
     dataIndex: 'problem',
+    width: 100,
     // ellipsis: true
   },
   {

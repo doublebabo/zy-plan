@@ -4,7 +4,6 @@ import {useNavigate, useParams} from "react-router";
 import {ActionType, ProTable} from '@ant-design/pro-components';
 import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from "antd";
  import {
-  apiFinishMonthPlan,
   apiWorkPlanCheckList, arrayToMap, auditEnum, getAllUsersWhoAreUnderManaged,
 
 
@@ -132,26 +131,6 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     },
   ],
   {
-    title: '操作',
-    valueType: 'option',
-    fixed: 'right',
-    width: 60,
-    align: "center",
-    render: (_, record,) => [
-
-      <Button
-          size='small'
-          type='primary'
-          disabled={record.status === 1}
-          onClick={() => {
-            onAction('complete', record)
-          }}
-          key="view">
-        完成
-      </Button>,
-    ],
-  },
-  {
     title: '合理性',
     valueType: 'option',
     fixed: 'right',
@@ -205,17 +184,7 @@ const WorkPlanCheck = () => {
   });
 
   function onAction(type: string, record?: any) {
-
-    if (type === 'complete') {
-      Modal.confirm({
-        title: '是否确定完成？',
-        onOk: async () => {
-          await apiFinishMonthPlan(record.id);
-          actionRef.current.reload();
-         }
-      })
-    }
-    else if (type === 'reload') {
+    if (type === 'reload') {
       actionRef.current.reload();
     }
   }
@@ -293,12 +262,12 @@ const WorkPlanCheck = () => {
 
   async function allUsersWhoAreUnderManaged() {
      const res = await getAllUsersWhoAreUnderManaged();
-    if (res.data.length) {
-      formRef.current.setFieldsValue({userIdList: [res.data?.[0].id] || []})
-      setInitialValues(pre => ({...pre, userIdList: [res.data?.[0].id] || []}))
-    } else {
-      // setInitialValues({userId: null, status: 0})
-    }
+    // if (res.data.length) {
+    //   formRef.current.setFieldsValue({userIdList: [res.data?.[0].id] || []})
+    //   setInitialValues(pre => ({...pre, userIdList: [res.data?.[0].id] || []}))
+    // } else {
+    //   // setInitialValues({userId: null, status: 0})
+    // }
     usersRef.current = (res?.data || []).map(o => ({label: o.name, value: o.id}));
     // actionRef.current.reload();
   }
