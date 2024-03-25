@@ -100,18 +100,18 @@ const getColumns = ({type}): ProColumns<any>[] => {
         rules: [],
       },
     },
-    {
-      title: '是否管理员',
-      dataIndex: 'admin',
-      valueType: 'switch',
-      fieldProps: {
-        checkedChildren: '是',
-        unCheckedChildren: '否',
-      },
-      formItemProps: {
-        rules: [],
-      },
-    },
+    // {
+    //   title: '是否管理员',
+    //   dataIndex: 'admin',
+    //   valueType: 'switch',
+    //   fieldProps: {
+    //     checkedChildren: '是',
+    //     unCheckedChildren: '否',
+    //   },
+    //   formItemProps: {
+    //     rules: [],
+    //   },
+    // },
   ];
 }
 
@@ -132,9 +132,9 @@ export default function ModifyModal(props: any) {
     // }
     let result;
     if (type === 'edit') {
-      result = await editUser({...values, userId: record.id});
+      result = await editUser({...values, userId: record.id, admin: 0});
     } else if (type === 'add') {
-      result = await addUser(values);
+      result = await addUser({...values, admin: 0});
     }
     if (result.success) {
       setVisible(false);
