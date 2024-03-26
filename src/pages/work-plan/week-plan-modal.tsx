@@ -80,6 +80,7 @@ export default React.forwardRef(function (props: any, ref) {
                     name="outcome"
                     label="工作结果"
                     placeholder="请输入"
+                    disabled={recordRef.current?.content ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />
@@ -87,6 +88,7 @@ export default React.forwardRef(function (props: any, ref) {
                     name="problem"
                     label="问题和风险"
                     placeholder="请输入"
+                    disabled={recordRef.current?.content ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />
