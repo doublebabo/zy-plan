@@ -60,6 +60,14 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         align: "center"
     },
     {
+        title: '超时',
+        dataIndex: 'overTime',
+        // ellipsis: true,
+        hideInSearch: true,
+        width: 50,
+        align: "center"
+    },
+    {
         title: '工作描述',
         dataIndex: 'content',
         // ellipsis: true,
