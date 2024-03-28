@@ -67,7 +67,11 @@ const Login = () => {
             setLoading(true);
             const res = await userLogin(values);
             if (res?.success) {
-                navigate('/work-plan');
+                if (res?.data?.admin === 1) {
+                    navigate('/office-summary');
+                } else {
+                    navigate('/work-plan');
+                }
             }
             setLoading(false);
         })
