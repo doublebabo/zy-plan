@@ -30,7 +30,7 @@ const items: MenuProps['items'] = [
   getItem('工作计划编辑', '/work-plan', null,),
   getItem('工作计划检查', '/work-plan-check', null,),
   getItem('检查结果', '/self-check', null,),
-  getItem('部门问题管理', '/dept-issue', null,),
+  // getItem('部门问题管理', '/dept-issue', null,),
   getItem('办公室统计', '/office-summary', null,),
   getItem('用户管理', '/user-mgt', null,),
 
