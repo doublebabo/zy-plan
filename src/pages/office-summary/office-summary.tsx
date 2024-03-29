@@ -109,7 +109,6 @@ const getColumns = ({isSelfCheckPage}: any): any => [
     hideInSearch: true,
     align: "center"
   },
-    ...isSelfCheckPage ? [
       {
         title: '合理性',
         dataIndex: 'quality',
@@ -137,24 +136,6 @@ const getColumns = ({isSelfCheckPage}: any): any => [
         hideInSearch: true,
         align: "center"
       },
-    ] : [
-      {
-        title: '计划批改情况',
-        dataIndex: 'result',
-        valueEnum: arrayToMap(resultEnum),
-        hideInSearch: true,
-
-        align: "center"
-      },
-      {
-        title: '批注',
-        valueType: 'text',
-        dataIndex: 'comment',
-        hideInSearch: true,
-        align: "center"
-
-      },
-    ],
   ...[
     // 搜索表单项
     {
@@ -299,51 +280,33 @@ const OfficeSummary = (props: any) => {
             align: "center",
             dataIndex: 'problem',
           },
-          ...isSelfCheckPage ? [
-            {
-              title: '合理性',
-              dataIndex: 'quality',
-              valueEnum: arrayToMap(qualityEnum),
-              hideInSearch: true,
+          {
+            title: '合理性',
+            dataIndex: 'quality',
+            valueEnum: arrayToMap(qualityEnum),
+            hideInSearch: true,
 
-              align: "center"
-            },
-            {
-              title: '合理性批注',
-              dataIndex: 'qualityComment',
-              hideInSearch: true,
-              align: "center"
-            },
-            {
-              title: '结果',
-              dataIndex: 'result',
-              valueEnum: arrayToMap(resultEnum),
-              hideInSearch: true,
-              align: "center"
-            },
-            {
-              title: '结果批注',
-              dataIndex: 'resultComment',
-              hideInSearch: true,
-              align: "center"
-            },
-          ] : [
-            {
-              title: '计划批改情况',
-              dataIndex: 'result',
-              valueEnum: arrayToMap(resultEnum),
-              hideInSearch: true,
-              align: "center"
-            },
-            {
-              title: '批注',
-              valueType: 'text',
-              dataIndex: 'comment',
-              hideInSearch: true,
-              align: "center"
-
-            },
-          ] as any,
+            align: "center"
+          },
+          {
+            title: '合理性批注',
+            dataIndex: 'qualityComment',
+            hideInSearch: true,
+            align: "center"
+          },
+          {
+            title: '结果',
+            dataIndex: 'result',
+            valueEnum: arrayToMap(resultEnum),
+            hideInSearch: true,
+            align: "center"
+          },
+          {
+            title: '结果批注',
+            dataIndex: 'resultComment',
+            hideInSearch: true,
+            align: "center"
+          },
         ]}
         headerTitle={false}
         search={false}
