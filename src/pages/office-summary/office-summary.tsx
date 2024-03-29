@@ -194,9 +194,13 @@ const getColumns = ({isSelfCheckPage}: any): any => [
 
       {
         title: '姓名',
-        dataIndex: 'userId',
+        dataIndex: 'userIdList',
         hideInSearch: false,
         hideInTable: true,
+        valueType: 'select',
+        fieldProps: {
+          mode: 'multiple'
+        },
         dependencies: ['deptSecondId', 'deptFirstId'],
         request: async ({deptSecondId, deptFirstId}) => {
           if ([null, void 0, ''].includes(deptFirstId)) return [];
@@ -412,12 +416,12 @@ const OfficeSummary = (props: any) => {
                 if ('deptFirstId' in changedValues || !('deptFirstId' in values)) {
                   formRef.current.setFieldsValue({
                     deptSecondId: null,
-                    userId: null
+                    // userIdList: []
                   })
                 }
                 if ('deptSecondId' in changedValues || !('deptSecondId' in values)) {
                   formRef.current.setFieldsValue({
-                    userId: null
+                    // userIdList: []
                   })
                 }
               },
