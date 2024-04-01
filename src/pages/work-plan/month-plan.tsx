@@ -104,7 +104,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 100,
+        width: 140,
         render: (_, record,) => [
 
             <a
@@ -113,6 +113,13 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
                 }}
                 key="view">
                 编辑
+            </a>,
+            <a
+                onClick={() => {
+                    onDel(record)
+                }}
+                key="finish">
+                删除
             </a>,
             <Button
                 size='small'
