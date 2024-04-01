@@ -133,11 +133,17 @@ export function monthPlanList(data) {
 }
 
 export const planStatus = [
+  {label: '全部', value: 0, status: 'success'},
+  {label: '未完成', value: 1, status: 'default'},
+  {label: '已完成', value: 2, status: 'success'},
+  {label: '超时未完成', value: 3, status: 'error'},
+  {label: '超时已完成', value: 4, status: 'error'},
+];
+
+export const monthPlanStatus = [
   {label: '未完成', value: 0, status: 'default'},
   {label: '已完成', value: 1, status: 'success'},
-  {label: '超时未完成', value: 2, status: 'error'},
-  {label: '超时已完成', value: 3, status: 'error'},
-];
+]
 
 export const weekStatus = [
   // {label: '未完成', value: 1},

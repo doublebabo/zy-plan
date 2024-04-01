@@ -8,6 +8,7 @@ import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from 
 
 
   planStatus,
+  monthPlanStatus,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
  import PlanCorrectionCol from "./plan-correction-col.tsx";
@@ -94,9 +95,9 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     dataIndex: 'status',
     valueType: 'select',
     hideInSearch: true,
-    valueEnum: arrayToMap(planStatus),
+    valueEnum: arrayToMap(monthPlanStatus),
     request: () => {
-      return planStatus;
+      return monthPlanStatus;
     },
   },
   ...[
