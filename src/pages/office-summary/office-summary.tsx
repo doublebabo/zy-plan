@@ -12,6 +12,7 @@ import {
   download,
   planStatus,
   qualityEnum, resultEnum,
+  workIsImportantSearchEnum,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import localstorage from "../../utils/localstorage.ts";
@@ -192,6 +193,17 @@ const getColumns = ({isSelfCheckPage}: any): any => [
           return (res?.data || []).map(o => ({label: o.name, value: o.id}));
         },
       },
+      {
+        title: '工作分类',
+        dataIndex: 'important',
+        valueType: 'select',
+        initialValue: 0,
+        ellipsis: true,
+        request: async () => {
+            return workIsImportantSearchEnum;
+        },
+        hideInTable: true,
+    },
       {
         title: '月份选择',
         valueType: 'dateMonth',

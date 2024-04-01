@@ -441,10 +441,14 @@ export function exportDataTwo(params = {}) {
 }
 
 export const workIsImportantEnum = [
-  {label: '日常工作', value: '日常工作'},
-  {label: '培训工作', value: '培训工作'},
-  {label: '一般工作', value: '一般工作'},
-  {label: '重点工作', value: '重点工作'},
+  {label: '重点工作', value: 1},
+  {label: '非重点工作', value: 2},
+]
+
+export const workIsImportantSearchEnum = [
+  {label: '全部', value: 0},
+  {label: '重点工作', value: 1},
+  {label: '非重点工作', value: 2},
 ]
 
 

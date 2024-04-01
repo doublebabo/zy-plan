@@ -81,6 +81,12 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
                   label="截止时间"
                   rules={[{ required: true, message: '这是必填项' }]}
               />
+                <ProFormSelect
+                    name='important'
+                    label="工作分类"
+                    request={() => Promise.resolve(workIsImportantEnum)}
+                    rules={[{ required: true, message: '这是必填项' }]}
+                />
                 <ProFormTextArea
                     name="content"
                     label="工作描述"
