@@ -12,6 +12,7 @@ import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from 
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
  import PlanCorrectionCol from "./plan-correction-col.tsx";
+import useTableHeight from "../../hooks/useTableHeight.ts";
 
 const {confirm} = Modal;
 
@@ -187,10 +188,16 @@ const WorkPlanCheck = () => {
   const usersRef = useRef<any>();
 
   const [initialValues, setInitialValues] = useState({
-    monthPlanStatus: 0,
+    monthPlanStatus: 1,
     userIdList: [],
     checkStatus: 0
   });
+
+    const {height, resize} = useTableHeight();
+
+    useEffect(() => {
+        resize();
+    }, [cols]);
 
   function onAction(type: string, record?: any) {
     if (type === 'reload') {
@@ -305,6 +312,7 @@ const WorkPlanCheck = () => {
                   </Tooltip>
               )
             }))}
+            scroll={{y: height}}
             actionRef={actionRef}
             formRef={formRef}
             cardBordered
@@ -340,7 +348,7 @@ const WorkPlanCheck = () => {
                   if (!['', void 0, null].includes(results.monthPlanStatus)) {
                     results.monthPlanStatus = +results.monthPlanStatus
                   } else {
-                    results.monthPlanStatus = 0
+                    results.monthPlanStatus = 1
                   }
                   if (!['', void 0, null].includes(results.checkStatus)) {
                     results.checkStatus = +results.checkStatus

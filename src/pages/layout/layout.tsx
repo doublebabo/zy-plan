@@ -114,7 +114,7 @@ const Layout = () => {
   return (
       <>
         <div className={styles.context}>
-          <div className={styles.head}>
+          <div className={`${styles.head} websiteHead`}>
             <div className={styles.headLeft}>泽宇智能工作管理</div>
             <div className={styles.headMid}>
               <Menu className={styles.menus}
@@ -147,6 +147,8 @@ const Layout = () => {
             onOk={onChangePwd}
             onCancel={() => setPwdChangeVisible(false)}
             confirmLoading={confirmLoading}
+            maskClosable={false}
+            keyboard={false}
         >
           <ProForm
               formRef={formRef}

@@ -115,8 +115,9 @@ export default function WorkDetailModal(props: any) {
 
     function onEditOk() {
         formRefEdit?.current?.validateFields()?.then(async values => {
-            let result;
+            let result: any;
             setLoading(true);
+          // eslint-disable-next-line prefer-const
             result = await weekPlanEdit({...values, weekPlanId: record.id});
             setLoading(false);
             if (result.success) {
@@ -169,6 +170,8 @@ export default function WorkDetailModal(props: any) {
                         width='80%'
                         onCancel={() => setVisible(false)}
                         onOk={onEditOk}
+                        maskClosable={false}
+                        keyboard={false}
                         >
                         <ProForm
                             formRef={formRefEdit}

@@ -3,6 +3,8 @@ import {ProForm, ProFormInstance, ProFormSelect, ProFormTextArea} from "@ant-des
 import {Modal} from "antd";
 import {planMonths, weekPlanAdd, weekPlanEdit} from "../../services";
 import {useParams} from "react-router";
+import type { DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable from 'react-draggable';
 
 export default React.forwardRef(function (props: any, ref) {
 
@@ -20,6 +22,25 @@ export default React.forwardRef(function (props: any, ref) {
 
     const recordRef = useRef<any>();
 
+    const [disabled, setDisabled] = useState(false);
+    const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
+    const draggleRef = useRef<HTMLDivElement>(null);
+
+    const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
+      const { clientWidth, clientHeight } = window.document.documentElement;
+      const targetRect = draggleRef.current?.getBoundingClientRect();
+      if (!targetRect) {
+        return;
+      }
+      setBounds({
+        left: -targetRect.left + uiData.x,
+        right: clientWidth - (targetRect.right - uiData.x),
+        top: -targetRect.top + uiData.y,
+        bottom: clientHeight - (targetRect.bottom - uiData.y),
+      });
+    };
+
+
     function onOk() {
         if (loading) return;
         formRef.current?.validateFields?.().then(async values => {
@@ -34,7 +55,13 @@ export default React.forwardRef(function (props: any, ref) {
     }
 
     function onCancel() {
-        setVisible(false)
+
+      Modal.confirm({
+        title: '是否确定取消？',
+        onOk: () => {
+          setVisible(false)
+        }
+      })
     }
 
     useImperativeHandle(ref, () => ({
@@ -59,11 +86,44 @@ export default React.forwardRef(function (props: any, ref) {
 
         <Modal
             open={visible}
-            title={`${weekPlanId ? '修改' : '新增'}周工作计划`}
+            title={
+              <div
+                  style={{
+                    width: '100%',
+                    cursor: 'move',
+                  }}
+                  onMouseOver={() => {
+                    if (disabled) {
+                      setDisabled(false);
+                    }
+                  }}
+                  onMouseOut={() => {
+                    setDisabled(true);
+                  }}
+                  // fix eslintjsx-a11y/mouse-events-have-key-events
+                  // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
+                  onFocus={() => {}}
+                  onBlur={() => {}}
+                  // end
+              >
+                {`${weekPlanId ? '修改' : '新增'}周工作计划`}
+              </div>
+            }
             width={500}
-            onCancel={() => setVisible(false)}
+            onCancel={onCancel}
             onOk={onOk}
             confirmLoading={loading}
+            maskClosable={false}
+            keyboard={false}
+            modalRender={modal => (
+                <Draggable
+                    disabled={disabled}
+                    bounds={bounds}
+                    onStart={(event, uiData) => onStart(event, uiData)}
+                >
+                  <div ref={draggleRef}>{modal}</div>
+                </Draggable>
+            )}
         >
             <ProForm
                 formRef={formRef}

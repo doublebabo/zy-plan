@@ -54,6 +54,8 @@ export default React.forwardRef(function WeekPlanDetailModal(props: any, ref: an
           width={870}
           onCancel={() => setVisible(false)}
           onOk={onOk}
+          maskClosable={false}
+          keyboard={false}
       >
         <Spin spinning={loading}>
           <ProForm

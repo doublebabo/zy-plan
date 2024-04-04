@@ -7,6 +7,7 @@ import ModifyModal from "./modify-modal.tsx";
 import {delUser, userList, yesOrNoEnumValue} from "../../services";
 import {PlusOutlined} from "@ant-design/icons";
 import myLocalstorage from "../../utils/localstorage.ts";
+import useTableHeight from "../../hooks/useTableHeight.ts";
 
 const {confirm} = Modal;
 
@@ -97,7 +98,11 @@ const UserMgt = () => {
     const [modalType, setModalType] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [record, setRecord] = useState<any>(null);
+    const {height, resize} = useTableHeight();
 
+    useEffect(() => {
+        resize();
+    }, [cols]);
     function onShowModal(type: string, record?: any) {
         setModalType(type);
         setModalVisible(true);
@@ -134,6 +139,7 @@ const UserMgt = () => {
       <div className={styles.container}>
         <ProTable
             columns={cols}
+            scroll={{y: height}}
             actionRef={actionRef}
             cardBordered
             request={async (params = {}, sort, filter) => {

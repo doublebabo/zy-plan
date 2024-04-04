@@ -569,7 +569,8 @@ export default function DeptIssue() {
                 formRef={confirmFormRef}
                 modalProps={{
                     maskClosable: false,
-                    onCancel: () => setConfirmVisible(false)
+                    onCancel: () => setConfirmVisible(false),
+                  keyboard:false
                 }}
             >
                 <ProFormTextArea

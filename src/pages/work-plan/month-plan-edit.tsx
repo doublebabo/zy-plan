@@ -12,7 +12,7 @@ import {
 } from "@ant-design/pro-components";
 
 import styles from './plan-edit.module.less';
-import {Button, Row, Spin} from "antd";
+import {Button, Modal, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
   arrayToMap, getBlameList, importantEnum,
@@ -74,7 +74,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 70,
+        width: 90,
         render: (text, record, _, action) => {
 
             return [
@@ -85,7 +85,13 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
                 }}
                 >
                     编辑
-                </a>
+                </a>,
+              <a key="delete"   onClick={() => {
+                  onWeekPlan('delete',record);
+                }}
+              >
+                删除
+              </a>,
             ]
         },
     },
@@ -123,6 +129,16 @@ export default function MonthPlanEdit(prosp: any) {
             addWeekPlanRef.current.show();
         } else if (type === 'edit') {
             addWeekPlanRef.current.show(record.id, record);
+        } else if (type === 'delete') {
+          // 删除周计划
+          Modal.confirm({
+            title: '是否确认删除？',
+            onOk: async () => {
+              // todo
+              // await deleteapi();
+              initData()
+            }
+          });
         }
     }
 

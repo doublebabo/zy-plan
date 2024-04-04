@@ -165,8 +165,8 @@ export default function ConfirmModal(props: any) {
             // 0表示未确认，1表示确认为未完成，2表示确认为已完成
             formRef?.current?.resetFields();
             formRef2?.current?.resetFields();
-            weekPlanDetail(weekPlanId).then(res => {
-                const {employeeStatus, leaderStatus} = res?.data;
+            weekPlanDetail(weekPlanId).then((res: any) => {
+                const {employeeStatus, leaderStatus} = res?.data || {};
                 const isManager = myLocalstorage.get('manager') === 1;
                 let canEmployeeEdit = false;
                 // 员工打开这个页面时，领导的部分是灰色的，员工的部分只有当 employeeStatus 是 0 的时候可以进行输入和选择完成未完成
@@ -203,7 +203,12 @@ export default function ConfirmModal(props: any) {
 
     return (
         <>
-            <Modal width={'65%'} open={visible} cancelText='关闭' okButtonProps={{style: {display: 'none'}}} onCancel={() => setVisible(false)}>
+            <Modal width={'65%'} open={visible}
+                   maskClosable={false}
+                   keyboard={false}
+                   cancelText='关闭'
+                   okButtonProps={{style: {display: 'none'}}}
+                   onCancel={() => setVisible(false)}>
                 <BetaSchemaForm
                     onFinish={onEmployeeOk}
                     formRef={formRef}

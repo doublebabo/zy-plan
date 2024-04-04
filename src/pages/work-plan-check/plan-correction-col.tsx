@@ -25,46 +25,58 @@ export default function PlanCorrectionCol(props: any) {
       message.warning('请选择批改状态')
       return;
     }
-    if (!comment) {
+
+    // 在进行审批时，如果选择的是合理/合格，则可以不用输入文字直接提交，同时去掉确认窗口，提交完成后，置灰
+    if (!comment && quality !== 1) {
       message.warning('输入批改意见')
       return;
     }
-    Modal.confirm({
-      title: '是否确认提交？',
-      onOk: async () => {
-        let idName;
-        let api;
-        let singleName;
-        switch (type) {
-          case 'monthResult':
-            idName = 'monthPlanId';
-            api = apiResultCheckMonthly;
-            singleName = 'result';
-            break
-          case 'monthQuality':
-            idName = 'monthPlanId';
-            api = apiQualityCheckMonthly;
-            singleName = 'quality';
-            break
-          case 'weekResult':
-            idName = 'weekPlanId';
-            api = apiResultCheckWeekly;
-            singleName = 'result';
-            break
-          case 'weekQuality':
-            idName = 'weekPlanId';
-            api = apiQualityCheckWeekly;
-            singleName = 'quality';
-            break
-        }
-        await api({
-          [idName]: record.id,
-          [singleName]: quality,
-          comment
-        });
-        reload?.()
+
+
+    if (quality !== 1) {
+      Modal.confirm({
+        title: '是否确认提交？',
+        onOk: doSubmit
+      });
+    } else {
+      doSubmit();
+    }
+
+    async function doSubmit() {
+      let idName;
+      let api;
+      let singleName;
+      switch (type) {
+        case 'monthResult':
+          idName = 'monthPlanId';
+          api = apiResultCheckMonthly;
+          singleName = 'result';
+          break
+        case 'monthQuality':
+          idName = 'monthPlanId';
+          api = apiQualityCheckMonthly;
+          singleName = 'quality';
+          break
+        case 'weekResult':
+          idName = 'weekPlanId';
+          api = apiResultCheckWeekly;
+          singleName = 'result';
+          break
+        case 'weekQuality':
+          idName = 'weekPlanId';
+          api = apiQualityCheckWeekly;
+          singleName = 'quality';
+          break
       }
-    })
+      await api({
+        [idName]: record.id,
+        [singleName]: quality,
+        comment
+      });
+      reload?.()
+    }
+
+
   }
 
   useEffect(() => {
@@ -106,7 +118,9 @@ export default function PlanCorrectionCol(props: any) {
         <Space.Compact style={{width: '100%'}}>
           <Input size='small'
                  value={comment}
-                 onChange={(e) => {setComment(e.target.value);}}
+                 onChange={(e) => {
+                   setComment(e.target.value);
+                 }}
                  placeholder='输入批改意见'
                  onClick={e => e.stopPropagation()}
           />

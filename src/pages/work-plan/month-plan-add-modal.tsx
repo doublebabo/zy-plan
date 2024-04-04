@@ -54,6 +54,8 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
             onCancel={() => setVisible(false)}
             onOk={onOk}
             confirmLoading={loading}
+            maskClosable={false}
+            keyboard={false}
         >
             <ProForm
                 formRef={formRef}

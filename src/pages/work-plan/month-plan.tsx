@@ -4,7 +4,6 @@ import {useNavigate} from "react-router";
 import {ActionType,  ProTable} from '@ant-design/pro-components';
 import {Button, message, Modal, Select, Tooltip, Upload, UploadProps} from "antd";
 import {PlusOutlined} from "@ant-design/icons";
-import MonthPlanModal from "./month-plan-modal.tsx";
 import {
     apiFinishMonthPlan,
     download,
@@ -13,8 +12,9 @@ import {
     planStatus, planMonths,  monthPlanDel,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
-import AddPlanModal from "./add-plan-modal.tsx";
+import AddPlanModal from "./month-plan-add-modal.tsx";
  import {baseURL} from "../../utils/http";
+import useTableHeight from "../../hooks/useTableHeight.ts";
 
 const {confirm} = Modal;
 
@@ -121,16 +121,25 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
                 key="finish">
                 删除
             </a>,
-            <Button
+            record.status === 0 && <Button
                 size='small'
                 type='primary'
-                disabled={record.status === 1}
+                // disabled={record.status === 1}
                 onClick={() => {
-                onAction('complete', record)
+                    onAction('complete', record)
                 }}
                 key="view">
             完成
             </Button>,
+            record.status === 1 && <Button
+                size='small'
+                type='primary'
+                onClick={() => {
+                    onAction('undone', record)
+                }}
+                key="view">
+                未完成
+            </Button>
         ],
     },
 ];
@@ -141,7 +150,7 @@ const MonthPlan = () => {
     const actionRef = useRef<ActionType>();
     const [cols, setCols] = useState<any>([]);
 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(true);
 
     const [modalType, setModalType] = useState<string>('');
 
@@ -163,10 +172,13 @@ const MonthPlan = () => {
 
     const [modalLoading, setModalLoading] = useState(false);
 
+    const {height, resize} = useTableHeight();
+
+    useEffect(() => {
+        resize();
+    }, [cols]);
+
     function onAction(type: string, record?: any) {
-        // setModalVisible(true);
-        // setModalType(type);
-        // if (record) setRecord({...record});
 
         if (type === 'add') {
             addModalRef.current.show();
@@ -181,7 +193,15 @@ const MonthPlan = () => {
                 actionRef.current.reload();
                }
             })
-          }
+        } else if (type === 'undone') {
+            Modal.confirm({
+                title: '是否确定未完成？',
+                onOk: async () => {
+                    await apiFinishMonthPlan(record.id);
+                    actionRef.current.reload();
+                }
+            })
+        }
     }
 
     function onDel(record: any) {
@@ -243,9 +263,14 @@ const MonthPlan = () => {
 
     useEffect(() => {
         const isManager = myLocalstorage.get('manager') === 1;
-
         setCols(getColumns(navigate, {onAction,onFinish, isManager, onDel}));
     }, []);
+
+
+
+
+
+
     return (
         <div className={styles.container}>
             <ProTable
@@ -257,6 +282,7 @@ const MonthPlan = () => {
                         </Tooltip>
                     )
                 }))}
+                scroll={{y: height}}
                 actionRef={actionRef}
                 cardBordered
                 request={async (params = {}, sort, filter) => {
@@ -288,7 +314,7 @@ const MonthPlan = () => {
                             if (!['', void 0, null].includes(results.status)) {
                                 results.status = +results.status
                             } else {
-                              results.status =0
+                              results.status = 1
                             }
                             if (results.deptFirstList && !(results.deptFirstList instanceof Array)) {
                                 results.deptFirstList = [results.deptFirstList]
@@ -305,7 +331,7 @@ const MonthPlan = () => {
                 }}
                 pagination={{
                   defaultPageSize: 10,
-                    pageSizeOptions: [10, 20, 50],
+                  pageSizeOptions: [10, 20, 50],
                 }}
                 dateFormatter="string"
                 toolBarRender={() => [
@@ -323,11 +349,6 @@ const MonthPlan = () => {
             <AddPlanModal ref={addModalRef} onSuccess={() => {
                 actionRef?.current?.reload();
             }}/>
-            <MonthPlanModal
-              onSuccess={() => {
-                  actionRef?.current?.reload();
-              }}
-              type={modalType} visible={modalVisible} setVisible={setModalVisible} isManager={isManager} record={record}/>
 
             <Modal
               title="选择月份"
@@ -338,6 +359,8 @@ const MonthPlan = () => {
               cancelText="取消"
               okButtonProps={{loading: downloading}}
               cancelButtonProps={{loading: downloading}}
+              maskClosable={false}
+              keyboard={false}
             >
                 <Select
                   value={month}

@@ -16,6 +16,7 @@ import {
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import localstorage from "../../utils/localstorage.ts";
+import useTableHeight from "../../hooks/useTableHeight.ts";
 
 
 const {confirm} = Modal;
@@ -244,6 +245,12 @@ const OfficeSummary = (props: any) => {
 
   const paramsRef = useRef<any>();
 
+    const {height, resize} = useTableHeight();
+
+    useEffect(() => {
+        resize();
+    }, [cols]);
+
   async function onAction(type: string, record?: any) {
 
     if (type === 'export') {
@@ -344,6 +351,7 @@ const OfficeSummary = (props: any) => {
                   </Tooltip>
               )
             }))}
+            scroll={{y: height}}
             actionRef={actionRef}
             formRef={formRef}
             cardBordered
@@ -378,7 +386,7 @@ const OfficeSummary = (props: any) => {
                   if (!['', void 0, null].includes(results.status)) {
                     results.status = +results.status
                   } else {
-                    results.status = 0
+                    results.status = 1
                   }
                   return results;
                 }
