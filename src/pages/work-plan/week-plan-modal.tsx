@@ -55,13 +55,16 @@ export default React.forwardRef(function (props: any, ref) {
     }
 
     function onCancel() {
-
-      Modal.confirm({
-        title: '是否确定取消？',
-        onOk: () => {
+      if (weekPlanId) {
+          Modal.confirm({
+              title: '是否确定取消？',
+              onOk: () => {
+                  setVisible(false)
+              }
+          })
+      } else {
           setVisible(false)
-        }
-      })
+      }
     }
 
     useImperativeHandle(ref, () => ({
