@@ -104,7 +104,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         dataIndex: 'title',
         valueType: 'option',
         fixed: 'right',
-        width: 140,
+        width: 150,
         render: (_, record,) => [
 
             <a
