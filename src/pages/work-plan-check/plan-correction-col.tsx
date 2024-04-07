@@ -130,6 +130,7 @@ export default function PlanCorrectionCol(props: any) {
                  onChange={(e) => {
                    setComment(e.target.value);
                  }}
+                 disabled={disable}
                  placeholder='输入批改意见'
                  onClick={e => e.stopPropagation()}
           />
