@@ -18,6 +18,8 @@ export default function PlanCorrectionCol(props: any) {
 
   const [enums, setEnums] = useState<any>([]);
 
+  const [disable, setDisable] = useState<boolean>();
+
 
   function onSubmit(e) {
     e.stopPropagation();
@@ -93,6 +95,9 @@ export default function PlanCorrectionCol(props: any) {
       ])
       setComment(record?.resultComment);
       setQuality(record?.result);
+      if (record.result !== 0) {
+        setDisable(true);
+      }
     } else {
       setEnums([
         {label: '合理', value: 1},
@@ -100,6 +105,9 @@ export default function PlanCorrectionCol(props: any) {
       ])
       setComment(record?.qualityComment);
       setQuality(record?.quality);
+      if (record.quality !== 0) {
+        setDisable(true);
+      }
     }
   }, [type]);
 
@@ -111,7 +119,7 @@ export default function PlanCorrectionCol(props: any) {
         <Radio.Group value={quality} onChange={e => {
           setQuality(e.target.value);
         }}>
-          {enums.map((o, oIndex) => <Radio key={oIndex} value={o.value}>{o.label}</Radio>)}
+          {enums.map((o, oIndex) => <Radio disabled={disable} key={oIndex} value={o.value}>{o.label}</Radio>)}
           {/*<Radio value={1}>合格</Radio>*/}
           {/*<Radio value={2}>不合格</Radio>*/}
         </Radio.Group>
@@ -124,7 +132,7 @@ export default function PlanCorrectionCol(props: any) {
                  placeholder='输入批改意见'
                  onClick={e => e.stopPropagation()}
           />
-          <Button size='small' type="primary" onClick={onSubmit}>提交</Button>
+          <Button disabled={disable} size='small' type="primary" onClick={onSubmit}>提交</Button>
         </Space.Compact>
       </div>
   )
