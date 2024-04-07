@@ -20,7 +20,8 @@ import {
   weekPlanListById,
   weekStatus,
   workIsImportantEnum,
-  workStatus, workStatus2
+  workStatus, workStatus2,
+  weekPlanDel
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import ConfirmModal from "./week-plan/confirm-modal.tsx";
@@ -135,8 +136,8 @@ export default function MonthPlanEdit(prosp: any) {
             title: '是否确认删除？',
             onOk: async () => {
               // todo
-              // await deleteapi();
-              initData()
+              await weekPlanDel(record.id);
+              initData();
             }
           });
         }

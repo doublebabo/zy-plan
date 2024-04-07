@@ -520,6 +520,12 @@ export function monthPlanDel(id) {
 
 }
 
+// 删除周计划
+export function weekPlanDel(id) {
+  return executeAndTryCatch(() => http.get('/weekPlan/delete?weekPlanId=' + id));
+
+}
+
 export const yesOrNoEnumValue = {
   1: {
     text: '是',
