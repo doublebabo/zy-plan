@@ -75,6 +75,7 @@ export default function PlanCorrectionCol(props: any) {
         [singleName]: quality,
         comment
       });
+      setDisable(true);
       reload?.()
     }
 
