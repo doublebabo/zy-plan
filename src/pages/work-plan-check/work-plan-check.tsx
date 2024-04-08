@@ -9,6 +9,8 @@ import {Button, Input, message, Modal, Radio, Space, Tooltip, UploadProps} from 
 
   planStatus,
   monthPlanStatus,
+  apiCheckExport,
+  download,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
  import PlanCorrectionCol from "./plan-correction-col.tsx";
@@ -193,15 +195,23 @@ const WorkPlanCheck = () => {
     checkStatus: 0
   });
 
-    const {height, resize} = useTableHeight();
+  const paramsRef = useRef<any>();
 
-    useEffect(() => {
-        resize();
-    }, [cols]);
+  const {height, resize} = useTableHeight();
 
-  function onAction(type: string, record?: any) {
+  useEffect(() => {
+      resize();
+  }, [cols]);
+
+  async function onAction(type: string, record?: any) {
     if (type === 'reload') {
       actionRef.current.reload();
+    }
+    if (type === 'export') {
+      // setLoading(true);
+      const res = await apiCheckExport(paramsRef.current);
+      // setLoading(false);
+      download(res, `月计划表-${Date.now()}.xlsx`);
     }
   }
 
@@ -321,6 +331,7 @@ const WorkPlanCheck = () => {
                 ...params,
                 userIdList: params?.userIdList?.length ? params.userIdList : initialValues.userIdList
               };
+              paramsRef.current = postData;
               // setParams(postData)
               // console.log('postData===>', postData);
                return apiWorkPlanCheckList(postData);
@@ -378,14 +389,14 @@ const WorkPlanCheck = () => {
             toolbar={{
               title: '每月计划列表'
             }}
-            // toolBarRender={() => [
-            //   <Button
-            //       key="button"
-            //       onClick={() => onAction('export')}
-            //   >
-            //     导出工作计划表
-            //   </Button>,
-            // ]}
+            toolBarRender={() => [
+              <Button
+                  key="button"
+                  onClick={() => onAction('export')}
+              >
+                导出工作计划表
+              </Button>,
+            ]}
             expandable={{ expandedRowRender, expandRowByClick: true }}
         />
       </div>

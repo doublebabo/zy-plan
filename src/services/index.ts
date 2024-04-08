@@ -691,6 +691,11 @@ export function apiStatisticsExport(data) {
   }));
 }
 
+export function apiCheckExport(data) {
+  return executeAndTryCatch(() => http.post('/monthPlan/exportCheckList', data, {
+    responseType: 'blob'
+  }));
+}
 
 export const qualityEnum = [
   {label: '合理', value: 1, status: 'success'},
