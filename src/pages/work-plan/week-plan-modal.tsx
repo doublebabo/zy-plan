@@ -48,7 +48,7 @@ export default React.forwardRef(function (props: any, ref) {
             const res = await (weekPlanId ?  weekPlanEdit({...values, weekPlanId}) : weekPlanAdd({...values, monthId: useparams.id}));
             onSuccess?.();
             if (res?.success) {
-                onCancel();
+                setVisible(false)
             }
             setLoading(false);
         })
