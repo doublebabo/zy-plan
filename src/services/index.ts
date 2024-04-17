@@ -138,6 +138,7 @@ export const planStatus = [
   {label: '已完成', value: 2, status: 'success'},
   {label: '超时未完成', value: 3, status: 'error'},
   {label: '超时已完成', value: 4, status: 'error'},
+  {label: '超时', value: 5, status: 'error'},
 ];
 
 export const monthPlanStatus = [
