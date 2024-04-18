@@ -22,7 +22,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
   {
     title: '序号',
     dataIndex: 'rowNumber',
-    // width: 30,
+    width: 50,
     hideInSearch: true,
     align: "center"
   },
@@ -30,7 +30,7 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     title: '姓名',
     dataIndex: 'userName',
     hideInSearch: true,
-    // width: 100,
+      width: 50,
     align: "center",
   },
   {
@@ -185,6 +185,8 @@ const WorkPlanCheck = () => {
   const formRef = useRef<any>();
   const [cols, setCols] = useState<any>([]);
 
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any>([]);
+
 
   // const [users, setUsers] = useState<any>(null);
   const usersRef = useRef<any>();
@@ -298,6 +300,14 @@ const WorkPlanCheck = () => {
     // actionRef.current.reload();
   }
 
+    function onExpand(bool, record) {
+      if (bool) {
+          setExpandedRowKeys([record.id]);
+      } else {
+          setExpandedRowKeys([]);
+      }
+    }
+
 
 
   useEffect(() => {
@@ -397,7 +407,12 @@ const WorkPlanCheck = () => {
                 导出工作计划表
               </Button>,
             ]}
-            expandable={{ expandedRowRender, expandRowByClick: true }}
+            expandable={{
+                expandedRowRender,
+                expandRowByClick: true,
+                onExpand,
+                expandedRowKeys
+            }}
         />
       </div>
   )
