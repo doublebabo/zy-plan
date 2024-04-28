@@ -103,7 +103,7 @@ export default React.forwardRef(function AddPlan(props: any, ref: any) {
                     required={true}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
-                <ProFormText
+                <ProFormTextArea
                     name="milestone"
                     label="完成措施或关键节点"
                     required={true}
