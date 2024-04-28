@@ -100,6 +100,15 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         },
     },
     {
+        title: '月份选择',
+        valueType: 'dateMonth',
+        dataIndex: 'month',
+        hideInSearch: false,
+        hideInTable: true,
+        initialValue: null
+        // request: () => planMonths
+    },
+    {
         title: '操作',
         dataIndex: 'title',
         valueType: 'option',
