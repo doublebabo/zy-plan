@@ -151,7 +151,16 @@ const getColumns = ({isSelfCheckPage}: any): any => [
       },
       initialValue: 0
     },
-    ...(isSelfCheckPage ? [] : [
+    ...(isSelfCheckPage ? [
+      {
+      title: '月份选择',
+      valueType: 'dateMonth',
+      dataIndex: 'month',
+      hideInSearch: false,
+      hideInTable: true,
+      initialValue: null
+      // request: () => planMonths
+    },] : [
       {
         title: '一级部门',
         dataIndex: 'deptFirstId',
