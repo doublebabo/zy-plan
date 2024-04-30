@@ -16,7 +16,7 @@ import {Button, Modal, Row, Spin} from "antd";
 import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
   arrayToMap, getBlameList, importantEnum,
-  monthPlanDetail, monthPlanEdit, monthPlanUserList, planStatus,
+  monthPlanDetail, monthPlanEdit, monthPlanUserList, planStatus,monthPlanStatus,
   weekPlanListById,
   weekStatus,
   workIsImportantEnum,
@@ -258,7 +258,7 @@ export default function MonthPlanEdit(prosp: any) {
                             disabled={true}
                             // rules={[{ required: true, message: '这是必填项' }]}
                             request={() => {
-                                return Promise.resolve(planStatus)
+                                return Promise.resolve(monthPlanStatus)
                             }}
                         />
 

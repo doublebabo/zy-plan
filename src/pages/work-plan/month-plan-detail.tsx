@@ -17,7 +17,7 @@ import {ArrowLeftOutlined, PlusOutlined} from "@ant-design/icons";
 import {
   arrayToMap,
   importantEnum,
-  monthPlanDetail, planStatus,
+  monthPlanDetail, planStatus, monthPlanStatus,
   weekPlanListById,
   weekStatus,
   workIsImportantEnum,
@@ -213,7 +213,7 @@ export default function MonthPlanDetail(prosp: any) {
                                 width='lg'
                                 label="完成状态"
                                 disabled={true}
-                                options={planStatus}
+                                options={monthPlanStatus}
                             />
                             {/*<ProFormText*/}
                             {/*    name='executorName'*/}
