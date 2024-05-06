@@ -9,6 +9,7 @@ import {
     download,
     exportMonth,
     monthPlanList,
+    apiMyListExport,
     planStatus, planMonths,  monthPlanDel,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
@@ -183,11 +184,15 @@ const MonthPlan = () => {
 
     const {height, resize} = useTableHeight();
 
+    const formRef = useRef<any>();
+
+    const paramsRef = useRef<any>();
+
     useEffect(() => {
         resize();
     }, [cols]);
 
-    function onAction(type: string, record?: any) {
+    async function onAction(type: string, record?: any) {
 
         if (type === 'add') {
             addModalRef.current.show();
@@ -210,6 +215,11 @@ const MonthPlan = () => {
                     actionRef.current.reload();
                 }
             })
+        } else if (type === 'export') {
+            // setLoading(true);
+            const res = await apiMyListExport(paramsRef.current);
+            // setLoading(false);
+            download(res, `月计划表-${Date.now()}.xlsx`);
         }
     }
 
@@ -293,8 +303,11 @@ const MonthPlan = () => {
                 }))}
                 scroll={{y: height}}
                 actionRef={actionRef}
+                formRef={formRef}
                 cardBordered
                 request={async (params = {}, sort, filter) => {
+                    paramsRef.current = params;
+
                     setParams(params);
                     return monthPlanList(params);
                 }}
@@ -344,6 +357,12 @@ const MonthPlan = () => {
                 }}
                 dateFormatter="string"
                 toolBarRender={() => [
+                    <Button
+                        key="button"
+                        onClick={() => onAction('export')}
+                    >
+                        导出工作计划表
+                    </Button>,
                     <Button
                         key="button"
                         icon={<PlusOutlined/>}

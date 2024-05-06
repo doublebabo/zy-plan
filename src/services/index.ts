@@ -692,6 +692,12 @@ export function apiStatisticsExport(data) {
   }));
 }
 
+export function apiMyListExport(data) {
+  return executeAndTryCatch(() => http.post('/monthPlan/exportMyList', data, {
+    responseType: 'blob'
+  }));
+}
+
 export function apiCheckExport(data) {
   return executeAndTryCatch(() => http.post('/monthPlan/exportCheckList', data, {
     responseType: 'blob'

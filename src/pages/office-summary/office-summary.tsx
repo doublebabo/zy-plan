@@ -13,6 +13,7 @@ import {
   planStatus,
   qualityEnum, resultEnum,
   workIsImportantSearchEnum,
+  apiMyListExport,
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import localstorage from "../../utils/localstorage.ts";
@@ -151,16 +152,7 @@ const getColumns = ({isSelfCheckPage}: any): any => [
       },
       initialValue: 0
     },
-    ...(isSelfCheckPage ? [
-      {
-      title: '月份选择',
-      valueType: 'dateMonth',
-      dataIndex: 'month',
-      hideInSearch: false,
-      hideInTable: true,
-      initialValue: null
-      // request: () => planMonths
-    },] : [
+    ...(isSelfCheckPage ? [] : [
       {
         title: '一级部门',
         dataIndex: 'deptFirstId',
@@ -213,18 +205,16 @@ const getColumns = ({isSelfCheckPage}: any): any => [
             return workIsImportantSearchEnum;
         },
         hideInTable: true,
+    },]),
+    {
+      title: '月份选择',
+      valueType: 'dateMonth',
+      dataIndex: 'month',
+      hideInSearch: false,
+      hideInTable: true,
+      initialValue: null
+      // request: () => planMonths
     },
-      {
-        title: '月份选择',
-        valueType: 'dateMonth',
-        dataIndex: 'month',
-        hideInSearch: false,
-        hideInTable: true,
-        initialValue: null
-        // request: () => planMonths
-      },
-    ])
-
   ],
 
 ].filter(o => o);
@@ -264,7 +254,11 @@ const OfficeSummary = (props: any) => {
 
     if (type === 'export') {
       setLoading(true);
-      const res = await apiStatisticsExport(paramsRef.current);
+      let api = apiStatisticsExport
+      if (isSelfCheckPage) {
+        api = apiMyListExport
+      }
+      const res = await api(paramsRef.current);
       setLoading(false);
       download(res, `办公室统计-${paramsRef.current.month || ''}月计划表-${Date.now()}.xlsx`);
     }
@@ -427,7 +421,7 @@ const OfficeSummary = (props: any) => {
               title: '每月计划列表'
             }}
             toolBarRender={() => [
-              !isSelfCheckPage && <Button
+              <Button
                   key="button"
                   onClick={() => onAction('export')}
               >
