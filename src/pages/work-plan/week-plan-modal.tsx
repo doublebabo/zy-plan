@@ -43,6 +43,11 @@ export default React.forwardRef(function (props: any, ref) {
 
     function onOk() {
         if (loading) return;
+
+        if (recordRef.current?.quality !== 0 && recordRef.current?.result !== 0) {
+            setVisible(false);
+            return;
+        }
         formRef.current?.validateFields?.().then(async values => {
             setLoading(true);
             const res = await (weekPlanId ?  weekPlanEdit({...values, weekPlanId}) : weekPlanAdd({...values, monthId: useparams.id}));
@@ -137,13 +142,14 @@ export default React.forwardRef(function (props: any, ref) {
                     label="工作内容"
                     placeholder="请输入"
                     required={true}
+                    disabled={recordRef.current?.quality !== 0 ? true : false}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormTextArea
                     name="outcome"
                     label="工作结果"
                     placeholder="请输入"
-                    disabled={recordRef.current?.content ? false : true}
+                    disabled={recordRef.current?.content && recordRef.current?.result === 0 ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />
@@ -151,7 +157,7 @@ export default React.forwardRef(function (props: any, ref) {
                     name="problem"
                     label="问题和风险"
                     placeholder="请输入"
-                    disabled={recordRef.current?.content ? false : true}
+                    disabled={recordRef.current?.content && recordRef.current?.result === 0 ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />

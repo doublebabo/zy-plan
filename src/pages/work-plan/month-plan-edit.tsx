@@ -87,7 +87,7 @@ const getColumns = (navigate: any, {onWeekPlan, onConfirm, isManager}: any): Pro
                 >
                     编辑
                 </a>,
-              <a key="delete"   onClick={() => {
+              record.quality === 0 && record.result === 0 && <a key="delete"   onClick={() => {
                   onWeekPlan('delete',record);
                 }}
               >
