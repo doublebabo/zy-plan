@@ -599,11 +599,25 @@ export function apiResultCheckMonthly(data) {
   return executeAndTryCatch(() => http.post('/monthPlan/resultCheck', data));
 }
 
-
 export function apiResultCheckWeekly(data) {
   return executeAndTryCatch(() => http.post('/weekPlan/resultCheck', data));
 }
 
+export function apiQualityRevokeMonth(monthPlanId) {
+  return executeAndTryCatch(() => http.get('/monthPlan/qualityRevoke?monthPlanId=' + monthPlanId));
+}
+
+export function apiQualityRevokeWeek(weekPlanId) {
+  return executeAndTryCatch(() => http.get('/weekPlan/qualityRevoke?weekPlanId=' + weekPlanId));
+}
+
+export function apiResultRevokeMonth(monthPlanId) {
+  return executeAndTryCatch(() => http.get('/monthPlan/resultRevoke?monthPlanId=' + monthPlanId));
+}
+
+export function apiResultRevokeWeek(weekPlanId) {
+  return executeAndTryCatch(() => http.get('/weekPlan/resultRevoke?weekPlanId=' + weekPlanId));
+}
 
 // 122.192.6.227:8010/api/statistics/deptFirst
 // 办公室统计页面--一级部门列表

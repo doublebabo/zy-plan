@@ -4,7 +4,11 @@ import {
   apiQualityCheckMonthly,
   apiQualityCheckWeekly,
   apiResultCheckMonthly,
-  apiResultCheckWeekly
+  apiResultCheckWeekly,
+  apiQualityRevokeMonth,
+  apiQualityRevokeWeek,
+  apiResultRevokeMonth,
+  apiResultRevokeWeek
 } from "../../services";
 import styles from './plan-correction-col.module.less'
 
@@ -18,7 +22,9 @@ export default function PlanCorrectionCol(props: any) {
 
   const [enums, setEnums] = useState<any>([]);
 
-  const [disable, setDisable] = useState<boolean>();
+  const [checkDisable, setCheckDisable] = useState<boolean>();
+
+  const [revokeDisable, setRevokeDisable] = useState<boolean>();
 
 
   function onSubmit(e) {
@@ -75,11 +81,44 @@ export default function PlanCorrectionCol(props: any) {
         [singleName]: quality,
         comment
       });
-      setDisable(true);
+      setCheckDisable(true);
+      setRevokeDisable(false);
       reload?.()
     }
+  }
 
+  function onRevoke(e) {
+    console.log("---------------------")
+    e.stopPropagation();
 
+    doRevoke();
+
+    async function doRevoke() {
+      let idName;
+      let api;
+      switch (type) {
+        case 'monthResult':
+          idName = 'monthPlanId';
+          api = apiResultRevokeMonth;
+          break
+        case 'monthQuality':
+          idName = 'monthPlanId';
+          api = apiQualityRevokeMonth;
+          break
+        case 'weekResult':
+          idName = 'weekPlanId';
+          api = apiResultRevokeWeek;
+          break
+        case 'weekQuality':
+          idName = 'weekPlanId';
+          api = apiQualityRevokeWeek;
+          break
+      }
+      await api(record.id);
+      setCheckDisable(false);
+      setRevokeDisable(true);
+      reload?.()
+    }
   }
 
   useEffect(() => {
@@ -97,7 +136,10 @@ export default function PlanCorrectionCol(props: any) {
       setComment(record?.resultComment);
       setQuality(record?.result);
       if (record.result !== 0) {
-        setDisable(true);
+        setCheckDisable(true);
+        setRevokeDisable(false);
+      } else {
+        setRevokeDisable(true);
       }
     } else {
       setEnums([
@@ -107,7 +149,10 @@ export default function PlanCorrectionCol(props: any) {
       setComment(record?.qualityComment);
       setQuality(record?.quality);
       if (record.quality !== 0) {
-        setDisable(true);
+        setCheckDisable(true);
+        setRevokeDisable(false);
+      } else {
+        setRevokeDisable(true);
       }
     }
   }, [type]);
@@ -120,7 +165,7 @@ export default function PlanCorrectionCol(props: any) {
         <Radio.Group value={quality} onChange={e => {
           setQuality(e.target.value);
         }}>
-          {enums.map((o, oIndex) => <Radio disabled={disable} key={oIndex} value={o.value}>{o.label}</Radio>)}
+          {enums.map((o, oIndex) => <Radio disabled={checkDisable} key={oIndex} value={o.value}>{o.label}</Radio>)}
           {/*<Radio value={1}>合格</Radio>*/}
           {/*<Radio value={2}>不合格</Radio>*/}
         </Radio.Group>
@@ -130,12 +175,16 @@ export default function PlanCorrectionCol(props: any) {
                  onChange={(e) => {
                    setComment(e.target.value);
                  }}
-                 disabled={disable}
+                 disabled={checkDisable}
                  placeholder='输入批改意见'
                  onClick={e => e.stopPropagation()}
           />
-          <Button disabled={disable} size='small' type="primary" onClick={onSubmit}>提交</Button>
+          <Button disabled={checkDisable} size='small' type="primary" onClick={onSubmit}>提交</Button>
         </Space.Compact>
+        <Space.Compact style={{width: '100%'}}>
+          <Button disabled={revokeDisable} size='small' type="primary" onClick={onRevoke}>撤销</Button>
+        </Space.Compact>
+        
       </div>
   )
 };
