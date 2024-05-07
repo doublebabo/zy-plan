@@ -110,6 +110,8 @@ export default function MonthPlanEdit(prosp: any) {
     const [weekPlanId, setWeekPlanId] = useState<string>(null);
     const [loading, setLoading] = useState(false);
     const [weekData, setWeekData] = useState([]);
+    const [monthQuality, setMonthQuality] = useState();
+    const [monthResult, setMonthResult] = useState();
     const addWeekPlanRef: any = useRef();
     const weekPlanDetailModalRef: any = useRef();
     async function initData() {
@@ -118,6 +120,8 @@ export default function MonthPlanEdit(prosp: any) {
         setLoading(false);
         if (res.success) {
             setWeekData(res.data.weekPlanList);
+            setMonthQuality(res.data.quality);
+            setMonthResult(res.data.result);
             formRef.current?.setFieldsValue({
                 ...res.data,
             });
@@ -189,6 +193,9 @@ export default function MonthPlanEdit(prosp: any) {
                                 display: 'none',
                             },
                         },
+                        submitButtonProps: {
+                            disabled: monthQuality !== 0 || monthResult !== 0,
+                        }
                     }}
                     onFinish={onOK}
                 >

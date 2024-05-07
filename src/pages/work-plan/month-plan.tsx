@@ -124,7 +124,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
                 key="view">
                 编辑
             </a>,
-            <a
+            record.quality === 0 && record.result === 0 && <a
                 onClick={() => {
                     onDel(record)
                 }}
@@ -144,6 +144,7 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
             record.status === 1 && <Button
                 size='small'
                 type='primary'
+                disabled={record.quality !== 0 && record.result !== 0}
                 onClick={() => {
                     onAction('undone', record)
                 }}
