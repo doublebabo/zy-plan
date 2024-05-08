@@ -40,7 +40,6 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     // width: 100,
     align: "center",
     render: (dom, entity) => {
-        console.log(entity);
         let color = 'black';
         if (entity.important === 1) {
             color = 'red';

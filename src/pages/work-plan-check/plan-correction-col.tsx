@@ -88,7 +88,6 @@ export default function PlanCorrectionCol(props: any) {
   }
 
   function onRevoke(e) {
-    console.log("---------------------")
     e.stopPropagation();
 
     doRevoke();
