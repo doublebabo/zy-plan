@@ -38,7 +38,15 @@ const getColumns = ( {onAction, isManager, navigate, values}: any): any => [
     dataIndex: 'title',
     hideInSearch: true,
     // width: 100,
-    align: "center"
+    align: "center",
+    render: (dom, entity) => {
+        console.log(entity);
+        let color = 'black';
+        if (entity.important === 1) {
+            color = 'red';
+        }
+        return <span style={{color: color}}>{dom}</span>
+    },
   },
   {
     title: '开始时间',

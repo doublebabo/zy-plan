@@ -16,6 +16,7 @@ import myLocalstorage from "../../utils/localstorage.ts";
 import AddPlanModal from "./month-plan-add-modal.tsx";
  import {baseURL} from "../../utils/http";
 import useTableHeight from "../../hooks/useTableHeight.ts";
+import { render } from 'react-dom';
 
 const {confirm} = Modal;
 
@@ -34,7 +35,15 @@ const getColumns = (navigate: any, {onAction, onFinish, isManager, onDel}: any):
         // ellipsis: true,
         hideInSearch: true,
         // width: 100,
-        align: "center"
+        align: "center",
+        render: (dom, entity) => {
+            console.log(entity);
+            let color = 'black';
+            if (entity.important === 1) {
+                color = 'red';
+            }
+            return <span style={{color: color}}>{dom}</span>
+        },
     },
     {
         title: '开始时间',
