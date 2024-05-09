@@ -205,7 +205,23 @@ const getColumns = ({isSelfCheckPage}: any): any => [
             return workIsImportantSearchEnum;
         },
         hideInTable: true,
-    },]),
+      },
+      {
+        title: '完成时间',
+        valueType: 'dateRange',
+        dataIndex: 'finishTime',
+        hideInSearch: false,
+        hideInTable: true,
+        search: {
+          transform: (value) => {
+            return {
+              finishTimeStart: value[0],
+              finishTimeEnd: value[1],
+            };
+          },
+        }
+      },
+    ]),
     {
       title: '月份选择',
       valueType: 'dateMonth',
@@ -373,7 +389,7 @@ const OfficeSummary = (props: any) => {
             search={{
               // span: 6,
               // labelWidth: 'auto',
-              defaultColsNumber: 4,
+              defaultColsNumber: 12,
               // searchGutter: 24
               // filterType: 'light'
             }}
