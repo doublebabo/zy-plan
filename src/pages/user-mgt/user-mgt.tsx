@@ -11,7 +11,12 @@ import useTableHeight from "../../hooks/useTableHeight.ts";
 
 const {confirm} = Modal;
 
-const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
+const UserMgt = () => {
+
+  const isManager = myLocalstorage.get('manager') === 1;
+  const isAdmin = myLocalstorage.get('admin') === 1;
+
+  const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
     {
         dataIndex: 'id',
         hideInTable: true,
@@ -75,17 +80,12 @@ const getColumns = (navigate: any, {onDelete, onShowModal}: any) => [
             >
                 <span>编辑</span>
             </a>,
-            <a onClick={() => onDelete(record)} target="_blank" rel="noopener noreferrer" key="view">
+            isAdmin && <a onClick={() => onDelete(record)} target="_blank" rel="noopener noreferrer" key="view">
                 删除
             </a>,
         ],
     },
 ]
-
-const UserMgt = () => {
-
-  const isManager = myLocalstorage.get('manager') === 1;
-  const isAdmin = myLocalstorage.get('admin') === 1;
 
   if (!isManager && !isAdmin) {
     throw Error('没有权限')
