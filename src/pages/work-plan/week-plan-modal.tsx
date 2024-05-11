@@ -44,7 +44,7 @@ export default React.forwardRef(function (props: any, ref) {
     function onOk() {
         if (loading) return;
 
-        if (recordRef.current?.quality !== 0 && recordRef.current?.result !== 0) {
+        if (weekPlanId && recordRef.current?.quality !== 0 && recordRef.current?.result !== 0) {
             setVisible(false);
             return;
         }
@@ -142,7 +142,7 @@ export default React.forwardRef(function (props: any, ref) {
                     label="工作内容"
                     placeholder="请输入"
                     required={true}
-                    disabled={recordRef.current?.quality !== 0 ? true : false}
+                    disabled={weekPlanId && recordRef.current?.quality !== 0 ? true : false}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormTextArea
