@@ -21,19 +21,19 @@ const getColumns = ({type}): ProColumns<any>[] => {
         disabled: type === 'edit'
       },
     },
-    {
-      title: '登录密码',
-      dataIndex: 'password',
-      valueType: 'password',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
-    },
+    // {
+    //   title: '登录密码',
+    //   dataIndex: 'password',
+    //   valueType: 'password',
+    //   formItemProps: {
+    //     rules: [
+    //       {
+    //         required: true,
+    //         message: '此项为必填项',
+    //       },
+    //     ],
+    //   },
+    // },
     {
       title: '部门',
       dataIndex: 'deptId',

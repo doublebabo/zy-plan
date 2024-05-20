@@ -369,7 +369,7 @@ const WorkPlanCheck = () => {
             search={{
               // span: 6,
               // labelWidth: 'auto',
-              defaultColsNumber: 4,
+              defaultColsNumber: 12,
               // searchGutter: 24
 
             }}
