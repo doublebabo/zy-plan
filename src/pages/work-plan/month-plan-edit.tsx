@@ -21,7 +21,8 @@ import {
   weekStatus,
   workIsImportantEnum,
   workStatus, workStatus2,
-  weekPlanDel
+  weekPlanDel,
+  userExceptional
 } from "../../services";
 import myLocalstorage from "../../utils/localstorage.ts";
 import ConfirmModal from "./week-plan/confirm-modal.tsx";
@@ -112,16 +113,21 @@ export default function MonthPlanEdit(prosp: any) {
     const [weekData, setWeekData] = useState([]);
     const [monthQuality, setMonthQuality] = useState();
     const [monthResult, setMonthResult] = useState();
+    const [exceptional, setExceptional] = useState();
     const addWeekPlanRef: any = useRef();
     const weekPlanDetailModalRef: any = useRef();
     async function initData() {
         setLoading(true);
         const res = await monthPlanDetail(useparams.id);
+        const userExceptionRes = await userExceptional(myLocalstorage.get('id'));
         setLoading(false);
         if (res.success) {
             setWeekData(res.data.weekPlanList);
             setMonthQuality(res.data.quality);
             setMonthResult(res.data.result);
+            if (userExceptionRes.success) {
+                setExceptional(userExceptionRes.data);
+            }
             formRef.current?.setFieldsValue({
                 ...res.data,
             });
@@ -194,7 +200,7 @@ export default function MonthPlanEdit(prosp: any) {
                             },
                         },
                         submitButtonProps: {
-                            disabled: monthQuality !== 0 || monthResult !== 0,
+                            disabled: !exceptional && (monthQuality !== 0 || monthResult !== 0),
                         }
                     }}
                     onFinish={onOK}
@@ -316,7 +322,8 @@ export default function MonthPlanEdit(prosp: any) {
             <AddWeekPlanModal ref={addWeekPlanRef}
                               onSuccess={() => {
                                   initData()
-                              }}/>
+                              }}
+                              exceptional={exceptional}/>
             <WeekPlanDetailModal ref={weekPlanDetailModalRef}/>
         </div>
     );

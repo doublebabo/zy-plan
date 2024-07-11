@@ -8,7 +8,7 @@ import Draggable from 'react-draggable';
 
 export default React.forwardRef(function (props: any, ref) {
 
-    const {onSuccess} = props
+    const {onSuccess, exceptional} = props
 
     const [visible, setVisible] = useState(false);
 
@@ -142,14 +142,14 @@ export default React.forwardRef(function (props: any, ref) {
                     label="工作内容"
                     placeholder="请输入"
                     required={true}
-                    disabled={weekPlanId && recordRef.current?.quality !== 0 ? true : false}
+                    disabled={!exceptional && weekPlanId && recordRef.current?.quality !== 0 ? true : false}
                     rules={[{ required: true, message: '这是必填项' }]}
                 />
                 <ProFormTextArea
                     name="outcome"
                     label="工作结果"
                     placeholder="请输入"
-                    disabled={recordRef.current?.content && recordRef.current?.result === 0 ? false : true}
+                    disabled={exceptional || (recordRef.current?.content && recordRef.current?.result === 0) ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />
@@ -157,7 +157,7 @@ export default React.forwardRef(function (props: any, ref) {
                     name="problem"
                     label="问题和风险"
                     placeholder="请输入"
-                    disabled={recordRef.current?.content && recordRef.current?.result === 0 ? false : true}
+                    disabled={exceptional || (recordRef.current?.content && recordRef.current?.result === 0) ? false : true}
                     // required={true}
                     // rules={[{ required: true, message: '这是必填项' }]}
                 />

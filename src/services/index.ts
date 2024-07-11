@@ -458,6 +458,10 @@ export function monthPlanDetail(id: any) {
   return executeAndTryCatch(() => http.get('/monthPlan/detail', {params: {monthPlanId: id}}));
 }
 
+export function userExceptional(id: any) {
+  return executeAndTryCatch(() => http.get('/user/exceptional', {params: {userId: id}}));
+}
+
 export const workStatus2 = [
   {label: '未完成', value: 1},
   {label: '超时未完成', value: 2},
