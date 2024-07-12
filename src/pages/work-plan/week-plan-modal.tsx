@@ -44,7 +44,7 @@ export default React.forwardRef(function (props: any, ref) {
     function onOk() {
         if (loading) return;
 
-        if (weekPlanId && recordRef.current?.quality !== 0 && recordRef.current?.result !== 0) {
+        if (!exceptional && weekPlanId && recordRef.current?.quality !== 0 && recordRef.current?.result !== 0) {
             setVisible(false);
             return;
         }
