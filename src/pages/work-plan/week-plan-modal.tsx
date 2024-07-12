@@ -96,6 +96,7 @@ export default React.forwardRef(function (props: any, ref) {
             open={visible}
             title={
               <div
+                  className="mover"
                   style={{
                     width: '100%',
                     cursor: 'move',
@@ -127,6 +128,7 @@ export default React.forwardRef(function (props: any, ref) {
                 <Draggable
                     disabled={disabled}
                     bounds={bounds}
+                    handle=".mover"
                     onStart={(event, uiData) => onStart(event, uiData)}
                 >
                   <div ref={draggleRef}>{modal}</div>
